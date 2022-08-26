@@ -1,0 +1,37 @@
+ManifestFileVersion: 0
+CRC: 3955571739
+Hashes:
+  AssetFileHash:
+    serializedVersion: 2
+    Hash: e303e4629f92441db6e2c1ba8ec4cda5
+  TypeTreeHash:
+    serializedVersion: 2
+    Hash: 3cf622d0dc8b414aae3edc8a366baaab
+HashAppended: 0
+ClassTypes:
+- Class: 1
+  Script: {instanceID: 0}
+- Class: 4
+  Script: {instanceID: 0}
+- Class: 20
+  Script: {instanceID: 0}
+- Class: 21
+  Script: {instanceID: 0}
+- Class: 23
+  Script: {instanceID: 0}
+- Class: 28
+  Script: {instanceID: 0}
+- Class: 33
+  Script: {instanceID: 0}
+- Class: 43
+  Script: {instanceID: 0}
+- Class: 48
+  Script: {instanceID: 0}
+- Class: 114
+  Script: {fileID: 11500000, guid: 1f0522eaef74d984591c060d05a095c8, type: 3}
+- Class: 115
+  Script: {instanceID: 0}
+Assets:
+- Assets/Hands/StereoRender.shader
+- Assets/Hands/Cat/[VRCameraRig].prefab
+Dependencies: []
