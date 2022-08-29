@@ -3,12 +3,16 @@ using UnityEngine;
 using VRMod.Assets;
 using Mathf = Valve.VR.Mathf;
 using Il2CppSystem.Collections.Generic;
+using System;
+using Yoyo.UI;
 
 namespace VRMod.UI.Pointers
 {
     public class UIPointer : MonoBehaviour
     {
-        public float defaultLength = 3.0f;
+        public UIPointer(IntPtr value) : base(value) { }
+
+        public float defaultLength = 5.0f;
 
         public EventSystem eventSystem = null;
         public StandaloneInputModule inputModule = null;
@@ -19,6 +23,7 @@ namespace VRMod.UI.Pointers
         private void Awake()
         {
             lineRenderer = gameObject.GetOrAddComponent<LineRenderer>();
+            lineRenderer.sortingLayerName = "Foreground";
         }
         private void Update()
         {
@@ -36,7 +41,7 @@ namespace VRMod.UI.Pointers
             float distance = GetCanavsDistance();
             Vector3 endPostition = CalculateEnd(defaultLength);
 
-            if (distance != 0)
+            if (distance > 0.1f)
                 endPostition = CalculateEnd(distance);
 
             return endPostition;
@@ -46,7 +51,10 @@ namespace VRMod.UI.Pointers
         {
             // Get data
             PointerEventData eventData = new PointerEventData(eventSystem);
-            eventData.position = inputModule.inputOverride.mousePosition;
+            if (inputModule.inputOverride != null)
+                eventData.position = inputModule.inputOverride.mousePosition;
+            else
+                return 5.0f;
 
             // Raycast using data
             List<RaycastResult> results = new List<RaycastResult>();

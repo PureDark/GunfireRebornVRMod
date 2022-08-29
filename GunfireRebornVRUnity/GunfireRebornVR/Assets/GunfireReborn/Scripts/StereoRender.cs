@@ -5,13 +5,13 @@ using UnityEngine.Rendering;
 using UnityEngine.Rendering.PostProcessing;
 using UnityEngine.XR;
 using Valve.VR;
+using System;
 
-[ExecuteInEditMode]
-[ImageEffectAllowedInSceneView]
 public class StereoRender : MonoBehaviour, IAfterTransparentPass
 {
     private RenderTexture leftFarRT, rightFarRT;
     private RenderTexture leftNearRT, rightNearRT;
+    private RenderTexture leftUIRT, rightUIRT;
     public StereoRenderPass stereoPass;
     public float separation = 0.031f;
 
@@ -23,69 +23,72 @@ public class StereoRender : MonoBehaviour, IAfterTransparentPass
     {
         var head = transform.Find("Head");
         if (!head)
-        {
             head = new GameObject("Head").transform;
-            head.parent = transform;
-            head.localPosition = Vector3.zero;
-            head.localRotation = Quaternion.identity;
-        }
+        head.parent = transform;
+        head.localPosition = Vector3.zero;
+        head.localRotation = Quaternion.identity;
 
         var leftFarEye = head.Find("LeftEye");
         if (!leftFarEye)
-        {
             leftFarEye = new GameObject("LeftEye").transform;
-            leftFarEye.parent = head;
-            leftFarEye.localPosition = new Vector3(-separation, 0, 0);
-            leftFarEye.localEulerAngles = new Vector3(0, 0, 0);
-        }
 
-        var leftFarCam = leftFarEye.gameObject.GetComponent<Camera>();
-        if (!leftFarCam)
-            leftFarCam = leftFarEye.gameObject.AddComponent<Camera>();
+        leftFarEye.parent = head;
+        leftFarEye.localPosition = new Vector3(-separation, 0, 0);
+        leftFarEye.localEulerAngles = new Vector3(0, 0, 0);
+
+        var leftFarCam = leftFarEye.gameObject.GetOrAddComponent<Camera>();
+        leftFarCam.cullingMask = -966787561;
         leftFarCam.stereoTargetEye = StereoTargetEyeMask.None;
-        leftFarCam.clearFlags = CameraClearFlags.Skybox;
-        //leftFarCam.fieldOfView = (SteamVR.instance.fieldOfView > 0) ? SteamVR.instance.fieldOfView : 109.363f;
-        leftFarCam.fieldOfView = 109.363f;
+        leftFarCam.clearFlags = CameraClearFlags.SolidColor;
+        leftFarCam.fieldOfView = (SteamVR.instance.fieldOfView > 0) ? SteamVR.instance.fieldOfView : 109.363f;
         leftFarCam.nearClipPlane = 0.95f;
         leftFarCam.farClipPlane = 1000f;
 
         var leftNearEye = leftFarEye.Find("LeftNearCam");
-
         if (!leftNearEye)
-        {
             leftNearEye = new GameObject("LeftNearCam").transform;
-            leftNearEye.parent = leftFarEye;
-            leftNearEye.localPosition = new Vector3(0, 0, 0);
-            leftNearEye.localEulerAngles = new Vector3(0, 0, 0);
-        }
+        leftNearEye.parent = leftFarEye;
+        leftNearEye.localPosition = new Vector3(0, 0, 0);
+        leftNearEye.localEulerAngles = new Vector3(0, 0, 0);
 
-        var leftNearCam = leftNearEye.gameObject.GetComponent<Camera>();
-        if (!leftNearCam)
-            leftNearCam = leftNearEye.gameObject.AddComponent<Camera>();
+        var leftNearCam = leftNearEye.gameObject.GetOrAddComponent<Camera>();
+        leftNearCam.cullingMask = -966787561;
         leftNearCam.stereoTargetEye = StereoTargetEyeMask.None;
-        leftNearCam.clearFlags = CameraClearFlags.Depth;
-        //leftNearCam.fieldOfView = (SteamVR.instance.fieldOfView > 0) ? SteamVR.instance.fieldOfView : 109.363f;
-        leftNearCam.fieldOfView = 109.363f;
+        leftNearCam.clearFlags = CameraClearFlags.SolidColor;
+        leftNearCam.backgroundColor = new Color(0, 0, 0, 0);
+        leftNearCam.fieldOfView = (SteamVR.instance.fieldOfView > 0) ? SteamVR.instance.fieldOfView : 109.363f;
         leftNearCam.nearClipPlane = 0.02f;
         leftNearCam.farClipPlane = 1.05f;
+
+        var leftUITran = leftFarEye.Find("LeftUICam");
+        if (!leftUITran)
+            leftUITran = new GameObject("LeftUICam").transform;
+        leftUITran.parent = leftNearEye;
+        leftUITran.localPosition = new Vector3(0, 0, 0);
+        leftUITran.localEulerAngles = new Vector3(0, 0, 0);
+
+        var leftUICam = leftUITran.gameObject.GetOrAddComponent<Camera>();
+        leftUICam.cullingMask = 32;
+        leftUICam.stereoTargetEye = StereoTargetEyeMask.None;
+        leftUICam.clearFlags = CameraClearFlags.SolidColor;
+        leftUICam.backgroundColor = new Color(0, 0, 0, 0);
+        leftUICam.fieldOfView = (SteamVR.instance.fieldOfView > 0) ? SteamVR.instance.fieldOfView : 109.363f;
+        leftUICam.nearClipPlane = 0.02f;
+        leftUICam.farClipPlane = 100f;
 
 
         var rightFarEye = head.Find("RightEye");
         if (!rightFarEye)
-        {
             rightFarEye = new GameObject("RightEye").transform;
-            rightFarEye.parent = head;
-            rightFarEye.localPosition = new Vector3(separation, 0, 0);
-            rightFarEye.localEulerAngles = new Vector3(0, 0, 0);
-        }
+        rightFarEye.parent = head;
+        rightFarEye.localPosition = new Vector3(separation, 0, 0);
+        rightFarEye.localEulerAngles = new Vector3(0, 0, 0);
 
-        var rightFarCam = rightFarEye.gameObject.GetComponent<Camera>();
-        if (!rightFarCam)
-            rightFarCam = rightFarEye.gameObject.AddComponent<Camera>();
+        var rightFarCam = rightFarEye.gameObject.GetOrAddComponent<Camera>();
+        rightFarCam.cullingMask = -966787561;
         rightFarCam.stereoTargetEye = StereoTargetEyeMask.None;
-        rightFarCam.clearFlags = CameraClearFlags.Skybox;
-        //rightFarCam.fieldOfView = (SteamVR.instance.fieldOfView > 0) ? SteamVR.instance.fieldOfView : 109.363f;
-        rightFarCam.fieldOfView = 109.363f;
+        rightFarCam.clearFlags = CameraClearFlags.SolidColor;
+        rightFarCam.fieldOfView = (SteamVR.instance.fieldOfView > 0) ? SteamVR.instance.fieldOfView : 109.363f;
         rightFarCam.nearClipPlane = 0.95f;
         rightFarCam.farClipPlane = 1000f;
 
@@ -93,23 +96,35 @@ public class StereoRender : MonoBehaviour, IAfterTransparentPass
         var rightNearEye = rightFarEye.Find("RightNearCam");
 
         if (!rightNearEye)
-        {
             rightNearEye = new GameObject("RightNearCam").transform;
-            rightNearEye.parent = rightFarEye;
-            rightNearEye.localPosition = new Vector3(0, 0, 0);
-            rightNearEye.localEulerAngles = new Vector3(0, 0, 0);
-        }
+        rightNearEye.parent = rightFarEye;
+        rightNearEye.localPosition = new Vector3(0, 0, 0);
+        rightNearEye.localEulerAngles = new Vector3(0, 0, 0);
 
-        var rightNearCam = rightNearEye.gameObject.GetComponent<Camera>();
-        if (!rightNearCam)
-            rightNearCam = rightNearEye.gameObject.AddComponent<Camera>();
+        var rightNearCam = rightNearEye.gameObject.GetOrAddComponent<Camera>();
+        rightNearCam.cullingMask = -966787561;
         rightNearCam.stereoTargetEye = StereoTargetEyeMask.None;
-        rightNearCam.clearFlags = CameraClearFlags.Depth;
-        //rightNearCam.fieldOfView = (SteamVR.instance.fieldOfView > 0) ? SteamVR.instance.fieldOfView : 109.363f;
-        rightNearCam.fieldOfView = 109.363f;
+        rightNearCam.clearFlags = CameraClearFlags.SolidColor;
+        rightNearCam.backgroundColor = new Color(0, 0, 0, 0);
+        rightNearCam.fieldOfView = (SteamVR.instance.fieldOfView > 0) ? SteamVR.instance.fieldOfView : 109.363f;
         rightNearCam.nearClipPlane = 0.02f;
         rightNearCam.farClipPlane = 1.05f;
 
+        var rightUITran = leftFarEye.Find("RightUICam");
+        if (!rightUITran)
+            rightUITran = new GameObject("RightUICam").transform;
+        rightUITran.parent = rightNearEye;
+        rightUITran.localPosition = new Vector3(0, 0, 0);
+        rightUITran.localEulerAngles = new Vector3(0, 0, 0);
+
+        var rightUICam = rightUITran.gameObject.GetOrAddComponent<Camera>();
+        rightUICam.cullingMask = 32;
+        rightUICam.stereoTargetEye = StereoTargetEyeMask.None;
+        rightUICam.clearFlags = CameraClearFlags.SolidColor;
+        rightUICam.backgroundColor = new Color(0, 0, 0, 0);
+        rightUICam.fieldOfView = (SteamVR.instance.fieldOfView > 0) ? SteamVR.instance.fieldOfView : 109.363f;
+        rightUICam.nearClipPlane = 0.02f;
+        rightUICam.farClipPlane = 100f;
 
 
         var headCam = GetComponent<Camera>();
@@ -124,24 +139,37 @@ public class StereoRender : MonoBehaviour, IAfterTransparentPass
         leftNearCam.projectionMatrix = headCam.GetStereoProjectionMatrix(Camera.StereoscopicEye.Left);
         rightNearCam.projectionMatrix = headCam.GetStereoProjectionMatrix(Camera.StereoscopicEye.Right);
 
+        headCam.nearClipPlane = 0.02f;
+        headCam.farClipPlane = 100f;
+        leftUICam.projectionMatrix = headCam.GetStereoProjectionMatrix(Camera.StereoscopicEye.Left);
+        rightUICam.projectionMatrix = headCam.GetStereoProjectionMatrix(Camera.StereoscopicEye.Right);
+
         int width = (XRSettings.eyeTextureWidth <= 0) ? 2208 : XRSettings.eyeTextureWidth;
         int height = (XRSettings.eyeTextureHeight <= 0) ? 2452 : XRSettings.eyeTextureHeight;
         if (leftFarRT == null)
             leftFarRT = new RenderTexture(width, height, 8, RenderTextureFormat.ARGB32);
-        if (leftNearRT == null)
-            leftNearRT = new RenderTexture(width, height, 8, RenderTextureFormat.ARGB32);
         if (rightFarRT == null)
             rightFarRT = new RenderTexture(width, height, 8, RenderTextureFormat.ARGB32);
+        if (leftNearRT == null)
+            leftNearRT = new RenderTexture(width, height, 8, RenderTextureFormat.ARGB32);
         if (rightNearRT == null)
             rightNearRT = new RenderTexture(width, height, 8, RenderTextureFormat.ARGB32);
+        if (leftUIRT == null)
+            leftUIRT = new RenderTexture(width, height, 8, RenderTextureFormat.ARGB32);
+        if (rightUIRT == null)
+            rightUIRT = new RenderTexture(width, height, 8, RenderTextureFormat.ARGB32);
         leftFarRT.antiAliasing = 4;
         rightFarRT.antiAliasing = 4;
         leftNearRT.antiAliasing = 4;
         rightNearRT.antiAliasing = 4;
+        leftUIRT.antiAliasing = 4;
+        rightUIRT.antiAliasing = 4;
         leftFarCam.targetTexture = leftFarRT;
         rightFarCam.targetTexture = rightFarRT;
         leftNearCam.targetTexture = leftNearRT;
         rightNearCam.targetTexture = rightNearRT;
+        leftUICam.targetTexture = leftUIRT;
+        rightUICam.targetTexture = rightUIRT;
     }
 
     public ScriptableRenderPass GetPassToEnqueue(RenderTextureDescriptor baseDescriptor, RenderTargetHandle colorHandle, RenderTargetHandle depthHandle)
@@ -178,6 +206,8 @@ public class StereoRender : MonoBehaviour, IAfterTransparentPass
             stereoMaterial.SetTexture("_RightFarTex", stereoRender.rightFarRT);
             stereoMaterial.SetTexture("_LeftNearTex", stereoRender.leftNearRT);
             stereoMaterial.SetTexture("_RightNearTex", stereoRender.rightNearRT);
+            stereoMaterial.SetTexture("_LeftUITex", stereoRender.leftUIRT);
+            stereoMaterial.SetTexture("_RightUITex", stereoRender.rightUIRT);
             this.baseDescriptor = baseDescriptor;
             this.colorHandle = colorHandle;
             Debug.Log("baseDescriptor:" + baseDescriptor.width + "x" + baseDescriptor.height);

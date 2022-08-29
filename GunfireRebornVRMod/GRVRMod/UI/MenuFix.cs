@@ -3,6 +3,7 @@ using UI;
 using UnityEngine.Rendering.PostProcessing;
 using VRMod.Patches;
 using VRMod.Core;
+using static UnityEngine.UI.Image;
 
 namespace VRMod.UI
 {
@@ -17,39 +18,91 @@ namespace VRMod.UI
         }
 
 
-        public static void Apply()
+        public static void HomeFix()
         {
+
+            // 第一次初始化一定是在Home场景，处理一下相机
+            var CamPoint = GameObject.Find("CamPoint_Camera");
+            if (CamPoint)
+            {
+                var cameras = CamPoint.GetComponentsInChildren<Camera>(true);
+                foreach (var cam in cameras)
+                {
+                    cam.stereoTargetEye = StereoTargetEyeMask.None;
+                    cam.enabled = false;
+                }
+            }
+
             var canvasRoot = CUIManager.instance.transform.Find("Canvas_PC(Clone)");
             canvasRoot.transform.localScale = new Vector3(0.002f,0.002f,0.002f);
             canvasRoot.transform.position = Vector3.zero;
 
-            // 原来的UICamera可以禁用掉了，也可以留着，屏幕上会多一层后处理滤镜
+            // 原来的UICamera可以禁用掉了
             var UICamera = canvasRoot.Find("Camera");
             UICamera.gameObject.active = false;
             UICamera.GetComponent<Camera>().stereoTargetEye = StereoTargetEyeMask.None;
 
             // 将主菜单转为世界坐标，才能在VR里使用菜单
-            var canvases = canvasRoot.gameObject.GetComponentsInChildren<Canvas>();
+            var canvases = canvasRoot.gameObject.GetComponentsInChildren<Canvas>(true);
             foreach(var canvas in canvases)
             {
                 canvas.renderMode = RenderMode.WorldSpace;
                 canvas.worldCamera = Camera.main;
             }
-            canvasRoot.gameObject.SetLayerRecursively(Layer.Default);
-            canvasRoot.position = new Vector3(28f, 3.7f, 23.15f);
-            //var settingRoot = canvasRoot.Find("SettingRoot");
-            //settingRoot.localPosition = new Vector3(-627f, 219f, 219f);
-            //settingRoot.eulerAngles = new Vector3(0, 327, 0);
-            Transform mask;
-            while(mask = canvasRoot.Find("Ani_mask")){
-                mask.gameObject.active = false;
+            //canvasRoot.gameObject.SetLayerRecursively(Layer.Default);
+            canvasRoot.position = new Vector3(33.2f, 3.7f, 16f);
+            canvasRoot.localEulerAngles = new Vector3(0, 90, 0);
+
+            //蜡烛的烟要改成世界朝向，否则歪头时会跟着一起歪
+            var effectRoot = GameObject.Find("Effectroot");
+            foreach (var child in effectRoot.transform)
+            {
+                if (child.Cast<Transform>().gameObject.name.Contains("candle"))
+                {
+                    var psrs = child.Cast<Transform>().GetComponentsInChildren<ParticleSystemRenderer>(true);
+                    foreach (var psr in psrs)
+                    {
+                        psr.alignment = ParticleSystemRenderSpace.World;
+                    }
+                }
+            }
+
+            //武器图鉴和怪物图鉴的模型要显示到UI所在的位置
+            var ModelRoot = GameObject.Find("3000101");
+            var weapon = ModelRoot.transform.Find("Weapon");
+            if (weapon != null)
+            {
+                weapon.parent = CUIManager.instance.MainDialogCanvas.transform;
+                weapon.localPosition = new Vector3(0, -215, 0);
+                weapon.localEulerAngles = new Vector3(0, 90, 0);
+                weapon.localScale = new Vector3(1000, 1000, 1000);
+            }
+
+            var monster = ModelRoot.transform.Find("Monster");
+            if (monster != null)
+            {
+                monster.parent = CUIManager.instance.MainDialogCanvas.transform;
+                monster.localPosition = new Vector3(0, -600, 0);
+                monster.localEulerAngles = new Vector3(0, 180, 0);
+                monster.localScale = new Vector3(450, 450, 450);
             }
         }
+
         public static void FixCollectionMenu()
         {
             var collectionList = CUIManager.instance.MainDialogCanvas.transform.Find("PC_Panel_collection/MainPage/Collection_list/");
             Object.Destroy(collectionList.Find("MonsterCollection_Enter/book_01").gameObject);
             Object.Destroy(collectionList.Find("RelicCollection_Enter/book_01").gameObject);
+        }
+
+        public static void FixCharacterMenu()
+        {
+            var heroList = CUIManager.instance.MainDialogCanvas.transform.Find("PC_Panel_character/lay_mainpage/lay_base/list_area/");
+            var psrs = heroList.GetComponentsInChildren<ParticleSystemRenderer>(true);
+            foreach (var psr in psrs)
+            {
+                psr.alignment = ParticleSystemRenderSpace.Local;
+            }
         }
 
 

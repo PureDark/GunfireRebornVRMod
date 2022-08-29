@@ -1,10 +1,16 @@
-﻿using System;
+﻿using InControl;
+using System;
+using System.Linq;
+using UI;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
 using Valve.VR;
 using VRMod.Assets;
 using VRMod.Core;
 using VRMod.Patches;
+using VRMod.Player.VRInput;
+using VRMod.UI.Pointers;
 
 namespace VRMod.Player
 {
@@ -21,8 +27,6 @@ namespace VRMod.Player
         public SteamVR_Behaviour_Pose RightHand { get; private set; }
         public StereoRender StereoRender { get; private set; }
 
-        public VRInput Input { get; set; }
-
         private void Awake()
         {
             if (Instance)
@@ -38,13 +42,8 @@ namespace VRMod.Player
 
             HarmonyPatches.onSceneLoaded += OnSceneLoaded;
 
-            var CamPoint = GameObject.Find("CamPoint_Camera");
-            if (CamPoint)
-            {
-                CamPoint.GetComponent<Camera>().stereoTargetEye = StereoTargetEyeMask.None;
-                //CamPoint.GetComponent<Camera>().enabled = false;
-            }
-
+            // 新增一个新手柄给游戏识别
+            FindObjectOfType<InControl.InControlManager>()?.gameObject.GetOrAddComponent<VRInputManager>();
 
             Origin = transform.parent;
             Head = transform.Find("PlayerCamera");
@@ -54,9 +53,6 @@ namespace VRMod.Player
                 Camera.cullingMask = 0;
                 Camera.depth = -1;
                 StereoRender = Head.gameObject.AddComponent<StereoRender>();
-                //Head.gameObject.AddComponent<OutLinePassMgr>();
-
-                Input = new VRInput();
 
                 LeftHand = transform.Find("LeftHand").gameObject.GetOrAddComponent<SteamVR_Behaviour_Pose>();
                 RightHand = transform.Find("RightHand").gameObject.GetOrAddComponent<SteamVR_Behaviour_Pose>();
@@ -67,10 +63,61 @@ namespace VRMod.Player
                 RightHand.inputSource = SteamVR_Input_Sources.RightHand;
                 LeftHand.origin = Origin;
                 RightHand.origin = Origin;
+
+                var shader = Resources.FindObjectsOfTypeAll<Shader>().First(x=>x.name.Contains("M1/Character"));
+                var renderers = gameObject.GetComponentsInChildren<Renderer>();
+                foreach(var renderer in renderers)
+                {
+                    renderer.material.shader = shader;
+                    renderer.material.SetFloat("_OutlineWidth", 0.005f);
+                }
             }
 
             SetOriginHomePosition();
             DontDestroyOnLoad(Origin);
+        }
+
+        public void ToggleEventCamera()
+        {
+            //var eventSystem = GameObject.Find("DontDestroyRoot/EventSystem");
+            var eventSystem = GameObject.Find("UniverseLibCanvas");
+            //var eventSystem = GameObject.Find("EventSystem");
+
+            var uIPointer = RightHand.transform.Find("CanvasPointer").gameObject.GetOrAddComponent<UIPointer>();
+            uIPointer.eventSystem = eventSystem.GetComponent<EventSystem>();
+            uIPointer.inputModule = eventSystem.GetComponent<StandaloneInputModule>();
+
+            var eventCam = uIPointer.GetComponent<Camera>();
+
+            var vrPointerInput = eventSystem.GetComponent<VRPointerInput>();
+            if(vrPointerInput != null)
+            {
+                DestroyImmediate(vrPointerInput);
+            }
+            else
+            {
+                vrPointerInput = eventSystem.AddComponent<VRPointerInput>();
+                vrPointerInput.eventCamera = eventCam;
+                vrPointerInput.clikeButton = SteamVR_Actions.gameplay_RT_Fire_InteractUI;
+            }
+            var canvases = CUIManager.instance.gameObject.GetComponentsInChildren<Canvas>();
+            foreach (var canvas in canvases)
+            {
+                canvas.worldCamera = eventCam;
+            }
+        }
+        
+        void Update()
+        {
+            if (Input.GetKeyUp(KeyCode.J))
+            {
+                ToggleEventCamera();
+            }
+            if (Input.GetKeyUp(KeyCode.N))
+            {
+                Log.Info(" InputManager.activeDevice.RightStick.Vector : " + InputManager.activeDevice.RightStick.Vector);
+            }
+            
         }
 
         public void OnSceneLoaded(Scene scene, LoadSceneMode mode)
@@ -78,6 +125,16 @@ namespace VRMod.Player
             if(scene.name == "home")
             {
                 SetOriginHomePosition();
+            }
+            else if(RegexManager.IsNumber(scene.name))
+            {
+                Camera[] cams = FindObjectsOfType<Camera>();
+                foreach (Camera c in cams)
+                {
+                    c.stereoTargetEye = StereoTargetEyeMask.None;
+                }
+                Camera.stereoTargetEye = StereoTargetEyeMask.Both;
+                Origin.parent = GameObject.Find("FPSCam").transform.parent;
             }
         }
 
@@ -88,7 +145,8 @@ namespace VRMod.Player
 
         private void SetOriginHomePosition()
         {
-            Origin.position = new Vector3(28f, 1.6f, 21.55f);
+            Origin.position = new Vector3(28f, 1.6f, 16f);
+            Origin.localEulerAngles = new Vector3(0, 90, 0);
         }
 
         public Vector3 GetWorldForward()

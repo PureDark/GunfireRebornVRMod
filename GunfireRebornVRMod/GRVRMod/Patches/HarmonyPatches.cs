@@ -8,6 +8,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using VRMod.Core;
 using VRMod.Player;
+using VRMod.Player.VRInput;
 using VRMod.UI;
 
 namespace VRMod.Patches
@@ -52,7 +53,12 @@ namespace VRMod.Patches
                 else if (scene.name?.ToLower() == "home")
                 {
                     //首次进入home要修复UI，改造为适合VR的方式
-                    MenuFix.Apply();
+                    MenuFix.HomeFix();
+                    VRInputDevice.DisableRT = true;
+                }
+                else
+                {
+                    VRInputDevice.DisableRT = false;
                 }
             }
         }
@@ -76,8 +82,18 @@ namespace VRMod.Patches
         {
             private static void Postfix()
             {
-                //修复点图鉴后粒子特效无法缩小导致闪瞎屏幕的问题
+                //修复点图鉴后粒子特效无法缩小导致闪爆屏幕的问题
                 MenuFix.FixCollectionMenu();
+            }
+        }
+
+        [HarmonyPatch(typeof(PC_Home_Panel_logic), nameof(PC_Home_Panel_logic.OnCharacter))]
+        internal class InjectMainMenuCharater
+        {
+            private static void Postfix()
+            {
+                //修复选人界面的粒子特效朝向
+                MenuFix.FixCharacterMenu();
             }
         }
 

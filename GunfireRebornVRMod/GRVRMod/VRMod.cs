@@ -8,6 +8,8 @@ using VRMod.Player;
 using VRMod.Assets;
 using VRMod.Core;
 using UnhollowerRuntimeLib;
+using VRMod.UI.Pointers;
+using VRMod.Player.VRInput;
 
 namespace VRMod
 {
@@ -55,6 +57,10 @@ namespace VRMod
             ClassInjector.RegisterTypeInIl2Cpp<VRPlayer>();
             ClassInjector.RegisterTypeInIl2Cpp<ShaderFixer>();
             ClassInjector.RegisterTypeInIl2Cpp<StereoRender>();
+            ClassInjector.RegisterTypeInIl2Cpp<VRInputManager>();
+            ClassInjector.RegisterTypeInIl2Cpp<VRInputDevice>();
+            ClassInjector.RegisterTypeInIl2Cpp<UIPointer>();
+            ClassInjector.RegisterTypeInIl2Cpp<VRPointerInput>();
         }
 
         private bool SteamVRRunningCheck()

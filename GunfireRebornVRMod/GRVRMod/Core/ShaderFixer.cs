@@ -19,13 +19,11 @@ namespace VRMod.Core
 
         private void Awake()
         {
-            HarmonyPatches.onSceneLoaded += OnSceneLoaded;
+            //HarmonyPatches.onSceneLoaded += OnSceneLoaded;
         }
 
         private void Update()
         {
-            MenuFix.SetDebugUICamera();
-
             //if (Input.GetKeyUp(KeyCode.H))
             //{
             //    CUIManager.instance.ShowUIForm(UIFormName.CHARATER_PANEL);
@@ -46,16 +44,16 @@ namespace VRMod.Core
 
         }
 
-        private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
-        {
-            //if(GraphicsSettings.renderPipelineAsset != null)
-            //    GraphicsSettings.renderPipelineAsset = null;
-            //if(scene.name == "home")
-            //{
-            //    var renderers = FindObjectsOfType<Renderer>();
-            //    FixRenderers(renderers);
-            //}
-        }
+        //private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+        //{
+        //    //if(GraphicsSettings.renderPipelineAsset != null)
+        //    //    GraphicsSettings.renderPipelineAsset = null;
+        //    //if(scene.name == "home")
+        //    //{
+        //    //    var renderers = FindObjectsOfType<Renderer>();
+        //    //    FixRenderers(renderers);
+        //    //}
+        //}
 
         public static void FixRenderers(Renderer[] renderers)
         {

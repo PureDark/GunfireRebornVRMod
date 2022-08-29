@@ -50,19 +50,12 @@ namespace VRPatcher
                 "AudioPluginOculusSpatializer.dll",
                 "openvr_api.dll",
                 "OVRGamepad.dll",
-                "OVRPlugin.dll",
-                "LIV_Bridge.dll"
-            };
-            string[] managedLibraries = new string[]
-            {
-                "SteamVR.dll",
-                "SteamVR_Actions.dll"
+                "OVRPlugin.dll"
             };
 
             bool copyPluginsResult = CopyFiles(pluginsPath, plugins, "Plugins.");
-            bool copyManagedLibrariesResult = CopyFiles(VREnabler.PluginsPath, managedLibraries, "Plugins.");
 
-            if (copyPluginsResult || copyManagedLibrariesResult)
+            if (copyPluginsResult)
                 VREnabler.Logger.LogInfo("Successfully copied VR plugins!");
             else
                 VREnabler.Logger.LogInfo("VR plugins already present");
@@ -110,6 +103,10 @@ namespace VRPatcher
 
         private static bool EnableVROptions(string path)
         {
+
+
+
+
             AssetsManager assetsManager = new AssetsManager();
             AssetsFileInstance assetsFileInstance = assetsManager.LoadAssetsFile(path, false, "");
             assetsManager.LoadClassDatabase(Path.Combine(VREnabler.VRPatcherPath, "cldb.dat"));

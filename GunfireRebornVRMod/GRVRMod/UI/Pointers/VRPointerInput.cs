@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -8,8 +9,10 @@ namespace VRMod.UI.Pointers
 {
     public class VRPointerInput : BaseInput
     {
+        public VRPointerInput(IntPtr value) : base(value) { }
+
         public Camera eventCamera = null;
-        public SteamVR_Action_Boolean clikeButton = SteamVR_Actions.uI_InteractUI;
+        public SteamVR_Action_Single clikeButton = SteamVR_Actions.gameplay_RT_Fire_InteractUI;
 
         public override void Awake()
         {
@@ -18,17 +21,17 @@ namespace VRMod.UI.Pointers
 
         public override bool GetMouseButton(int button)
         {
-            return clikeButton.state;
+            return clikeButton.axis > 0.8f;
         }
 
         public override bool GetMouseButtonDown(int button)
         {
-            return clikeButton.stateDown;
+            return clikeButton.lastAxis <= 0.8f && clikeButton.axis > 0.8f;
         }
 
         public override bool GetMouseButtonUp(int button)
         {
-            return clikeButton.stateUp;
+            return clikeButton.lastAxis > 0.8f && clikeButton.axis <= 0.8f;
         }
 
         public override Vector2 mousePosition

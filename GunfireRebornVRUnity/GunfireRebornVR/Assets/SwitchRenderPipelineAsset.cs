@@ -1,22 +1,20 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using UnityEngine.Experimental.Rendering;
 using UnityEngine.Rendering;
 
-public class SwitchRenderPipelineAsset : MonoBehaviour
+public static class SwitchRenderPipelineAsset
 {
-    public RenderPipelineAsset exampleAssetA;
 
-    void Update()
+    public static T GetOrAddComponent<T>(this GameObject gameObject) where T : Component
     {
-        if (Input.GetKeyDown(KeyCode.A))
-        {
-            GraphicsSettings.renderPipelineAsset = exampleAssetA;
-            Debug.Log("Active render pipeline asset is: " + GraphicsSettings.renderPipelineAsset.name);
-        }
-        else if (Input.GetKeyDown(KeyCode.B))
-        {
-            GraphicsSettings.renderPipelineAsset = null;
-            Debug.Log("Active render pipeline asset is: None");
-        }
+        if (gameObject == null)
+            throw new ArgumentNullException("GetOrAddComponent: gameObject is null!");
+
+        T comp = gameObject.GetComponent<T>();
+        if (comp == null)
+            comp = gameObject.AddComponent<T>();
+
+        return comp;
     }
 }

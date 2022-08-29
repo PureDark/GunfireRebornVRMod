@@ -9,7 +9,7 @@
     <ProductVersion>10.0.20506</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <RootNamespace></RootNamespace>
-    <ProjectGuid>{FB4470C8-B81E-E655-F8F1-1FF1B5ABB61E}</ProjectGuid>
+    <ProjectGuid>{CC8CA93B-4F1A-56AC-2FE8-B6200FAA3098}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <AssemblyName>SteamVR_Editor</AssemblyName>
@@ -74,12 +74,6 @@
     <Compile Include="Assets\SteamVR\Editor\SteamVR_UnitySettingsWindow.cs" />
     <Compile Include="Assets\SteamVR\Editor\SteamVR_Update.cs" />
     <Compile Include="Assets\SteamVR\Editor\SteamVR_UpdateModeEditor.cs" />
-    <Reference Include="Unity.XR.Management.Editor">
-      <HintPath>F:/GithubMods/GunfireReborn/GunfireRebornVR/GunfireRebornVRUnity/VRTest/Library/ScriptAssemblies/Unity.XR.Management.Editor.dll</HintPath>
-    </Reference>
-    <Reference Include="Unity.XR.Management">
-      <HintPath>F:/GithubMods/GunfireReborn/GunfireRebornVR/GunfireRebornVRUnity/VRTest/Library/ScriptAssemblies/Unity.XR.Management.dll</HintPath>
-    </Reference>
     <Reference Include="UnityEngine.AIModule">
       <HintPath>C:/Program Files/Unity/Hub/2018.4.20f1/Editor/Data/Managed/UnityEngine/UnityEngine.AIModule.dll</HintPath>
     </Reference>
@@ -312,22 +306,22 @@
       <HintPath>C:/Program Files/Unity/Hub/2018.4.20f1/Editor/Data/PlaybackEngines/windowsstandalonesupport/UnityEditor.WindowsStandalone.Extensions.dll</HintPath>
     </Reference>
     <Reference Include="Valve.Newtonsoft.Json">
-      <HintPath>F:/GithubMods/GunfireReborn/GunfireRebornVR/GunfireRebornVRUnity/VRTest/Assets/SteamVR/Input/Plugins/JSON.NET/Valve.Newtonsoft.Json.dll</HintPath>
+      <HintPath>F:/GithubMods/GunfireReborn/GunfireRebornVR/GunfireRebornVRUnity/GunfireRebornVR/Assets/SteamVR/Input/Plugins/JSON.NET/Valve.Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="UnityEditor.Advertisements">
-      <HintPath>F:/GithubMods/GunfireReborn/GunfireRebornVR/GunfireRebornVRUnity/VRTest/Library/PackageCache/com.unity.ads@2.0.8/Editor/UnityEditor.Advertisements.dll</HintPath>
+      <HintPath>F:/GithubMods/GunfireReborn/GunfireRebornVR/GunfireRebornVRUnity/GunfireRebornVR/Library/PackageCache/com.unity.ads@2.0.8/Editor/UnityEditor.Advertisements.dll</HintPath>
     </Reference>
     <Reference Include="Unity.Analytics.StandardEvents">
-      <HintPath>F:/GithubMods/GunfireReborn/GunfireRebornVR/GunfireRebornVRUnity/VRTest/Library/PackageCache/com.unity.analytics@3.2.3/AnalyticsStandardEvents/Unity.Analytics.StandardEvents.dll</HintPath>
+      <HintPath>F:/GithubMods/GunfireReborn/GunfireRebornVR/GunfireRebornVRUnity/GunfireRebornVR/Library/PackageCache/com.unity.analytics@3.2.3/AnalyticsStandardEvents/Unity.Analytics.StandardEvents.dll</HintPath>
     </Reference>
     <Reference Include="Unity.Analytics.Editor">
-      <HintPath>F:/GithubMods/GunfireReborn/GunfireRebornVR/GunfireRebornVRUnity/VRTest/Library/PackageCache/com.unity.analytics@3.2.3/Editor/Unity.Analytics.Editor.dll</HintPath>
+      <HintPath>F:/GithubMods/GunfireReborn/GunfireRebornVR/GunfireRebornVRUnity/GunfireRebornVR/Library/PackageCache/com.unity.analytics@3.2.3/Editor/Unity.Analytics.Editor.dll</HintPath>
     </Reference>
     <Reference Include="Unity.Analytics.Tracker">
-      <HintPath>F:/GithubMods/GunfireReborn/GunfireRebornVR/GunfireRebornVRUnity/VRTest/Library/PackageCache/com.unity.analytics@3.2.3/Editor/Unity.Analytics.Tracker.dll</HintPath>
+      <HintPath>F:/GithubMods/GunfireReborn/GunfireRebornVR/GunfireRebornVRUnity/GunfireRebornVR/Library/PackageCache/com.unity.analytics@3.2.3/Editor/Unity.Analytics.Tracker.dll</HintPath>
     </Reference>
     <Reference Include="UnityEditor.Purchasing">
-      <HintPath>F:/GithubMods/GunfireReborn/GunfireRebornVR/GunfireRebornVRUnity/VRTest/Library/PackageCache/com.unity.purchasing@2.0.3/Editor/UnityEditor.Purchasing.dll</HintPath>
+      <HintPath>F:/GithubMods/GunfireReborn/GunfireRebornVR/GunfireRebornVRUnity/GunfireRebornVR/Library/PackageCache/com.unity.purchasing@2.0.3/Editor/UnityEditor.Purchasing.dll</HintPath>
     </Reference>
     <Reference Include="mscorlib">
       <HintPath>C:/Program Files/Unity/Hub/2018.4.20f1/Editor/Data/MonoBleedingEdge/lib/mono/4.7.1-api/mscorlib.dll</HintPath>
@@ -686,7 +680,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="SteamVR.csproj">
-      <Project>{C6E22BFB-EC22-2099-4937-9E515CCF5209}</Project>
+      <Project>{02E46395-1A9A-A080-B5BC-8A0C1C3A4348}</Project>
       <Name>SteamVR</Name>
     </ProjectReference>
   </ItemGroup>

@@ -274,7 +274,7 @@
   </ItemGroup>
 
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="if &quot;$(Username)&quot; == &quot;PureDark&quot; copy /Y &quot;$(TargetPath)&quot; &quot;F:\Steam\steamapps\common\Gunfire Reborn\BepInEx\plugins\PureDark.VRMod&quot;&#xD;&#xA;if &quot;$(Username)&quot; == &quot;PureDark&quot; copy /Y &quot;$(ProjectDir)..\..\GunfireRebornVRUnity\VRTest\AssetBundles\StandaloneWindows\vrassets&quot; &quot;F:\Steam\steamapps\common\Gunfire Reborn\Gunfire Reborn_Data\StreamingAssets" />
+    <Exec Command="if &quot;$(Username)&quot; == &quot;PureDark&quot; copy /Y &quot;$(TargetPath)&quot; &quot;F:\Steam\steamapps\common\Gunfire Reborn\BepInEx\plugins\PureDark.VRMod&quot;&#xD;&#xA;if &quot;$(Username)&quot; == &quot;PureDark&quot; copy /Y &quot;$(ProjectDir)..\..\GunfireRebornVRUnity\GunfireRebornVR\AssetBundles\StandaloneWindows\vrassets&quot; &quot;F:\Steam\steamapps\common\Gunfire Reborn\Gunfire Reborn_Data\StreamingAssets" />
   </Target>
 
 </Project>

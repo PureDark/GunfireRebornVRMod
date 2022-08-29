@@ -29,93 +29,83 @@
       "type": "boolean"
     },
     {
-      "name": "/actions/Gameplay/in/Move",
+      "name": "/actions/Gameplay/in/LS_Move",
       "type": "vector2",
       "requirement": "suggested"
     },
     {
-      "name": "/actions/Gameplay/in/Fire",
+      "name": "/actions/Gameplay/in/RT_Fire_InteractUI",
+      "type": "vector1"
+    },
+    {
+      "name": "/actions/Gameplay/in/A_Jump",
       "type": "boolean"
     },
     {
-      "name": "/actions/Gameplay/in/Jump",
+      "name": "/actions/Gameplay/in/X_Interact_Reload",
       "type": "boolean"
     },
     {
-      "name": "/actions/Gameplay/in/Interact",
+      "name": "/actions/Gameplay/in/Y_SwitchWeapons",
       "type": "boolean"
     },
     {
-      "name": "/actions/Gameplay/in/Reload",
+      "name": "/actions/Gameplay/in/LB_PrimarySkill",
       "type": "boolean"
     },
     {
-      "name": "/actions/Gameplay/in/SwitchWeapons",
+      "name": "/actions/Gameplay/in/RB_SecondarySkill",
       "type": "boolean"
     },
     {
-      "name": "/actions/Gameplay/in/PrimarySkill",
+      "name": "/actions/Gameplay/in/B_Dash_ReturnUI",
       "type": "boolean"
     },
     {
-      "name": "/actions/Gameplay/in/SecondarySkill",
+      "name": "/actions/Gameplay/in/LT_WeaponSkill",
+      "type": "vector1"
+    },
+    {
+      "name": "/actions/Gameplay/in/DPadL_InterruptCharging",
       "type": "boolean"
     },
     {
-      "name": "/actions/Gameplay/in/Dash",
+      "name": "/actions/Gameplay/in/DPadD_SwitchFireMode",
       "type": "boolean"
     },
     {
-      "name": "/actions/Gameplay/in/WeaponSkill",
+      "name": "/actions/Gameplay/in/DPadR_TeamInformation",
       "type": "boolean"
     },
     {
-      "name": "/actions/Gameplay/in/InterruptCharging",
+      "name": "/actions/Gameplay/in/DPadU_Ping",
       "type": "boolean"
     },
     {
-      "name": "/actions/Gameplay/in/DualWielding",
-      "type": "boolean"
-    },
-    {
-      "name": "/actions/Gameplay/in/SwitchFireMode",
-      "type": "boolean"
-    },
-    {
-      "name": "/actions/Gameplay/in/TeamInformation",
-      "type": "boolean"
-    },
-    {
-      "name": "/actions/Gameplay/in/Ping",
-      "type": "boolean"
-    },
-    {
-      "name": "/actions/Gameplay/in/Rotate",
+      "name": "/actions/Gameplay/in/RS_Rotate",
       "type": "vector2"
+    },
+    {
+      "name": "/actions/Gameplay/in/R3_Speak",
+      "type": "boolean"
+    },
+    {
+      "name": "/actions/Gameplay/in/View_ToggleBattleMenu",
+      "type": "boolean"
+    },
+    {
+      "name": "/actions/Gameplay/in/Menu_ToggleBackpack",
+      "type": "boolean"
     },
     {
       "name": "/actions/Gameplay/out/Haptic",
       "type": "vibration"
-    },
-    {
-      "name": "/actions/UI/in/InteractUI",
-      "type": "boolean",
-      "requirement": "mandatory"
-    },
-    {
-      "name": "/actions/UI/in/Return",
-      "type": "boolean",
-      "requirement": "mandatory"
     }
   ],
   "action_sets": [
     {
       "name": "/actions/Gameplay",
       "usage": "leftright"
-    },
-    {
-      "name": "/actions/UI",
-      "usage": "single"
     }
   ],
   "default_bindings": [
@@ -178,22 +168,25 @@
     },
     {
       "language_tag": "zh-CN",
-      "/actions/UI/in/InteractUI": "UI交互",
-      "/actions/UI/in/Return": "返回",
-      "/actions/Gameplay/in/Fire": "开火",
-      "/actions/Gameplay/in/Interact": "交互",
-      "/actions/Gameplay/in/Reload": "再装填",
-      "/actions/Gameplay/in/Move": "移动",
       "/actions/Gameplay/in/SnapTurnLeft": "平滑转向左",
       "/actions/Gameplay/in/SnapTurnRight": "平滑转向右",
-      "/actions/Gameplay/in/Jump": "跳跃",
-      "/actions/Gameplay/in/SwitchWeapons": "切换主副武器",
-      "/actions/Gameplay/in/PrimarySkill": "主要技能",
-      "/actions/Gameplay/in/SecondarySkill": "次要技能",
-      "/actions/Gameplay/in/WeaponSkill": "武器技能",
-      "/actions/Gameplay/in/SwitchFireMode": "切换射击模式",
-      "/actions/Gameplay/in/Ping": "标记信号",
-      "/actions/Gameplay/in/Rotate": "转向"
+      "/actions/Gameplay/in/A_Jump": "A_跳跃",
+      "/actions/Gameplay/in/X_Interact_Reload": "X_交互/再装填",
+      "/actions/Gameplay/in/Y_SwitchWeapons": "Y_交换主副武器",
+      "/actions/Gameplay/in/LB_PrimarySkill": "LB_主要技能",
+      "/actions/Gameplay/in/LS_Move": "LS_移动",
+      "/actions/Gameplay/in/RB_SecondarySkill": "RB_次要技能",
+      "/actions/Gameplay/in/LT_WeaponSkill": "LT_武器技能",
+      "/actions/Gameplay/in/DPadL_InterruptCharging": "DPadL_打断蓄力/精英双持",
+      "/actions/Gameplay/in/DPadD_SwitchFireMode": "DPadD_切换射击模式",
+      "/actions/Gameplay/in/DPadR_TeamInformation": "DPadR_队伍信息",
+      "/actions/Gameplay/in/DPadU_Ping": "DPadU_标记信号",
+      "/actions/Gameplay/in/RS_Rotate": "RS_移动视角",
+      "/actions/Gameplay/in/RT_Fire_InteractUI": "RT_开火_UI交互",
+      "/actions/Gameplay/in/B_Dash_ReturnUI": "B_冲刺_UI返回",
+      "/actions/Gameplay/in/R3_Speak": "R3_发言",
+      "/actions/Gameplay/in/Menu_ToggleBackpack": "Menu_打开/关闭背包",
+      "/actions/Gameplay/in/View_ToggleBattleMenu": "View_打开/关闭战斗菜单"
     }
   ]
 }

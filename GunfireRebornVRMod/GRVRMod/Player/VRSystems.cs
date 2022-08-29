@@ -5,6 +5,9 @@ using UnityEngine.SceneManagement;
 using VRMod.Core;
 using VRMod.Assets;
 using Valve.VR;
+using GameCoder.Engine;
+using BepInEx.IL2CPP.Utils;
+using VRMod.UI;
 
 namespace VRMod.Player
 {
@@ -38,7 +41,8 @@ namespace VRMod.Player
         }
         private void Update()
         {
-            if (Input.GetKeyUp(KeyCode.J))
+            MenuFix.SetDebugUICamera();
+            if (Input.GetKeyUp(KeyCode.L))
             {
                 Log.Info("Screen: " + Screen.width + "x" + Screen.height);
             }

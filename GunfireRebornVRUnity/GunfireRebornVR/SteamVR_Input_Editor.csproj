@@ -9,7 +9,7 @@
     <ProductVersion>10.0.20506</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <RootNamespace></RootNamespace>
-    <ProjectGuid>{98872FD9-091C-D52E-3932-C44AF1D71B3B}</ProjectGuid>
+    <ProjectGuid>{3827C914-65B6-424A-CED7-D798B13CF805}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <AssemblyName>SteamVR_Input_Editor</AssemblyName>
@@ -315,22 +315,22 @@
       <HintPath>C:/Program Files/Unity/Hub/2018.4.20f1/Editor/Data/PlaybackEngines/windowsstandalonesupport/UnityEditor.WindowsStandalone.Extensions.dll</HintPath>
     </Reference>
     <Reference Include="Valve.Newtonsoft.Json">
-      <HintPath>F:/GithubMods/GunfireReborn/GunfireRebornVR/GunfireRebornVRUnity/VRTest/Assets/SteamVR/Input/Plugins/JSON.NET/Valve.Newtonsoft.Json.dll</HintPath>
+      <HintPath>F:/GithubMods/GunfireReborn/GunfireRebornVR/GunfireRebornVRUnity/GunfireRebornVR/Assets/SteamVR/Input/Plugins/JSON.NET/Valve.Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="UnityEditor.Advertisements">
-      <HintPath>F:/GithubMods/GunfireReborn/GunfireRebornVR/GunfireRebornVRUnity/VRTest/Library/PackageCache/com.unity.ads@2.0.8/Editor/UnityEditor.Advertisements.dll</HintPath>
+      <HintPath>F:/GithubMods/GunfireReborn/GunfireRebornVR/GunfireRebornVRUnity/GunfireRebornVR/Library/PackageCache/com.unity.ads@2.0.8/Editor/UnityEditor.Advertisements.dll</HintPath>
     </Reference>
     <Reference Include="Unity.Analytics.StandardEvents">
-      <HintPath>F:/GithubMods/GunfireReborn/GunfireRebornVR/GunfireRebornVRUnity/VRTest/Library/PackageCache/com.unity.analytics@3.2.3/AnalyticsStandardEvents/Unity.Analytics.StandardEvents.dll</HintPath>
+      <HintPath>F:/GithubMods/GunfireReborn/GunfireRebornVR/GunfireRebornVRUnity/GunfireRebornVR/Library/PackageCache/com.unity.analytics@3.2.3/AnalyticsStandardEvents/Unity.Analytics.StandardEvents.dll</HintPath>
     </Reference>
     <Reference Include="Unity.Analytics.Editor">
-      <HintPath>F:/GithubMods/GunfireReborn/GunfireRebornVR/GunfireRebornVRUnity/VRTest/Library/PackageCache/com.unity.analytics@3.2.3/Editor/Unity.Analytics.Editor.dll</HintPath>
+      <HintPath>F:/GithubMods/GunfireReborn/GunfireRebornVR/GunfireRebornVRUnity/GunfireRebornVR/Library/PackageCache/com.unity.analytics@3.2.3/Editor/Unity.Analytics.Editor.dll</HintPath>
     </Reference>
     <Reference Include="Unity.Analytics.Tracker">
-      <HintPath>F:/GithubMods/GunfireReborn/GunfireRebornVR/GunfireRebornVRUnity/VRTest/Library/PackageCache/com.unity.analytics@3.2.3/Editor/Unity.Analytics.Tracker.dll</HintPath>
+      <HintPath>F:/GithubMods/GunfireReborn/GunfireRebornVR/GunfireRebornVRUnity/GunfireRebornVR/Library/PackageCache/com.unity.analytics@3.2.3/Editor/Unity.Analytics.Tracker.dll</HintPath>
     </Reference>
     <Reference Include="UnityEditor.Purchasing">
-      <HintPath>F:/GithubMods/GunfireReborn/GunfireRebornVR/GunfireRebornVRUnity/VRTest/Library/PackageCache/com.unity.purchasing@2.0.3/Editor/UnityEditor.Purchasing.dll</HintPath>
+      <HintPath>F:/GithubMods/GunfireReborn/GunfireRebornVR/GunfireRebornVRUnity/GunfireRebornVR/Library/PackageCache/com.unity.purchasing@2.0.3/Editor/UnityEditor.Purchasing.dll</HintPath>
     </Reference>
     <Reference Include="mscorlib">
       <HintPath>C:/Program Files/Unity/Hub/2018.4.20f1/Editor/Data/MonoBleedingEdge/lib/mono/4.7.1-api/mscorlib.dll</HintPath>
@@ -689,7 +689,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="SteamVR.csproj">
-      <Project>{C6E22BFB-EC22-2099-4937-9E515CCF5209}</Project>
+      <Project>{02E46395-1A9A-A080-B5BC-8A0C1C3A4348}</Project>
       <Name>SteamVR</Name>
     </ProjectReference>
   </ItemGroup>

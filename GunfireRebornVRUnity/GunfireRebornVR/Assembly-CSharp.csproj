@@ -9,7 +9,7 @@
     <ProductVersion>10.0.20506</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <RootNamespace></RootNamespace>
-    <ProjectGuid>{B2D3C9BD-93D3-9985-E80C-526886709AB8}</ProjectGuid>
+    <ProjectGuid>{2115A2B9-CB9A-17C0-194E-AE195DD0283C}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <AssemblyName>Assembly-CSharp</AssemblyName>
@@ -67,65 +67,50 @@
     <Compile Include="Assets\GunfireReborn\Scripts\StereoRender.cs" />
     <Compile Include="Assets\GunfireReborn\Scripts\Test.cs" />
     <Compile Include="Assets\GunfireReborn\Scripts\UIPointer.cs" />
+    <Compile Include="Assets\GunfireReborn\Scripts\VirtualDevice\VRDeviceExample.cs" />
+    <Compile Include="Assets\GunfireReborn\Scripts\VirtualDevice\VRInputDevice.cs" />
     <Compile Include="Assets\GunfireReborn\Scripts\VRInput.cs" />
     <Compile Include="Assets\SwitchRenderPipelineAsset.cs" />
-    <None Include="Assets\GunfireReborn\Hands\StereoRender.shader" />
-    <None Include="Assets\GunfireReborn\CustomShaders\ToonShader.shader" />
-    <None Include="Assets\GunfireReborn\CustomShaders\StandardSpecular.shader" />
-    <None Include="Assets\GunfireReborn\CustomShaders\UVAnimInChannelAlphaBlend.shader" />
-    <None Include="Assets\GunfireReborn\CustomShaders\Particle Add.shader" />
-    <None Include="Assets\GunfireReborn\CustomShaders\StandardFleischDissolve.shader" />
-    <None Include="Assets\GunfireReborn\CustomShaders\StandardMerged.shader" />
-    <Reference Include="Unity.XR.Management">
-      <HintPath>F:/GithubMods/GunfireReborn/GunfireRebornVR/GunfireRebornVRUnity/VRTest/Library/ScriptAssemblies/Unity.XR.Management.dll</HintPath>
-    </Reference>
-    <Reference Include="Unity.Subsystem.Registration">
-      <HintPath>F:/GithubMods/GunfireReborn/GunfireRebornVR/GunfireRebornVRUnity/VRTest/Library/ScriptAssemblies/Unity.Subsystem.Registration.dll</HintPath>
-    </Reference>
+    <None Include="Assets\GunfireReborn\CustomShaders\StereoRender.shader" />
+    <None Include="Assets\GunfireReborn\CustomShaders\LWRPUnlit.shader" />
     <Reference Include="Unity.RenderPipelines.Core.Editor">
-      <HintPath>F:/GithubMods/GunfireReborn/GunfireRebornVR/GunfireRebornVRUnity/VRTest/Library/ScriptAssemblies/Unity.RenderPipelines.Core.Editor.dll</HintPath>
+      <HintPath>F:/GithubMods/GunfireReborn/GunfireRebornVR/GunfireRebornVRUnity/GunfireRebornVR/Library/ScriptAssemblies/Unity.RenderPipelines.Core.Editor.dll</HintPath>
     </Reference>
     <Reference Include="Unity.RenderPipelines.Core.Runtime">
-      <HintPath>F:/GithubMods/GunfireReborn/GunfireRebornVR/GunfireRebornVRUnity/VRTest/Library/ScriptAssemblies/Unity.RenderPipelines.Core.Runtime.dll</HintPath>
+      <HintPath>F:/GithubMods/GunfireReborn/GunfireRebornVR/GunfireRebornVRUnity/GunfireRebornVR/Library/ScriptAssemblies/Unity.RenderPipelines.Core.Runtime.dll</HintPath>
     </Reference>
     <Reference Include="Unity.TextMeshPro.Editor">
-      <HintPath>F:/GithubMods/GunfireReborn/GunfireRebornVR/GunfireRebornVRUnity/VRTest/Library/ScriptAssemblies/Unity.TextMeshPro.Editor.dll</HintPath>
+      <HintPath>F:/GithubMods/GunfireReborn/GunfireRebornVR/GunfireRebornVRUnity/GunfireRebornVR/Library/ScriptAssemblies/Unity.TextMeshPro.Editor.dll</HintPath>
     </Reference>
     <Reference Include="Unity.RenderPipelines.Lightweight.Runtime">
-      <HintPath>F:/GithubMods/GunfireReborn/GunfireRebornVR/GunfireRebornVRUnity/VRTest/Library/ScriptAssemblies/Unity.RenderPipelines.Lightweight.Runtime.dll</HintPath>
+      <HintPath>F:/GithubMods/GunfireReborn/GunfireRebornVR/GunfireRebornVRUnity/GunfireRebornVR/Library/ScriptAssemblies/Unity.RenderPipelines.Lightweight.Runtime.dll</HintPath>
     </Reference>
     <Reference Include="Unity.RenderPipelines.Lightweight.Editor">
-      <HintPath>F:/GithubMods/GunfireReborn/GunfireRebornVR/GunfireRebornVRUnity/VRTest/Library/ScriptAssemblies/Unity.RenderPipelines.Lightweight.Editor.dll</HintPath>
+      <HintPath>F:/GithubMods/GunfireReborn/GunfireRebornVR/GunfireRebornVRUnity/GunfireRebornVR/Library/ScriptAssemblies/Unity.RenderPipelines.Lightweight.Editor.dll</HintPath>
     </Reference>
     <Reference Include="Unity.PackageManagerUI.Editor">
-      <HintPath>F:/GithubMods/GunfireReborn/GunfireRebornVR/GunfireRebornVRUnity/VRTest/Library/ScriptAssemblies/Unity.PackageManagerUI.Editor.dll</HintPath>
-    </Reference>
-    <Reference Include="Unity.CollabProxy.Editor">
-      <HintPath>F:/GithubMods/GunfireReborn/GunfireRebornVR/GunfireRebornVRUnity/VRTest/Library/ScriptAssemblies/Unity.CollabProxy.Editor.dll</HintPath>
+      <HintPath>F:/GithubMods/GunfireReborn/GunfireRebornVR/GunfireRebornVRUnity/GunfireRebornVR/Library/ScriptAssemblies/Unity.PackageManagerUI.Editor.dll</HintPath>
     </Reference>
     <Reference Include="Unity.Postprocessing.Editor">
-      <HintPath>F:/GithubMods/GunfireReborn/GunfireRebornVR/GunfireRebornVRUnity/VRTest/Library/ScriptAssemblies/Unity.Postprocessing.Editor.dll</HintPath>
+      <HintPath>F:/GithubMods/GunfireReborn/GunfireRebornVR/GunfireRebornVRUnity/GunfireRebornVR/Library/ScriptAssemblies/Unity.Postprocessing.Editor.dll</HintPath>
     </Reference>
     <Reference Include="Unity.AssetBundleBrowser.Editor">
-      <HintPath>F:/GithubMods/GunfireReborn/GunfireRebornVR/GunfireRebornVRUnity/VRTest/Library/ScriptAssemblies/Unity.AssetBundleBrowser.Editor.dll</HintPath>
-    </Reference>
-    <Reference Include="Unity.XR.Management.Editor">
-      <HintPath>F:/GithubMods/GunfireReborn/GunfireRebornVR/GunfireRebornVRUnity/VRTest/Library/ScriptAssemblies/Unity.XR.Management.Editor.dll</HintPath>
+      <HintPath>F:/GithubMods/GunfireReborn/GunfireRebornVR/GunfireRebornVRUnity/GunfireRebornVR/Library/ScriptAssemblies/Unity.AssetBundleBrowser.Editor.dll</HintPath>
     </Reference>
     <Reference Include="Unity.Postprocessing.Runtime">
-      <HintPath>F:/GithubMods/GunfireReborn/GunfireRebornVR/GunfireRebornVRUnity/VRTest/Library/ScriptAssemblies/Unity.Postprocessing.Runtime.dll</HintPath>
+      <HintPath>F:/GithubMods/GunfireReborn/GunfireRebornVR/GunfireRebornVRUnity/GunfireRebornVR/Library/ScriptAssemblies/Unity.Postprocessing.Runtime.dll</HintPath>
     </Reference>
     <Reference Include="Unity.ShaderGraph.Editor">
-      <HintPath>F:/GithubMods/GunfireReborn/GunfireRebornVR/GunfireRebornVRUnity/VRTest/Library/ScriptAssemblies/Unity.ShaderGraph.Editor.dll</HintPath>
+      <HintPath>F:/GithubMods/GunfireReborn/GunfireRebornVR/GunfireRebornVRUnity/GunfireRebornVR/Library/ScriptAssemblies/Unity.ShaderGraph.Editor.dll</HintPath>
     </Reference>
     <Reference Include="Unity.RenderPipelines.Core.ShaderLibrary">
-      <HintPath>F:/GithubMods/GunfireReborn/GunfireRebornVR/GunfireRebornVRUnity/VRTest/Library/ScriptAssemblies/Unity.RenderPipelines.Core.ShaderLibrary.dll</HintPath>
+      <HintPath>F:/GithubMods/GunfireReborn/GunfireRebornVR/GunfireRebornVRUnity/GunfireRebornVR/Library/ScriptAssemblies/Unity.RenderPipelines.Core.ShaderLibrary.dll</HintPath>
     </Reference>
     <Reference Include="Unity.TextMeshPro">
-      <HintPath>F:/GithubMods/GunfireReborn/GunfireRebornVR/GunfireRebornVRUnity/VRTest/Library/ScriptAssemblies/Unity.TextMeshPro.dll</HintPath>
+      <HintPath>F:/GithubMods/GunfireReborn/GunfireRebornVR/GunfireRebornVRUnity/GunfireRebornVR/Library/ScriptAssemblies/Unity.TextMeshPro.dll</HintPath>
     </Reference>
     <Reference Include="Unity.Analytics.DataPrivacy">
-      <HintPath>F:/GithubMods/GunfireReborn/GunfireRebornVR/GunfireRebornVRUnity/VRTest/Library/ScriptAssemblies/Unity.Analytics.DataPrivacy.dll</HintPath>
+      <HintPath>F:/GithubMods/GunfireReborn/GunfireRebornVR/GunfireRebornVRUnity/GunfireRebornVR/Library/ScriptAssemblies/Unity.Analytics.DataPrivacy.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.AIModule">
       <HintPath>C:/Program Files/Unity/Hub/2018.4.20f1/Editor/Data/Managed/UnityEngine/UnityEngine.AIModule.dll</HintPath>
@@ -329,10 +314,10 @@
       <HintPath>C:/Program Files/Unity/Hub/2018.4.20f1/Editor/Data/UnityExtensions/Unity/UnitySpatialTracking/RuntimeEditor/UnityEngine.SpatialTracking.dll</HintPath>
     </Reference>
     <Reference Include="Valve.Newtonsoft.Json">
-      <HintPath>F:/GithubMods/GunfireReborn/GunfireRebornVR/GunfireRebornVRUnity/VRTest/Assets/SteamVR/Input/Plugins/JSON.NET/Valve.Newtonsoft.Json.dll</HintPath>
+      <HintPath>F:/GithubMods/GunfireReborn/GunfireRebornVR/GunfireRebornVRUnity/GunfireRebornVR/Assets/SteamVR/Input/Plugins/JSON.NET/Valve.Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="Unity.Analytics.StandardEvents">
-      <HintPath>F:/GithubMods/GunfireReborn/GunfireRebornVR/GunfireRebornVRUnity/VRTest/Library/PackageCache/com.unity.analytics@3.2.3/AnalyticsStandardEvents/Unity.Analytics.StandardEvents.dll</HintPath>
+      <HintPath>F:/GithubMods/GunfireReborn/GunfireRebornVR/GunfireRebornVRUnity/GunfireRebornVR/Library/PackageCache/com.unity.analytics@3.2.3/AnalyticsStandardEvents/Unity.Analytics.StandardEvents.dll</HintPath>
     </Reference>
     <Reference Include="netstandard">
       <HintPath>C:/Program Files/Unity/Hub/2018.4.20f1/Editor/Data/NetStandard/ref/2.0.0/netstandard.dll</HintPath>
@@ -681,24 +666,36 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="InControl.Examples.csproj">
+      <Project>{56A97345-5F64-44A6-E468-E72565157A73}</Project>
+      <Name>InControl.Examples</Name>
+    </ProjectReference>
+    <ProjectReference Include="InControl.csproj">
+      <Project>{A0A6801E-394E-4A93-28C0-9592A5D5E383}</Project>
+      <Name>InControl</Name>
+    </ProjectReference>
+    <ProjectReference Include="InControl.Editor.csproj">
+      <Project>{56BCA738-C2EF-094D-6CE0-719941286209}</Project>
+      <Name>InControl.Editor</Name>
+    </ProjectReference>
     <ProjectReference Include="SteamVR_Input_Editor.csproj">
-      <Project>{98872FD9-091C-D52E-3932-C44AF1D71B3B}</Project>
+      <Project>{3827C914-65B6-424A-CED7-D798B13CF805}</Project>
       <Name>SteamVR_Input_Editor</Name>
     </ProjectReference>
     <ProjectReference Include="SteamVR_Editor.csproj">
-      <Project>{FB4470C8-B81E-E655-F8F1-1FF1B5ABB61E}</Project>
+      <Project>{CC8CA93B-4F1A-56AC-2FE8-B6200FAA3098}</Project>
       <Name>SteamVR_Editor</Name>
     </ProjectReference>
     <ProjectReference Include="SteamVR.csproj">
-      <Project>{C6E22BFB-EC22-2099-4937-9E515CCF5209}</Project>
+      <Project>{02E46395-1A9A-A080-B5BC-8A0C1C3A4348}</Project>
       <Name>SteamVR</Name>
     </ProjectReference>
     <ProjectReference Include="SteamVR_Windows_EditorHelper.csproj">
-      <Project>{FBE6E17F-720D-E99E-BA3A-26D58CBF6887}</Project>
+      <Project>{55180215-A5D2-40FD-8C15-CC5BD8903958}</Project>
       <Name>SteamVR_Windows_EditorHelper</Name>
     </ProjectReference>
     <ProjectReference Include="SteamVR_Actions.csproj">
-      <Project>{ABF6D891-141D-0C68-FC78-C66AC7D830AB}</Project>
+      <Project>{2C136DCC-FC07-D298-BB67-11CE4027D945}</Project>
       <Name>SteamVR_Actions</Name>
     </ProjectReference>
   </ItemGroup>

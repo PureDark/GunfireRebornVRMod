@@ -5,7 +5,7 @@
       "app_key": "application.generated.unity.vrtest.exe",
       "launch_type": "url",
       "url": "steam://launch/",
-      "action_manifest_path": "F:\\GithubMods\\GunfireReborn\\GunfireRebornVR\\GunfireRebornVRUnity\\VRTest\\Assets\\StreamingAssets\\SteamVR\\actions.json",
+      "action_manifest_path": "F:\\GithubMods\\GunfireReborn\\GunfireRebornVR\\GunfireRebornVRUnity\\GunfireRebornVR\\Assets\\StreamingAssets\\SteamVR\\actions.json",
       "strings": {
         "en_us": {
           "name": "VRTest [Testing]"
