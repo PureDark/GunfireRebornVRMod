@@ -1,10 +1,7 @@
-﻿using HarmonyLib;
-using InControl;
+﻿using InControl;
 using System;
-using UnhollowerBaseLib;
-using UnhollowerRuntimeLib;
 using UnityEngine;
-using VRMod.Core;
+using static VRMod.VRMod;
 
 namespace VRMod.Player.VRInput
 {

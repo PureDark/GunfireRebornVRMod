@@ -2,12 +2,12 @@
 using UnityEngine;
 using VRMod.Patches;
 using UnityEngine.SceneManagement;
-using VRMod.Core;
 using VRMod.Assets;
 using Valve.VR;
 using GameCoder.Engine;
 using BepInEx.IL2CPP.Utils;
 using VRMod.UI;
+using static VRMod.VRMod;
 
 namespace VRMod.Player
 {
@@ -41,7 +41,7 @@ namespace VRMod.Player
         }
         private void Update()
         {
-            MenuFix.SetDebugUICamera();
+            //MenuFix.SetDebugUICamera();
             if (Input.GetKeyUp(KeyCode.L))
             {
                 Log.Info("Screen: " + Screen.width + "x" + Screen.height);
@@ -53,6 +53,7 @@ namespace VRMod.Player
                 {
                     c.stereoTargetEye = StereoTargetEyeMask.None;
                 }
+                VRPlayer.Instance.Camera.stereoTargetEye = StereoTargetEyeMask.Both;
             }
 
         }

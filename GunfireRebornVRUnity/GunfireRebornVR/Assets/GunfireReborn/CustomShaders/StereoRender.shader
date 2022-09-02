@@ -59,16 +59,16 @@
                     if (unity_StereoEyeIndex == 0) {
                         o = tex2D(_LeftFarTex, i.uv);
                         fixed4 nearCol = tex2D(_LeftNearTex, i.uv);
-                        fixed4 UICol = tex2D(_LeftUITex, i.uv);
                         o.rgb = o.rgb * (1 - nearCol.a) + nearCol.rgb * nearCol.a;
+                        fixed4 UICol = tex2D(_LeftUITex, i.uv);
                         UICol.a = min(UICol.a * 2, 1);
                         o.rgb = o.rgb * (1 - UICol.a) + UICol.rgb * UICol.a;
                     }
                     else {
                         o = tex2D(_RightFarTex, i.uv);
                         fixed4 nearCol = tex2D(_RightNearTex, i.uv);
-                        fixed4 UICol = tex2D(_RightUITex, i.uv);
                         o.rgb = o.rgb * (1 - nearCol.a) + nearCol.rgb * nearCol.a;
+                        fixed4 UICol = tex2D(_RightUITex, i.uv);
                         UICol.a = min(UICol.a * 2, 1);
                         o.rgb = o.rgb * (1 - UICol.a) + UICol.rgb * UICol.a;
                     }

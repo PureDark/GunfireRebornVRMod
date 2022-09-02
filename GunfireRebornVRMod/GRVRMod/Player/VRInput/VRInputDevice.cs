@@ -1,7 +1,6 @@
 ﻿using InControl;
 using System;
 using Valve.VR;
-using VRMod.Core;
 
 namespace VRMod.Player.VRInput
 {
@@ -25,9 +24,11 @@ namespace VRMod.Player.VRInput
         public SteamVR_Action_Boolean R3_Speak() => SteamVR_Actions.gameplay_R3_Speak;
         public SteamVR_Action_Vector2 LS_Move() => SteamVR_Actions.gameplay_LS_Move;
         public SteamVR_Action_Vector2 RS_Rotate() => SteamVR_Actions.gameplay_RS_Rotate;
+        public SteamVR_Action_Boolean Back_ToggleBattleMenu() => SteamVR_Actions.gameplay_Back_ToggleBattleMenu;
+        public SteamVR_Action_Boolean Start_ToggleBackpack() => SteamVR_Actions.gameplay_Start_ToggleBackpack;
 
+        public SteamVR_Action_Vector2 Scroll() => SteamVR_Actions.gameplay_Scroll;
 
-        public static bool DisableRT = false;
         const float LowerDeadZone = 0.2f;
         const float UpperDeadZone = 0.9f;
 
@@ -67,16 +68,14 @@ namespace VRMod.Player.VRInput
             AddControl(InputControlType.LeftStickButton, "Left Stick Button");
             AddControl(InputControlType.RightStickButton, "Right Stick Button");
 
-            AddControl(InputControlType.View, "View");
-            AddControl(InputControlType.Menu, "Menu");
+            AddControl(InputControlType.Back, "Back");
+            AddControl(InputControlType.Start, "Start");
+
+
+            AddControl(InputControlType.ScrollWheel, "ScrollWheel");
 
         }
 
-
-        // This method will be called by the input manager every update tick.
-        // You are expected to update control states where appropriate passing
-        // through the updateTick and deltaTime unmodified.
-        //
         public void UpdateInternal(ulong updateTick, float deltaTime)
         {
             var leftStickVector = LS_Move().axis;
@@ -85,10 +84,6 @@ namespace VRMod.Player.VRInput
             var rightStickVector = RS_Rotate().axis;
             UpdateRightStickWithValue(rightStickVector, updateTick, deltaTime);
 
-            // For float values use:
-            // UpdateWithValue( InputControlType.LeftStickLeft, floatValue, updateTick, deltaTime );
-
-            // Read from SteamVR actions to submit into action buttons.
             UpdateWithState(InputControlType.Action1, A_Jump().state, updateTick, deltaTime);
             UpdateWithState(InputControlType.Action2, B_Dash_ReturnUI().state, updateTick, deltaTime);
             UpdateWithState(InputControlType.Action3, X_Interact_Reload().state, updateTick, deltaTime);
@@ -106,11 +101,15 @@ namespace VRMod.Player.VRInput
 
             UpdateWithValue(InputControlType.LeftTrigger, LT_WeaponSkill().axis, updateTick, deltaTime);
 
-            if(!DisableRT)
+            if(!VRPlayer.Instance || !VRPlayer.Instance.isHome)
                 UpdateWithValue(InputControlType.RightTrigger, RT_Fire_InteractUI().axis, updateTick, deltaTime);
 
             UpdateWithState(InputControlType.RightStickButton, R3_Speak().state, updateTick, deltaTime);
 
+            UpdateWithState(InputControlType.Back, Back_ToggleBattleMenu().state, updateTick, deltaTime);
+            UpdateWithState(InputControlType.Start, Start_ToggleBackpack().state, updateTick, deltaTime);
+
+            UpdateWithValue(InputControlType.ScrollWheel, Scroll().axis.y, updateTick, deltaTime); 
         }
 
         public void CommitInternal(ulong updateTick, float deltaTime)

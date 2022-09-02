@@ -185,19 +185,27 @@ namespace Valve.VR
             }
         }
         
-        public virtual SteamVR_Action_Boolean View_ToggleBattleMenu
+        public virtual SteamVR_Action_Boolean Back_ToggleBattleMenu
         {
             get
             {
-                return SteamVR_Actions.gameplay_View_ToggleBattleMenu;
+                return SteamVR_Actions.gameplay_Back_ToggleBattleMenu;
             }
         }
         
-        public virtual SteamVR_Action_Boolean Menu_ToggleBackpack
+        public virtual SteamVR_Action_Boolean Start_ToggleBackpack
         {
             get
             {
-                return SteamVR_Actions.gameplay_Menu_ToggleBackpack;
+                return SteamVR_Actions.gameplay_Start_ToggleBackpack;
+            }
+        }
+        
+        public virtual SteamVR_Action_Vector2 Scroll
+        {
+            get
+            {
+                return SteamVR_Actions.gameplay_Scroll;
             }
         }
         

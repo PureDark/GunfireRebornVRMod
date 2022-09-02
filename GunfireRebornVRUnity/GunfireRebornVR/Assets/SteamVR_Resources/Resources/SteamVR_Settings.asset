@@ -18,14 +18,14 @@ MonoBehaviour:
   actionsFilePath: actions.json
   steamVRInputPath: SteamVR_Input
   inputUpdateMode: 2
-  poseUpdateMode: 8
+  poseUpdateMode: 16
   activateFirstActionSetOnStart: 1
-  editorAppKey: application.generated.unity.vrtest.exe
+  editorAppKey: application.generated.unity.gunfirereborn.exe
   autoEnableVR: 0
   legacyMixedRealityCamera: 1
   mixedRealityCameraPose:
     actionPath: /actions/mixedreality/in/ExternalCamera
-    needsReinit: 0
+    needsReinit: 1
   mixedRealityCameraInputSource: 11
   mixedRealityActionSetAutoEnable: 1
   previewHandLeft: {fileID: 1000013348574242, guid: 638779290bce1af49b356f33dcc6fccf,

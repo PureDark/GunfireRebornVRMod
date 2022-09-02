@@ -69,6 +69,7 @@
     <Compile Include="Assets\GunfireReborn\Scripts\UIPointer.cs" />
     <Compile Include="Assets\GunfireReborn\Scripts\VirtualDevice\VRDeviceExample.cs" />
     <Compile Include="Assets\GunfireReborn\Scripts\VirtualDevice\VRInputDevice.cs" />
+    <Compile Include="Assets\GunfireReborn\Scripts\VisionFollower.cs" />
     <Compile Include="Assets\GunfireReborn\Scripts\VRInput.cs" />
     <Compile Include="Assets\SwitchRenderPipelineAsset.cs" />
     <None Include="Assets\GunfireReborn\CustomShaders\StereoRender.shader" />

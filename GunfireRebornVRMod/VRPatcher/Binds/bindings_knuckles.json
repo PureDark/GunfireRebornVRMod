@@ -1,218 +1,230 @@
 {
-  "app_key": "application.generated.unity.vrtest.exe",
-  "bindings": {
-    "/actions/buggy": {
-      "chords": [],
-      "poses": [],
-      "haptics": [],
-      "sources": [],
-      "skeleton": []
-    },
-    "/actions/default": {
-      "chords": [],
-      "poses": [],
-      "haptics": [],
-      "sources": [],
-      "skeleton": []
-    },
-    "/actions/gameplay": {
-      "chords": [],
-      "poses": [
-        {
-          "output": "/actions/gameplay/in/pose",
-          "path": "/user/hand/left/pose/raw"
-        },
-        {
-          "output": "/actions/gameplay/in/pose",
-          "path": "/user/hand/right/pose/raw"
-        }
-      ],
-      "haptics": [
-        {
-          "output": "/actions/gameplay/out/haptic",
-          "path": "/user/hand/left/output/haptic"
-        },
-        {
-          "output": "/actions/gameplay/out/haptic",
-          "path": "/user/hand/right/output/haptic"
-        }
-      ],
-      "sources": [
-        {
-          "path": "/user/hand/right/input/trigger",
-          "mode": "trigger",
-          "parameters": {},
-          "inputs": {
-            "pull": {
-              "output": "/actions/gameplay/in/rt_fire_interactui"
-            }
-          }
-        },
-        {
-          "path": "/user/hand/left/input/trigger",
-          "mode": "trigger",
-          "parameters": {},
-          "inputs": {
-            "pull": {
-              "output": "/actions/gameplay/in/lt_weaponskill"
-            }
-          }
-        },
-        {
-          "path": "/user/hand/left/input/thumbstick",
-          "mode": "joystick",
-          "parameters": {},
-          "inputs": {
-            "click": {
-              "output": "/actions/gameplay/in/a_jump"
+   "action_manifest_version" : 0,
+   "alias_info" : {},
+   "app_key" : "application.generated.unity.gunfirereborn.exe",
+   "bindings" : {
+      "/actions/buggy" : {
+         "chords" : [],
+         "haptics" : [],
+         "poses" : [],
+         "skeleton" : [],
+         "sources" : []
+      },
+      "/actions/default" : {
+         "chords" : [],
+         "haptics" : [],
+         "poses" : [],
+         "skeleton" : [],
+         "sources" : []
+      },
+      "/actions/gameplay" : {
+         "chords" : [],
+         "haptics" : [
+            {
+               "output" : "/actions/gameplay/out/haptic",
+               "path" : "/user/hand/left/output/haptic"
             },
-            "position": {
-              "output": "/actions/gameplay/in/ls_move"
+            {
+               "output" : "/actions/gameplay/out/haptic",
+               "path" : "/user/hand/right/output/haptic"
             }
-          }
-        },
-        {
-          "path": "/user/hand/right/input/thumbstick",
-          "mode": "joystick",
-          "parameters": {},
-          "inputs": {
-            "click": {
-              "output": "/actions/gameplay/in/dpadu_ping"
+         ],
+         "poses" : [
+            {
+               "output" : "/actions/gameplay/in/pose",
+               "path" : "/user/hand/left/pose/raw"
             },
-            "position": {
-              "output": "/actions/gameplay/in/rs_rotate"
+            {
+               "output" : "/actions/gameplay/in/pose",
+               "path" : "/user/hand/right/pose/raw"
             }
-          }
-        },
-        {
-          "path": "/user/hand/left/input/grip",
-          "mode": "button",
-          "parameters": {
-            "click_activate_threshold": "0.5",
-            "click_deactivate_threshold": "0.5",
-            "force_input": "force"
-          },
-          "inputs": {
-            "click": {
-              "output": "/actions/gameplay/in/lb_primaryskill"
-            }
-          }
-        },
-        {
-          "path": "/user/hand/right/input/grip",
-          "mode": "button",
-          "parameters": {
-            "click_activate_threshold": "0.5",
-            "click_deactivate_threshold": "0.5",
-            "force_input": "force"
-          },
-          "inputs": {
-            "click": {
-              "output": "/actions/gameplay/in/rb_secondaryskill"
-            }
-          }
-        },
-        {
-          "path": "/user/hand/right/input/a",
-          "mode": "button",
-          "parameters": {},
-          "inputs": {
-            "click": {
-              "output": "/actions/gameplay/in/b_dash_returnui"
-            }
-          }
-        },
-        {
-          "path": "/user/hand/left/input/b",
-          "mode": "button",
-          "parameters": {},
-          "inputs": {
-            "click": {
-              "output": "/actions/gameplay/in/view_togglebattlemenu"
-            }
-          }
-        },
-        {
-          "path": "/user/hand/right/input/b",
-          "mode": "button",
-          "parameters": {},
-          "inputs": {
-            "click": {
-              "output": "/actions/gameplay/in/x_interact_reload"
-            }
-          }
-        },
-        {
-          "path": "/user/hand/left/input/trackpad",
-          "mode": "dpad",
-          "parameters": {
-            "sub_mode": "click"
-          },
-          "inputs": {
-            "north": {
-              "output": "/actions/gameplay/in/dpadu_ping"
+         ],
+         "skeleton" : [
+            {
+               "output" : "/actions/gameplay/in/skeletonlefthand",
+               "path" : "/user/hand/left/input/skeleton/left"
             },
-            "south": {
-              "output": "/actions/gameplay/in/dpadr_teaminformation"
+            {
+               "output" : "/actions/gameplay/in/skeletonrighthand",
+               "path" : "/user/hand/right/input/skeleton/right"
             }
-          }
-        },
-        {
-          "path": "/user/hand/right/input/trackpad",
-          "mode": "dpad",
-          "parameters": {
-            "sub_mode": "click"
-          },
-          "inputs": {
-            "center": {
-              "output": "/actions/gameplay/in/dpadl_interruptcharging"
+         ],
+         "sources" : [
+            {
+               "inputs" : {
+                  "pull" : {
+                     "output" : "/actions/gameplay/in/rt_fire_interactui"
+                  }
+               },
+               "mode" : "trigger",
+               "path" : "/user/hand/right/input/trigger"
             },
-            "north": {
-              "output": "/actions/gameplay/in/y_switchweapons"
+            {
+               "inputs" : {
+                  "click" : {
+                     "output" : "/actions/gameplay/in/rb_secondaryskill"
+                  }
+               },
+               "mode" : "trigger",
+               "path" : "/user/hand/left/input/trigger"
             },
-            "south": {
-              "output": "/actions/gameplay/in/dpadd_switchfiremode"
+            {
+               "inputs" : {
+                  "position" : {
+                     "output" : "/actions/gameplay/in/ls_move"
+                  }
+               },
+               "mode" : "joystick",
+               "path" : "/user/hand/left/input/thumbstick"
+            },
+            {
+               "inputs" : {
+                  "click" : {
+                     "output" : "/actions/gameplay/in/dpadu_ping"
+                  },
+                  "position" : {
+                     "output" : "/actions/gameplay/in/rs_rotate"
+                  }
+               },
+               "mode" : "joystick",
+               "path" : "/user/hand/right/input/thumbstick"
+            },
+            {
+               "inputs" : {
+                  "click" : {
+                     "output" : "/actions/gameplay/in/lb_primaryskill"
+                  }
+               },
+               "mode" : "button",
+               "parameters" : {
+                  "click_activate_threshold" : "1",
+                  "click_deactivate_threshold" : "0.8",
+                  "force_input" : "force"
+               },
+               "path" : "/user/hand/left/input/grip"
+            },
+            {
+               "inputs" : {
+                  "click" : {
+                     "output" : "/actions/gameplay/in/b_dash_returnui"
+                  },
+                  "long" : {
+                     "output" : "/actions/gameplay/in/a_jump"
+                  }
+               },
+               "mode" : "button",
+               "path" : "/user/hand/right/input/a"
+            },
+            {
+               "inputs" : {
+                  "click" : {
+                     "output" : "/actions/gameplay/in/back_togglebattlemenu"
+                  }
+               },
+               "mode" : "button",
+               "path" : "/user/hand/left/input/b"
+            },
+            {
+               "inputs" : {
+                  "click" : {
+                     "output" : "/actions/gameplay/in/x_interact_reload"
+                  }
+               },
+               "mode" : "button",
+               "path" : "/user/hand/right/input/b"
+            },
+            {
+               "inputs" : {
+                  "north" : {
+                     "output" : "/actions/gameplay/in/dpadu_ping"
+                  },
+                  "south" : {
+                     "output" : "/actions/gameplay/in/dpadr_teaminformation"
+                  }
+               },
+               "mode" : "dpad",
+               "parameters" : {
+                  "sub_mode" : "click"
+               },
+               "path" : "/user/hand/left/input/trackpad"
+            },
+            {
+               "inputs" : {
+                  "south" : {
+                     "output" : "/actions/gameplay/in/y_switchweapons"
+                  }
+               },
+               "mode" : "dpad",
+               "parameters" : {
+                  "sub_mode" : "click"
+               },
+               "path" : "/user/hand/right/input/trackpad"
+            },
+            {
+               "inputs" : {
+                  "click" : {
+                     "output" : "/actions/gameplay/in/start_togglebackpack"
+                  }
+               },
+               "mode" : "button",
+               "path" : "/user/hand/left/input/a"
+            },
+            {
+               "inputs" : {
+                  "center" : {
+                     "output" : "/actions/gameplay/in/dpadl_interruptcharging"
+                  },
+                  "east" : {
+                     "output" : "/actions/gameplay/in/dpadl_interruptcharging"
+                  },
+                  "north" : {
+                     "output" : "/actions/gameplay/in/dpadd_switchfiremode"
+                  },
+                  "west" : {
+                     "output" : "/actions/gameplay/in/dpadl_interruptcharging"
+                  }
+               },
+               "mode" : "dpad",
+               "parameters" : {
+                  "sub_mode" : "click"
+               },
+               "path" : "/user/hand/right/input/trackpad"
+            },
+            {
+               "inputs" : {
+                  "click" : {
+                     "output" : "/actions/gameplay/in/lt_weaponskill"
+                  }
+               },
+               "mode" : "button",
+               "parameters" : {
+                  "click_activate_threshold" : "1",
+                  "click_deactivate_threshold" : "0.8",
+                  "force_input" : "force"
+               },
+               "path" : "/user/hand/right/input/grip"
             }
-          }
-        },
-        {
-          "path": "/user/hand/left/input/a",
-          "mode": "button",
-          "parameters": {},
-          "inputs": {
-            "click": {
-              "output": "/actions/gameplay/in/menu_togglebackpack"
-            }
-          }
-        }
-      ],
-      "skeleton": [
-        {
-          "output": "/actions/gameplay/in/skeletonlefthand",
-          "path": "/user/hand/left/input/skeleton/left"
-        },
-        {
-          "output": "/actions/gameplay/in/skeletonrighthand",
-          "path": "/user/hand/right/input/skeleton/right"
-        }
-      ]
-    },
-    "/actions/platformer": {
-      "chords": [],
-      "poses": [],
-      "haptics": [],
-      "sources": [],
-      "skeleton": []
-    },
-    "/actions/ui": {
-      "chords": [],
-      "poses": [],
-      "haptics": [],
-      "sources": [],
-      "skeleton": []
-    }
-  },
-  "controller_type": "knuckles",
-  "description": "",
-  "name": "为 Index Controller 保存的 VRTest [Testing] 配置"
+         ]
+      },
+      "/actions/platformer" : {
+         "chords" : [],
+         "haptics" : [],
+         "poses" : [],
+         "skeleton" : [],
+         "sources" : []
+      },
+      "/actions/ui" : {
+         "chords" : [],
+         "haptics" : [],
+         "poses" : [],
+         "skeleton" : [],
+         "sources" : []
+      }
+   },
+   "category" : "steamvr_input",
+   "controller_type" : "knuckles",
+   "description" : "",
+   "name" : "为 Index Controller 保存的 GunfireReborn 配置",
+   "options" : {},
+   "simulated_actions" : []
 }

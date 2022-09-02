@@ -1,15 +1,15 @@
 ﻿using GameCoder.Engine;
 using HarmonyLib;
-using InControl;
 using System.Collections;
 using UI;
 using UIScript;
+using UnhollowerRuntimeLib;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using VRMod.Core;
+using UnityEngine.XR;
 using VRMod.Player;
-using VRMod.Player.VRInput;
 using VRMod.UI;
+using static VRMod.VRMod;
 
 namespace VRMod.Patches
 {
@@ -39,27 +39,15 @@ namespace VRMod.Patches
         {
             private static void Postfix(DYSceneManager __instance, Scene scene, LoadSceneMode mode)
             {
-                if (onSceneLoaded != null)
+                Log.Info("Scene Loaded: " + scene.name);
+                if (scene.name?.ToLower() == "home")
                 {
-                    onSceneLoaded.Invoke(scene, mode);
+                    //进入home要修复UI，改造为适合VR的方式
+                    MenuFix.HomeFix();
                 }
 
-                Log.Info("Scene Loaded: " + scene.name);
-                if (scene.name?.ToLower() == "start")
-                {
-                    //很可惜注入后已经进入start场景了，这条永远不会被调用到
-                    //ClickStartScreenContinue();
-                }
-                else if (scene.name?.ToLower() == "home")
-                {
-                    //首次进入home要修复UI，改造为适合VR的方式
-                    MenuFix.HomeFix();
-                    VRInputDevice.DisableRT = true;
-                }
-                else
-                {
-                    VRInputDevice.DisableRT = false;
-                }
+                if (onSceneLoaded != null)
+                    onSceneLoaded.Invoke(scene, mode);
             }
         }
 
@@ -77,6 +65,25 @@ namespace VRMod.Patches
             }
         }
 
+        //[HarmonyPatch(typeof(CUIManager), nameof(CUIManager.SetWaterImage))]
+        //internal class InjectWaterImage
+        //{
+        //    private static bool Prefix(ref bool active)
+        //    {
+        //        active = false;
+        //        return true;
+        //    }
+        //}
+
+        [HarmonyPatch(typeof(CUIManager), nameof(CUIManager.SetUIEffectParent))]
+        internal class InjectSetUIEffectParent
+        {
+            private static void Postfix(Transform effect)
+            {
+                Log.Info("InjectSetUIEffectParent : " + effect.name);
+            }
+        }
+
         [HarmonyPatch(typeof(PC_Home_Panel_logic), nameof(PC_Home_Panel_logic.OnMonsterInfo))]
         internal class InjectMainMenuCollection
         {
@@ -87,8 +94,8 @@ namespace VRMod.Patches
             }
         }
 
-        [HarmonyPatch(typeof(PC_Home_Panel_logic), nameof(PC_Home_Panel_logic.OnCharacter))]
-        internal class InjectMainMenuCharater
+        [HarmonyPatch(typeof(PCCharaterPanelManager), nameof(PCCharaterPanelManager.ShowCharaterPanel))]
+        internal class InjectPCCharaterPanelManager
         {
             private static void Postfix()
             {
@@ -97,20 +104,43 @@ namespace VRMod.Patches
             }
         }
 
+        [HarmonyPatch(typeof(CameraCtrl), nameof(CameraCtrl.Recoil))]
+        internal class InjectCameraCtrl
+        {
+            private static bool Prefix()
+            {
+                //取消镜头晃动
+                return false;
+            }
+        }
+
+        [HarmonyPatch(typeof(DYResourceManager), nameof(DYResourceManager.Load))]
+        internal class InjectDYResourceManagerLoad
+        {
+            private static void Postfix(ref Object __result, Il2CppSystem.Type systemTypeInstance)
+            {
+                // 开启VR模式时所有Camera都会默认变成Stereo，然后可能是因为IL2CPP的原因哪怕再改回None，相机也会定死在原地死活不随Transform移动
+                // 必须在Unity接管前把stereoTargetEye改成None，才能解决
+                if (__result)
+                {
+                    if (systemTypeInstance == Il2CppType.Of<GameObject>())
+                    {
+                        var cameras = __result.TryCast<GameObject>().GetComponentsInChildren<Camera>(true);
+                        foreach (Camera c in cameras)
+                        {
+                            c.stereoTargetEye = StereoTargetEyeMask.None;
+                            XRDevice.DisableAutoXRCameraTracking(c, true);
+                        }
+                    }
+                }
+            }
+        }
+
         public static IEnumerator ClickStartScreenContinue()
         {
             yield return new WaitForSeconds(0.5f);
             //在VR里要帮玩家把开头的更新路线提示点掉，才能加载进酒馆主界面
             //CUIManager.instance.transform.Find("Canvas_PC(Clone)/MenuRoot")?.gameObject.GetComponentInChildren<M1Button>()?.onClick?.Invoke();
-        }
-
-
-        public static void SetLayerRecursively(this GameObject inst, int layer)
-        {
-            inst.layer = layer;
-            int children = inst.transform.childCount;
-            for (int i = 0; i < children; ++i)
-                inst.transform.GetChild(i).gameObject.SetLayerRecursively(layer);
         }
     }
 }

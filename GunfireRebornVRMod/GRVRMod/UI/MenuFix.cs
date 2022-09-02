@@ -1,9 +1,5 @@
 ﻿using UnityEngine;
 using UI;
-using UnityEngine.Rendering.PostProcessing;
-using VRMod.Patches;
-using VRMod.Core;
-using static UnityEngine.UI.Image;
 
 namespace VRMod.UI
 {
@@ -47,10 +43,9 @@ namespace VRMod.UI
             foreach(var canvas in canvases)
             {
                 canvas.renderMode = RenderMode.WorldSpace;
-                canvas.worldCamera = Camera.main;
             }
             //canvasRoot.gameObject.SetLayerRecursively(Layer.Default);
-            canvasRoot.position = new Vector3(33.2f, 3.7f, 16f);
+            canvasRoot.position = new Vector3(32.8f, 3.7f, 16f);
             canvasRoot.localEulerAngles = new Vector3(0, 90, 0);
 
             //蜡烛的烟要改成世界朝向，否则歪头时会跟着一起歪
@@ -90,14 +85,24 @@ namespace VRMod.UI
 
         public static void FixCollectionMenu()
         {
+            //部分粒子特效无法缩放，太过巨大遮挡视野，直接销毁
             var collectionList = CUIManager.instance.MainDialogCanvas.transform.Find("PC_Panel_collection/MainPage/Collection_list/");
-            Object.Destroy(collectionList.Find("MonsterCollection_Enter/book_01").gameObject);
-            Object.Destroy(collectionList.Find("RelicCollection_Enter/book_01").gameObject);
+            Object.Destroy(collectionList?.Find("MonsterCollection_Enter/book_01")?.gameObject);
+            Object.Destroy(collectionList?.Find("RelicCollection_Enter/book_01")?.gameObject);
         }
 
         public static void FixCharacterMenu()
         {
-            var heroList = CUIManager.instance.MainDialogCanvas.transform.Find("PC_Panel_character/lay_mainpage/lay_base/list_area/");
+            var heroList = CUIManager.instance.MainDialogCanvas.transform.Find("PC_Panel_character/lay_mainpage/lay_base/list_area/HeroTable/Viewport/Content/");
+
+            //部分粒子特效无法缩放，太过巨大遮挡视野，直接销毁
+            foreach(var child in heroList)
+            {
+                Object.Destroy(child.Cast<Transform>().Find("state/hero_index_bg/")?.gameObject);
+                Object.Destroy(child.Cast<Transform>().Find("state/hero_index_txt/")?.gameObject);
+            }
+
+            //让选中英雄的发光特效不会随着视角移动
             var psrs = heroList.GetComponentsInChildren<ParticleSystemRenderer>(true);
             foreach (var psr in psrs)
             {

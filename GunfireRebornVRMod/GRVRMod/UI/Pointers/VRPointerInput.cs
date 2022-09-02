@@ -11,7 +11,7 @@ namespace VRMod.UI.Pointers
     {
         public VRPointerInput(IntPtr value) : base(value) { }
 
-        public Camera eventCamera = null;
+        public Camera eventCamera = Camera.main;
         public SteamVR_Action_Single clikeButton = SteamVR_Actions.gameplay_RT_Fire_InteractUI;
 
         public override void Awake()

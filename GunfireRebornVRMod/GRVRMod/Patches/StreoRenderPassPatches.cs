@@ -1,10 +1,7 @@
 ﻿using HarmonyLib;
-using System;
 using UnityEngine;
 using UnityEngine.Experimental.Rendering;
 using UnityEngine.Experimental.Rendering.LightweightPipeline;
-using UnityEngine.Rendering;
-using VRMod.Core;
 using VRMod.Player;
 
 namespace VRMod.Patches

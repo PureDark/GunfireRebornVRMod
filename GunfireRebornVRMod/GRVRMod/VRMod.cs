@@ -6,10 +6,12 @@ using System.Diagnostics;
 using VRMod.Patches;
 using VRMod.Player;
 using VRMod.Assets;
-using VRMod.Core;
 using UnhollowerRuntimeLib;
 using VRMod.UI.Pointers;
 using VRMod.Player.VRInput;
+using VRMod.Player.MotionControlls;
+using BepInEx.Logging;
+using VRMod.UI;
 
 namespace VRMod
 {
@@ -31,15 +33,16 @@ namespace VRMod
         public override void Load()
         {
             Instance = this;
-            Core.Log.Setup(Log);
+            Log.Setup(base.Log);
 
+            HarmonyPatches.PatchAll();
             if (SteamVRRunningCheck())
             {
                 InitVR();
             }
             else
             {
-                Core.Log.Warning("VR launch aborted, VR is disabled or SteamVR is off!");
+                Log.Warning("VR launch aborted, VR is disabled or SteamVR is off!");
             }
         }
 
@@ -55,12 +58,13 @@ namespace VRMod
         {
             ClassInjector.RegisterTypeInIl2Cpp<VRSystems>();
             ClassInjector.RegisterTypeInIl2Cpp<VRPlayer>();
-            ClassInjector.RegisterTypeInIl2Cpp<ShaderFixer>();
             ClassInjector.RegisterTypeInIl2Cpp<StereoRender>();
             ClassInjector.RegisterTypeInIl2Cpp<VRInputManager>();
             ClassInjector.RegisterTypeInIl2Cpp<VRInputDevice>();
-            ClassInjector.RegisterTypeInIl2Cpp<UIPointer>();
             ClassInjector.RegisterTypeInIl2Cpp<VRPointerInput>();
+            ClassInjector.RegisterTypeInIl2Cpp<VRBattleUI>();
+            ClassInjector.RegisterTypeInIl2Cpp<HandController>();
+            ClassInjector.RegisterTypeInIl2Cpp<SmoothHUD>();
         }
 
         private bool SteamVRRunningCheck()
@@ -70,12 +74,42 @@ namespace VRMod
             possibleVRProcesses.AddRange(Process.GetProcessesByName("vrserver"));
             possibleVRProcesses.AddRange(Process.GetProcessesByName("vrcompositor"));
 
-            Core.Log.Debug("VR processes found - " + possibleVRProcesses.Count);
+            Log.Debug("VR processes found - " + possibleVRProcesses.Count);
             foreach (Process p in possibleVRProcesses)
             {
-                Core.Log.Debug(p.ToString());
+                Log.Debug(p.ToString());
             }
             return possibleVRProcesses.Count > 0;
+        }
+
+        public static new class Log
+        {
+            static ManualLogSource log;
+
+            public static void Setup(ManualLogSource log)
+            {
+                Log.log = log;
+            }
+
+            public static void Warning(string msg)
+            {
+                log.LogWarning(msg);
+            }
+
+            public static void Error(string msg)
+            {
+                log.LogError(msg);
+            }
+
+            public static void Info(string msg)
+            {
+                log.LogInfo(msg);
+            }
+
+            public static void Debug(string msg)
+            {
+                log.LogDebug(msg);
+            }
         }
     }
 }

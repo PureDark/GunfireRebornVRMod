@@ -59,9 +59,11 @@ namespace Valve.VR
         
         private static SteamVR_Action_Boolean p_gameplay_R3_Speak;
         
-        private static SteamVR_Action_Boolean p_gameplay_View_ToggleBattleMenu;
+        private static SteamVR_Action_Boolean p_gameplay_Back_ToggleBattleMenu;
         
-        private static SteamVR_Action_Boolean p_gameplay_Menu_ToggleBackpack;
+        private static SteamVR_Action_Boolean p_gameplay_Start_ToggleBackpack;
+        
+        private static SteamVR_Action_Vector2 p_gameplay_Scroll;
         
         private static SteamVR_Action_Vibration p_gameplay_Haptic;
         
@@ -233,19 +235,27 @@ namespace Valve.VR
             }
         }
         
-        public static SteamVR_Action_Boolean gameplay_View_ToggleBattleMenu
+        public static SteamVR_Action_Boolean gameplay_Back_ToggleBattleMenu
         {
             get
             {
-                return SteamVR_Actions.p_gameplay_View_ToggleBattleMenu.GetCopy<SteamVR_Action_Boolean>();
+                return SteamVR_Actions.p_gameplay_Back_ToggleBattleMenu.GetCopy<SteamVR_Action_Boolean>();
             }
         }
         
-        public static SteamVR_Action_Boolean gameplay_Menu_ToggleBackpack
+        public static SteamVR_Action_Boolean gameplay_Start_ToggleBackpack
         {
             get
             {
-                return SteamVR_Actions.p_gameplay_Menu_ToggleBackpack.GetCopy<SteamVR_Action_Boolean>();
+                return SteamVR_Actions.p_gameplay_Start_ToggleBackpack.GetCopy<SteamVR_Action_Boolean>();
+            }
+        }
+        
+        public static SteamVR_Action_Vector2 gameplay_Scroll
+        {
+            get
+            {
+                return SteamVR_Actions.p_gameplay_Scroll.GetCopy<SteamVR_Action_Vector2>();
             }
         }
         
@@ -281,8 +291,9 @@ namespace Valve.VR
                     SteamVR_Actions.gameplay_DPadU_Ping,
                     SteamVR_Actions.gameplay_RS_Rotate,
                     SteamVR_Actions.gameplay_R3_Speak,
-                    SteamVR_Actions.gameplay_View_ToggleBattleMenu,
-                    SteamVR_Actions.gameplay_Menu_ToggleBackpack,
+                    SteamVR_Actions.gameplay_Back_ToggleBattleMenu,
+                    SteamVR_Actions.gameplay_Start_ToggleBackpack,
+                    SteamVR_Actions.gameplay_Scroll,
                     SteamVR_Actions.gameplay_Haptic};
             Valve.VR.SteamVR_Input.actionsIn = new Valve.VR.ISteamVR_Action_In[] {
                     SteamVR_Actions.gameplay_Pose,
@@ -306,8 +317,9 @@ namespace Valve.VR
                     SteamVR_Actions.gameplay_DPadU_Ping,
                     SteamVR_Actions.gameplay_RS_Rotate,
                     SteamVR_Actions.gameplay_R3_Speak,
-                    SteamVR_Actions.gameplay_View_ToggleBattleMenu,
-                    SteamVR_Actions.gameplay_Menu_ToggleBackpack};
+                    SteamVR_Actions.gameplay_Back_ToggleBattleMenu,
+                    SteamVR_Actions.gameplay_Start_ToggleBackpack,
+                    SteamVR_Actions.gameplay_Scroll};
             Valve.VR.SteamVR_Input.actionsOut = new Valve.VR.ISteamVR_Action_Out[] {
                     SteamVR_Actions.gameplay_Haptic};
             Valve.VR.SteamVR_Input.actionsVibration = new Valve.VR.SteamVR_Action_Vibration[] {
@@ -329,14 +341,15 @@ namespace Valve.VR
                     SteamVR_Actions.gameplay_DPadR_TeamInformation,
                     SteamVR_Actions.gameplay_DPadU_Ping,
                     SteamVR_Actions.gameplay_R3_Speak,
-                    SteamVR_Actions.gameplay_View_ToggleBattleMenu,
-                    SteamVR_Actions.gameplay_Menu_ToggleBackpack};
+                    SteamVR_Actions.gameplay_Back_ToggleBattleMenu,
+                    SteamVR_Actions.gameplay_Start_ToggleBackpack};
             Valve.VR.SteamVR_Input.actionsSingle = new Valve.VR.SteamVR_Action_Single[] {
                     SteamVR_Actions.gameplay_RT_Fire_InteractUI,
                     SteamVR_Actions.gameplay_LT_WeaponSkill};
             Valve.VR.SteamVR_Input.actionsVector2 = new Valve.VR.SteamVR_Action_Vector2[] {
                     SteamVR_Actions.gameplay_LS_Move,
-                    SteamVR_Actions.gameplay_RS_Rotate};
+                    SteamVR_Actions.gameplay_RS_Rotate,
+                    SteamVR_Actions.gameplay_Scroll};
             Valve.VR.SteamVR_Input.actionsVector3 = new Valve.VR.SteamVR_Action_Vector3[0];
             Valve.VR.SteamVR_Input.actionsSkeleton = new Valve.VR.SteamVR_Action_Skeleton[] {
                     SteamVR_Actions.gameplay_SkeletonLeftHand,
@@ -360,8 +373,9 @@ namespace Valve.VR
                     SteamVR_Actions.gameplay_DPadU_Ping,
                     SteamVR_Actions.gameplay_RS_Rotate,
                     SteamVR_Actions.gameplay_R3_Speak,
-                    SteamVR_Actions.gameplay_View_ToggleBattleMenu,
-                    SteamVR_Actions.gameplay_Menu_ToggleBackpack};
+                    SteamVR_Actions.gameplay_Back_ToggleBattleMenu,
+                    SteamVR_Actions.gameplay_Start_ToggleBackpack,
+                    SteamVR_Actions.gameplay_Scroll};
         }
         
         private static void PreInitActions()
@@ -387,8 +401,9 @@ namespace Valve.VR
             SteamVR_Actions.p_gameplay_DPadU_Ping = ((SteamVR_Action_Boolean)(SteamVR_Action.Create<SteamVR_Action_Boolean>("/actions/Gameplay/in/DPadU_Ping")));
             SteamVR_Actions.p_gameplay_RS_Rotate = ((SteamVR_Action_Vector2)(SteamVR_Action.Create<SteamVR_Action_Vector2>("/actions/Gameplay/in/RS_Rotate")));
             SteamVR_Actions.p_gameplay_R3_Speak = ((SteamVR_Action_Boolean)(SteamVR_Action.Create<SteamVR_Action_Boolean>("/actions/Gameplay/in/R3_Speak")));
-            SteamVR_Actions.p_gameplay_View_ToggleBattleMenu = ((SteamVR_Action_Boolean)(SteamVR_Action.Create<SteamVR_Action_Boolean>("/actions/Gameplay/in/View_ToggleBattleMenu")));
-            SteamVR_Actions.p_gameplay_Menu_ToggleBackpack = ((SteamVR_Action_Boolean)(SteamVR_Action.Create<SteamVR_Action_Boolean>("/actions/Gameplay/in/Menu_ToggleBackpack")));
+            SteamVR_Actions.p_gameplay_Back_ToggleBattleMenu = ((SteamVR_Action_Boolean)(SteamVR_Action.Create<SteamVR_Action_Boolean>("/actions/Gameplay/in/Back_ToggleBattleMenu")));
+            SteamVR_Actions.p_gameplay_Start_ToggleBackpack = ((SteamVR_Action_Boolean)(SteamVR_Action.Create<SteamVR_Action_Boolean>("/actions/Gameplay/in/Start_ToggleBackpack")));
+            SteamVR_Actions.p_gameplay_Scroll = ((SteamVR_Action_Vector2)(SteamVR_Action.Create<SteamVR_Action_Vector2>("/actions/Gameplay/in/Scroll")));
             SteamVR_Actions.p_gameplay_Haptic = ((SteamVR_Action_Vibration)(SteamVR_Action.Create<SteamVR_Action_Vibration>("/actions/Gameplay/out/Haptic")));
         }
     }
