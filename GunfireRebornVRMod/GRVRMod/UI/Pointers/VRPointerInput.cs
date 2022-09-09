@@ -12,7 +12,7 @@ namespace VRMod.UI.Pointers
         public VRPointerInput(IntPtr value) : base(value) { }
 
         public Camera eventCamera = Camera.main;
-        public SteamVR_Action_Single clikeButton = SteamVR_Actions.gameplay_RT_Fire_InteractUI;
+        public SteamVR_Action_Boolean clikeButton = SteamVR_Actions.gameplay_InteractUI;
 
         public override void Awake()
         {
@@ -21,17 +21,17 @@ namespace VRMod.UI.Pointers
 
         public override bool GetMouseButton(int button)
         {
-            return clikeButton.axis > 0.8f;
+            return clikeButton.state;
         }
 
         public override bool GetMouseButtonDown(int button)
         {
-            return clikeButton.lastAxis <= 0.8f && clikeButton.axis > 0.8f;
+            return clikeButton.stateDown;
         }
 
         public override bool GetMouseButtonUp(int button)
         {
-            return clikeButton.lastAxis > 0.8f && clikeButton.axis <= 0.8f;
+            return clikeButton.stateUp;
         }
 
         public override Vector2 mousePosition

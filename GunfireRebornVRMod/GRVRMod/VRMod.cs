@@ -12,6 +12,7 @@ using VRMod.Player.VRInput;
 using VRMod.Player.MotionControlls;
 using BepInEx.Logging;
 using VRMod.UI;
+using VRMod.Player.Behaviours;
 
 namespace VRMod
 {
@@ -64,7 +65,7 @@ namespace VRMod
             ClassInjector.RegisterTypeInIl2Cpp<VRPointerInput>();
             ClassInjector.RegisterTypeInIl2Cpp<VRBattleUI>();
             ClassInjector.RegisterTypeInIl2Cpp<HandController>();
-            ClassInjector.RegisterTypeInIl2Cpp<SmoothHUD>();
+            ClassInjector.RegisterTypeInIl2Cpp<VRScope>();
         }
 
         private bool SteamVRRunningCheck()

@@ -7,6 +7,7 @@ using UnityEngine.XR;
 using Valve.VR;
 using System;
 
+[ExecuteInEditMode]
 public class StereoRender : MonoBehaviour, IAfterTransparentPass
 {
     private RenderTexture leftFarRT, rightFarRT;
@@ -14,13 +15,17 @@ public class StereoRender : MonoBehaviour, IAfterTransparentPass
     private RenderTexture leftUIRT, rightUIRT;
     public StereoRenderPass stereoPass;
     public float separation = 0.031f;
-
-    void OnEnable()
-    {
-    }
+    private float nearCamClipStart = 0.02f;
+    private float nearCamClipEnd = 0.5f;
+    private float farCamClipStart = 0.5f;
+    private float farCamClipEnd = 800f;
+    private float UICamClipStart = 0.02f;
+    private float UICamClipEnd = 100f;
 
     public void Awake()
     {
+        var cullingMask = -966787561;
+
         var head = transform.Find("Head");
         if (!head)
             head = new GameObject("Head").transform;
@@ -37,28 +42,28 @@ public class StereoRender : MonoBehaviour, IAfterTransparentPass
         leftFarEye.localEulerAngles = new Vector3(0, 0, 0);
 
         var leftFarCam = leftFarEye.gameObject.GetOrAddComponent<Camera>();
-        leftFarCam.cullingMask = -966787561;
+        leftFarCam.cullingMask = cullingMask;
         leftFarCam.stereoTargetEye = StereoTargetEyeMask.None;
         leftFarCam.clearFlags = CameraClearFlags.SolidColor;
-        leftFarCam.fieldOfView = (SteamVR.instance.fieldOfView > 0) ? SteamVR.instance.fieldOfView : 109.363f;
-        leftFarCam.nearClipPlane = 0.95f;
-        leftFarCam.farClipPlane = 1000f;
+        leftFarCam.fieldOfView = 109.363f;
+        leftFarCam.nearClipPlane = farCamClipStart;
+        leftFarCam.farClipPlane = farCamClipEnd;
 
-        var leftNearEye = leftFarEye.Find("LeftNearCam");
+        var leftNearEye = leftFarEye.Find("LeftNearEye");
         if (!leftNearEye)
-            leftNearEye = new GameObject("LeftNearCam").transform;
+            leftNearEye = new GameObject("LeftNearEye").transform;
         leftNearEye.parent = leftFarEye;
         leftNearEye.localPosition = new Vector3(0, 0, 0);
         leftNearEye.localEulerAngles = new Vector3(0, 0, 0);
 
         var leftNearCam = leftNearEye.gameObject.GetOrAddComponent<Camera>();
-        leftNearCam.cullingMask = -966787561;
+        leftNearCam.cullingMask = cullingMask;
         leftNearCam.stereoTargetEye = StereoTargetEyeMask.None;
         leftNearCam.clearFlags = CameraClearFlags.SolidColor;
         leftNearCam.backgroundColor = new Color(0, 0, 0, 0);
-        leftNearCam.fieldOfView = (SteamVR.instance.fieldOfView > 0) ? SteamVR.instance.fieldOfView : 109.363f;
-        leftNearCam.nearClipPlane = 0.02f;
-        leftNearCam.farClipPlane = 1.05f;
+        leftNearCam.fieldOfView = 109.363f;
+        leftNearCam.nearClipPlane = nearCamClipStart;
+        leftNearCam.farClipPlane = nearCamClipEnd;
 
         var leftUITran = leftFarEye.Find("LeftUICam");
         if (!leftUITran)
@@ -72,9 +77,9 @@ public class StereoRender : MonoBehaviour, IAfterTransparentPass
         leftUICam.stereoTargetEye = StereoTargetEyeMask.None;
         leftUICam.clearFlags = CameraClearFlags.SolidColor;
         leftUICam.backgroundColor = new Color(0, 0, 0, 0);
-        leftUICam.fieldOfView = (SteamVR.instance.fieldOfView > 0) ? SteamVR.instance.fieldOfView : 109.363f;
-        leftUICam.nearClipPlane = 0.02f;
-        leftUICam.farClipPlane = 100f;
+        leftUICam.fieldOfView =  109.363f;
+        leftUICam.nearClipPlane = UICamClipStart;
+        leftUICam.farClipPlane = UICamClipEnd;
 
 
         var rightFarEye = head.Find("RightEye");
@@ -85,30 +90,30 @@ public class StereoRender : MonoBehaviour, IAfterTransparentPass
         rightFarEye.localEulerAngles = new Vector3(0, 0, 0);
 
         var rightFarCam = rightFarEye.gameObject.GetOrAddComponent<Camera>();
-        rightFarCam.cullingMask = -966787561;
+        rightFarCam.cullingMask = cullingMask;
         rightFarCam.stereoTargetEye = StereoTargetEyeMask.None;
         rightFarCam.clearFlags = CameraClearFlags.SolidColor;
-        rightFarCam.fieldOfView = (SteamVR.instance.fieldOfView > 0) ? SteamVR.instance.fieldOfView : 109.363f;
-        rightFarCam.nearClipPlane = 0.95f;
-        rightFarCam.farClipPlane = 1000f;
+        rightFarCam.fieldOfView = 109.363f;
+        rightFarCam.nearClipPlane = farCamClipStart;
+        rightFarCam.farClipPlane = farCamClipEnd;
 
 
-        var rightNearEye = rightFarEye.Find("RightNearCam");
+        var rightNearEye = rightFarEye.Find("RightNearEye");
 
         if (!rightNearEye)
-            rightNearEye = new GameObject("RightNearCam").transform;
+            rightNearEye = new GameObject("RightNearEye").transform;
         rightNearEye.parent = rightFarEye;
         rightNearEye.localPosition = new Vector3(0, 0, 0);
         rightNearEye.localEulerAngles = new Vector3(0, 0, 0);
 
         var rightNearCam = rightNearEye.gameObject.GetOrAddComponent<Camera>();
-        rightNearCam.cullingMask = -966787561;
+        rightNearCam.cullingMask = cullingMask;
         rightNearCam.stereoTargetEye = StereoTargetEyeMask.None;
         rightNearCam.clearFlags = CameraClearFlags.SolidColor;
         rightNearCam.backgroundColor = new Color(0, 0, 0, 0);
-        rightNearCam.fieldOfView = (SteamVR.instance.fieldOfView > 0) ? SteamVR.instance.fieldOfView : 109.363f;
-        rightNearCam.nearClipPlane = 0.02f;
-        rightNearCam.farClipPlane = 1.05f;
+        rightNearCam.fieldOfView =  109.363f;
+        rightNearCam.nearClipPlane = nearCamClipStart;
+        rightNearCam.farClipPlane = nearCamClipEnd;
 
         var rightUITran = leftFarEye.Find("RightUICam");
         if (!rightUITran)
@@ -122,25 +127,25 @@ public class StereoRender : MonoBehaviour, IAfterTransparentPass
         rightUICam.stereoTargetEye = StereoTargetEyeMask.None;
         rightUICam.clearFlags = CameraClearFlags.SolidColor;
         rightUICam.backgroundColor = new Color(0, 0, 0, 0);
-        rightUICam.fieldOfView = (SteamVR.instance.fieldOfView > 0) ? SteamVR.instance.fieldOfView : 109.363f;
-        rightUICam.nearClipPlane = 0.02f;
-        rightUICam.farClipPlane = 100f;
+        rightUICam.fieldOfView = 109.363f;
+        rightUICam.nearClipPlane = UICamClipStart;
+        rightUICam.farClipPlane = UICamClipEnd;
 
 
         var headCam = GetComponent<Camera>();
 
-        headCam.nearClipPlane = 0.95f;
-        headCam.farClipPlane = 1000f;
+        headCam.nearClipPlane = farCamClipStart;
+        headCam.farClipPlane = farCamClipEnd;
         leftFarCam.projectionMatrix = headCam.GetStereoProjectionMatrix(Camera.StereoscopicEye.Left);
         rightFarCam.projectionMatrix = headCam.GetStereoProjectionMatrix(Camera.StereoscopicEye.Right);
 
-        headCam.nearClipPlane = 0.02f;
-        headCam.farClipPlane = 1.05f;
+        headCam.nearClipPlane = nearCamClipStart;
+        headCam.farClipPlane = nearCamClipEnd;
         leftNearCam.projectionMatrix = headCam.GetStereoProjectionMatrix(Camera.StereoscopicEye.Left);
         rightNearCam.projectionMatrix = headCam.GetStereoProjectionMatrix(Camera.StereoscopicEye.Right);
 
-        headCam.nearClipPlane = 0.02f;
-        headCam.farClipPlane = 100f;
+        headCam.nearClipPlane = UICamClipStart;
+        headCam.farClipPlane = UICamClipEnd;
         leftUICam.projectionMatrix = headCam.GetStereoProjectionMatrix(Camera.StereoscopicEye.Left);
         rightUICam.projectionMatrix = headCam.GetStereoProjectionMatrix(Camera.StereoscopicEye.Right);
 
@@ -155,9 +160,9 @@ public class StereoRender : MonoBehaviour, IAfterTransparentPass
         if (rightNearRT == null)
             rightNearRT = new RenderTexture(width, height, 8, RenderTextureFormat.ARGB32);
         if (leftUIRT == null)
-            leftUIRT = new RenderTexture(width, height, 8, RenderTextureFormat.ARGB32);
+            leftUIRT = new RenderTexture(width, height, 24, RenderTextureFormat.ARGB32);
         if (rightUIRT == null)
-            rightUIRT = new RenderTexture(width, height, 8, RenderTextureFormat.ARGB32);
+            rightUIRT = new RenderTexture(width, height, 24, RenderTextureFormat.ARGB32);
         leftFarRT.antiAliasing = 4;
         rightFarRT.antiAliasing = 4;
         leftNearRT.antiAliasing = 4;

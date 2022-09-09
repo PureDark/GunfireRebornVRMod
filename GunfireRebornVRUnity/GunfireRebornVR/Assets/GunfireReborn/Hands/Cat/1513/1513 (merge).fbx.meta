@@ -1,0 +1,871 @@
+fileFormatVersion: 2
+guid: ac5b86be1df7a904c99110bea341945c
+ModelImporter:
+  serializedVersion: 23
+  fileIDToRecycleName:
+    100000: 1513
+    100002: //RootNode
+    100004: 1513_Bone003
+    100006: 1513_Bone003 1
+    100008: 1513_Bone0033
+    100010: 1513_Bone0033 1
+    100012: 1513_Bone005
+    100014: 1513_Bone005 1
+    100016: 1513_Bone006
+    100018: 1513_Bone006 1
+    100020: 1513_Bone007
+    100022: 1513_Bone007 1
+    100024: 1513_Bone008
+    100026: 1513_Bone008 1
+    100028: 1513_Bone009
+    100030: 1513_Bone009 1
+    100032: 1513_Bone01
+    100034: 1513_Bone01 1
+    100036: 1513_Bone010
+    100038: 1513_Bone010 1
+    100040: 1513_Bone011
+    100042: 1513_Bone011 1
+    100044: 1513_Bone012
+    100046: 1513_Bone012 1
+    100048: 1513_Bone013
+    100050: 1513_Bone013 1
+    100052: 1513_Bone014
+    100054: 1513_Bone014 1
+    100056: 1513_Bone015
+    100058: 1513_Bone015 1
+    100060: 1513_Bone016
+    100062: 1513_Bone016 1
+    100064: 1513_Bone017
+    100066: 1513_Bone017 1
+    100068: 1513_Left
+    100070: 1513_Right
+    100072: 1513_tx0001
+    100074: 1513_tx0001 1
+    100076: 1513_tx0002
+    100078: 1513_tx0002 1
+    100080: 9513_weapon
+    100082: 9513_weapon 1
+    100084: 9513_weapon_01
+    100086: 9513_weapon_02
+    100088: 9513_weapon_02 1
+    100090: 9513_weapon_03
+    100092: 9513_weapon_03 1
+    100094: 9513_weapon_04
+    100096: 9513_weapon_04 1
+    100098: 9513_weapon_05
+    100100: 9513_weapon_05 1
+    100102: 9513_weapon_06
+    100104: 9513_weapon_06 1
+    100106: 9513_weapon_06 2
+    100108: 9513_weapon_07
+    100110: 9513_weapon_07 1
+    100112: 9513_weapon_08
+    100114: 9513_weapon_08 1
+    100116: 9513_weapon_full_02
+    100118: 9513_weapon_full_02 1
+    100120: 9513_weapon_full_loop
+    100122: 9513_weapon_full_loop 1
+    100124: 9513_weapon_full_start
+    100126: 9513_weapon_full_start 1
+    100128: 9513_weapon_model_02(Clone)
+    100130: 9513_weapon_model_02(Clone) 1
+    100132: 9513_weapon_reload
+    100134: 9513_weapon_reload 1
+    100136: Att
+    100138: Att 1
+    100140: base (3)
+    100142: base (3) 1
+    100144: base (3) 10
+    100146: base (3) 11
+    100148: base (3) 12
+    100150: base (3) 13
+    100152: base (3) 2
+    100154: base (3) 3
+    100156: base (3) 4
+    100158: base (3) 5
+    100160: base (3) 6
+    100162: base (3) 7
+    100164: base (3) 8
+    100166: base (3) 9
+    100168: Bip001
+    100170: Bip001 1
+    100172: Bip001 Footsteps
+    100174: Bip001 Footsteps 1
+    100176: Bip001 Head
+    100178: Bip001 Head 1
+    100180: Bip001 HeadNub
+    100182: Bip001 HeadNub 1
+    100184: Bip001 L Calf
+    100186: Bip001 L Calf 1
+    100188: Bip001 L Clavicle
+    100190: Bip001 L Clavicle 1
+    100192: Bip001 L Finger0
+    100194: Bip001 L Finger0 1
+    100196: Bip001 L Finger01
+    100198: Bip001 L Finger01 1
+    100200: Bip001 L Finger02
+    100202: Bip001 L Finger02 1
+    100204: Bip001 L Finger0Nub
+    100206: Bip001 L Finger0Nub 1
+    100208: Bip001 L Finger1
+    100210: Bip001 L Finger1 1
+    100212: Bip001 L Finger11
+    100214: Bip001 L Finger11 1
+    100216: Bip001 L Finger12
+    100218: Bip001 L Finger12 1
+    100220: Bip001 L Finger1Nub
+    100222: Bip001 L Finger1Nub 1
+    100224: Bip001 L Finger2
+    100226: Bip001 L Finger2 1
+    100228: Bip001 L Finger21
+    100230: Bip001 L Finger21 1
+    100232: Bip001 L Finger22
+    100234: Bip001 L Finger22 1
+    100236: Bip001 L Finger2Nub
+    100238: Bip001 L Finger2Nub 1
+    100240: Bip001 L Finger3
+    100242: Bip001 L Finger3 1
+    100244: Bip001 L Finger31
+    100246: Bip001 L Finger31 1
+    100248: Bip001 L Finger32
+    100250: Bip001 L Finger32 1
+    100252: Bip001 L Finger3Nub
+    100254: Bip001 L Finger3Nub 1
+    100256: Bip001 L Foot
+    100258: Bip001 L Foot 1
+    100260: Bip001 L Forearm
+    100262: Bip001 L Forearm 1
+    100264: Bip001 L ForeTwist
+    100266: Bip001 L ForeTwist 1
+    100268: Bip001 L ForeTwist1
+    100270: Bip001 L ForeTwist1 1
+    100272: Bip001 L Hand
+    100274: Bip001 L Hand 1
+    100276: Bip001 L Thigh
+    100278: Bip001 L Thigh 1
+    100280: Bip001 L Toe0
+    100282: Bip001 L Toe0 1
+    100284: Bip001 L Toe0Nub
+    100286: Bip001 L Toe0Nub 1
+    100288: Bip001 L UpperArm
+    100290: Bip001 L UpperArm 1
+    100292: Bip001 LUpArmTwist
+    100294: Bip001 LUpArmTwist 1
+    100296: Bip001 LUpArmTwist1
+    100298: Bip001 LUpArmTwist1 1
+    100300: Bip001 Neck
+    100302: Bip001 Neck 1
+    100304: Bip001 Pelvis
+    100306: Bip001 Pelvis 1
+    100308: Bip001 Prop1
+    100310: Bip001 Prop1 1
+    100312: Bip001 Prop2
+    100314: Bip001 Prop2 1
+    100316: Bip001 R Calf
+    100318: Bip001 R Calf 1
+    100320: Bip001 R Clavicle
+    100322: Bip001 R Clavicle 1
+    100324: Bip001 R Finger0
+    100326: Bip001 R Finger0 1
+    100328: Bip001 R Finger01
+    100330: Bip001 R Finger01 1
+    100332: Bip001 R Finger02
+    100334: Bip001 R Finger02 1
+    100336: Bip001 R Finger0Nub
+    100338: Bip001 R Finger0Nub 1
+    100340: Bip001 R Finger1
+    100342: Bip001 R Finger1 1
+    100344: Bip001 R Finger11
+    100346: Bip001 R Finger11 1
+    100348: Bip001 R Finger12
+    100350: Bip001 R Finger12 1
+    100352: Bip001 R Finger1Nub
+    100354: Bip001 R Finger1Nub 1
+    100356: Bip001 R Finger2
+    100358: Bip001 R Finger2 1
+    100360: Bip001 R Finger21
+    100362: Bip001 R Finger21 1
+    100364: Bip001 R Finger22
+    100366: Bip001 R Finger22 1
+    100368: Bip001 R Finger2Nub
+    100370: Bip001 R Finger2Nub 1
+    100372: Bip001 R Finger3
+    100374: Bip001 R Finger3 1
+    100376: Bip001 R Finger31
+    100378: Bip001 R Finger31 1
+    100380: Bip001 R Finger32
+    100382: Bip001 R Finger32 1
+    100384: Bip001 R Finger3Nub
+    100386: Bip001 R Finger3Nub 1
+    100388: Bip001 R Foot
+    100390: Bip001 R Foot 1
+    100392: Bip001 R Forearm
+    100394: Bip001 R Forearm 1
+    100396: Bip001 R ForeTwist
+    100398: Bip001 R ForeTwist 1
+    100400: Bip001 R ForeTwist1
+    100402: Bip001 R ForeTwist1 1
+    100404: Bip001 R Hand
+    100406: Bip001 R Hand 1
+    100408: Bip001 R Thigh
+    100410: Bip001 R Thigh 1
+    100412: Bip001 R Toe0
+    100414: Bip001 R Toe0 1
+    100416: Bip001 R Toe0Nub
+    100418: Bip001 R Toe0Nub 1
+    100420: Bip001 R UpperArm
+    100422: Bip001 R UpperArm 1
+    100424: Bip001 RUpArmTwist
+    100426: Bip001 RUpArmTwist 1
+    100428: Bip001 RUpArmTwist1
+    100430: Bip001 RUpArmTwist1 1
+    100432: Bip001 Spine
+    100434: Bip001 Spine 1
+    100436: Bip001 Spine1
+    100438: Bip001 Spine1 1
+    100440: FireLight
+    100442: FireLight 1
+    100444: flare
+    100446: flare (1)
+    100448: flare (1) 1
+    100450: flare 1
+    100452: flare 2
+    100454: flare 3
+    100456: flare 4
+    100458: flare 5
+    100460: GameObject
+    100462: GameObject (1)
+    100464: GameObject (1) 1
+    100466: GameObject 1
+    100468: GameObject 2
+    100470: GameObject 3
+    100472: glow
+    100474: glow (1)
+    100476: glow (1) 1
+    100478: glow (1) 2
+    100480: glow (1) 3
+    100482: glow (1) 4
+    100484: glow (1) 5
+    100486: glow (2)
+    100488: glow (2) 1
+    100490: glow (3)
+    100492: glow (3) 1
+    100494: glow (3) 2
+    100496: glow (3) 3
+    100498: glow (3) 4
+    100500: glow (3) 5
+    100502: glow (4)
+    100504: glow (4) 1
+    100506: glow (4) 2
+    100508: glow (4) 3
+    100510: glow (4) 4
+    100512: glow (4) 5
+    100514: glow (5)
+    100516: glow (5) 1
+    100518: glow (7)
+    100520: glow (7) 1
+    100522: glow 1
+    100524: glow 2
+    100526: glow 3
+    100528: glow02
+    100530: glow_01
+    100532: glow_01 1
+    100534: guang_2
+    100536: guang_2 (1)
+    100538: guang_2 (1) 1
+    100540: guang_2 1
+    100542: helix_01
+    100544: helix_01 1
+    100546: helix_01 2
+    100548: helix_01 3
+    100550: helix_02_dark
+    100552: helix_02_dark 1
+    100554: helix_02_dark 2
+    100556: helix_02_dark 3
+    100558: hero_fpp_101_A_L
+    100560: hero_fpp_101_A_L 1
+    100562: hero_fpp_101_A_R
+    100564: hero_fpp_101_A_R 1
+    100566: Home
+    100568: Home 1
+    100570: lighting01
+    100572: lighting01 1
+    100574: lightning_01
+    100576: lightning_01 (1)
+    100578: lightning_01 (1) 1
+    100580: lightning_01 (1) 2
+    100582: lightning_01 (1) 3
+    100584: lightning_01 (2)
+    100586: lightning_01 (2) 1
+    100588: lightning_01 (2) 2
+    100590: lightning_01 (2) 3
+    100592: lightning_01 (2) 4
+    100594: lightning_01 (2) 5
+    100596: lightning_01 (3)
+    100598: lightning_01 (3) 1
+    100600: lightning_01 (4)
+    100602: lightning_01 (4) 1
+    100604: lightning_01 (5)
+    100606: lightning_01 (5) 1
+    100608: lightning_01 (6)
+    100610: lightning_01 (6) 1
+    100612: lightning_01 (7)
+    100614: lightning_01 (7) 1
+    100616: lightning_01 1
+    100618: lightning_01 2
+    100620: lightning_01 3
+    100622: 'lightning_03 '
+    100624: lightning_03  1
+    100626: lightning_05
+    100628: lightning_05 (1)
+    100630: lightning_05 (1) 1
+    100632: lightning_05 (1) 2
+    100634: lightning_05 (1) 3
+    100636: lightning_05 1
+    100638: lightning_05 2
+    100640: lightning_05 3
+    100642: line_01
+    100644: line_01 (1)
+    100646: line_01 (1) 1
+    100648: line_01 1
+    100650: line_01 2
+    100652: line_01 3
+    100654: muzzle
+    100656: muzzle 1
+    100658: par_01
+    100660: par_01 1
+    100662: position
+    100664: position (1)
+    100666: position (1) 1
+    100668: position (2)
+    100670: position (2) 1
+    100672: position (2) 10
+    100674: position (2) 11
+    100676: position (2) 2
+    100678: position (2) 3
+    100680: position (2) 4
+    100682: position (2) 5
+    100684: position (2) 6
+    100686: position (2) 7
+    100688: position (2) 8
+    100690: position (2) 9
+    100692: position (3)
+    100694: position (3) 1
+    100696: position (3) 2
+    100698: position (3) 3
+    100700: position 1
+    100702: position 2
+    100704: position_loop
+    100706: position_loop 1
+    100708: position_start
+    100710: position_start 1
+    100712: ribbon_01
+    100714: ribbon_01 (1)
+    100716: ribbon_01 (1) 1
+    100718: ribbon_01 1
+    100720: ribbon_02 (1)
+    100722: ribbon_02 (1) 1
+    100724: ring_02
+    100726: ring_02 1
+    100728: weapon_1513
+    100730: weapon_1513 1
+    100732: weapon_1513_2
+    100734: weapon_1513_2 1
+    100736: weapon_1513_3
+    100738: weapon_1513_3 1
+    100740: weapon_1513_4
+    100742: weapon_1513_4 1
+    100744: weapon_1513_5
+    100746: weapon_1513_5 1
+    400000: 1513
+    400002: //RootNode
+    400004: 1513_Bone003
+    400006: 1513_Bone003 1
+    400008: 1513_Bone0033
+    400010: 1513_Bone0033 1
+    400012: 1513_Bone005
+    400014: 1513_Bone005 1
+    400016: 1513_Bone006
+    400018: 1513_Bone006 1
+    400020: 1513_Bone007
+    400022: 1513_Bone007 1
+    400024: 1513_Bone008
+    400026: 1513_Bone008 1
+    400028: 1513_Bone009
+    400030: 1513_Bone009 1
+    400032: 1513_Bone01
+    400034: 1513_Bone01 1
+    400036: 1513_Bone010
+    400038: 1513_Bone010 1
+    400040: 1513_Bone011
+    400042: 1513_Bone011 1
+    400044: 1513_Bone012
+    400046: 1513_Bone012 1
+    400048: 1513_Bone013
+    400050: 1513_Bone013 1
+    400052: 1513_Bone014
+    400054: 1513_Bone014 1
+    400056: 1513_Bone015
+    400058: 1513_Bone015 1
+    400060: 1513_Bone016
+    400062: 1513_Bone016 1
+    400064: 1513_Bone017
+    400066: 1513_Bone017 1
+    400068: 1513_Left
+    400070: 1513_Right
+    400072: 1513_tx0001
+    400074: 1513_tx0001 1
+    400076: 1513_tx0002
+    400078: 1513_tx0002 1
+    400080: 9513_weapon
+    400082: 9513_weapon 1
+    400084: 9513_weapon_01
+    400086: 9513_weapon_02
+    400088: 9513_weapon_02 1
+    400090: 9513_weapon_03
+    400092: 9513_weapon_03 1
+    400094: 9513_weapon_04
+    400096: 9513_weapon_04 1
+    400098: 9513_weapon_05
+    400100: 9513_weapon_05 1
+    400102: 9513_weapon_06
+    400104: 9513_weapon_06 1
+    400106: 9513_weapon_06 2
+    400108: 9513_weapon_07
+    400110: 9513_weapon_07 1
+    400112: 9513_weapon_08
+    400114: 9513_weapon_08 1
+    400116: 9513_weapon_full_02
+    400118: 9513_weapon_full_02 1
+    400120: 9513_weapon_full_loop
+    400122: 9513_weapon_full_loop 1
+    400124: 9513_weapon_full_start
+    400126: 9513_weapon_full_start 1
+    400128: 9513_weapon_model_02(Clone)
+    400130: 9513_weapon_model_02(Clone) 1
+    400132: 9513_weapon_reload
+    400134: 9513_weapon_reload 1
+    400136: Att
+    400138: Att 1
+    400140: base (3)
+    400142: base (3) 1
+    400144: base (3) 10
+    400146: base (3) 11
+    400148: base (3) 12
+    400150: base (3) 13
+    400152: base (3) 2
+    400154: base (3) 3
+    400156: base (3) 4
+    400158: base (3) 5
+    400160: base (3) 6
+    400162: base (3) 7
+    400164: base (3) 8
+    400166: base (3) 9
+    400168: Bip001
+    400170: Bip001 1
+    400172: Bip001 Footsteps
+    400174: Bip001 Footsteps 1
+    400176: Bip001 Head
+    400178: Bip001 Head 1
+    400180: Bip001 HeadNub
+    400182: Bip001 HeadNub 1
+    400184: Bip001 L Calf
+    400186: Bip001 L Calf 1
+    400188: Bip001 L Clavicle
+    400190: Bip001 L Clavicle 1
+    400192: Bip001 L Finger0
+    400194: Bip001 L Finger0 1
+    400196: Bip001 L Finger01
+    400198: Bip001 L Finger01 1
+    400200: Bip001 L Finger02
+    400202: Bip001 L Finger02 1
+    400204: Bip001 L Finger0Nub
+    400206: Bip001 L Finger0Nub 1
+    400208: Bip001 L Finger1
+    400210: Bip001 L Finger1 1
+    400212: Bip001 L Finger11
+    400214: Bip001 L Finger11 1
+    400216: Bip001 L Finger12
+    400218: Bip001 L Finger12 1
+    400220: Bip001 L Finger1Nub
+    400222: Bip001 L Finger1Nub 1
+    400224: Bip001 L Finger2
+    400226: Bip001 L Finger2 1
+    400228: Bip001 L Finger21
+    400230: Bip001 L Finger21 1
+    400232: Bip001 L Finger22
+    400234: Bip001 L Finger22 1
+    400236: Bip001 L Finger2Nub
+    400238: Bip001 L Finger2Nub 1
+    400240: Bip001 L Finger3
+    400242: Bip001 L Finger3 1
+    400244: Bip001 L Finger31
+    400246: Bip001 L Finger31 1
+    400248: Bip001 L Finger32
+    400250: Bip001 L Finger32 1
+    400252: Bip001 L Finger3Nub
+    400254: Bip001 L Finger3Nub 1
+    400256: Bip001 L Foot
+    400258: Bip001 L Foot 1
+    400260: Bip001 L Forearm
+    400262: Bip001 L Forearm 1
+    400264: Bip001 L ForeTwist
+    400266: Bip001 L ForeTwist 1
+    400268: Bip001 L ForeTwist1
+    400270: Bip001 L ForeTwist1 1
+    400272: Bip001 L Hand
+    400274: Bip001 L Hand 1
+    400276: Bip001 L Thigh
+    400278: Bip001 L Thigh 1
+    400280: Bip001 L Toe0
+    400282: Bip001 L Toe0 1
+    400284: Bip001 L Toe0Nub
+    400286: Bip001 L Toe0Nub 1
+    400288: Bip001 L UpperArm
+    400290: Bip001 L UpperArm 1
+    400292: Bip001 LUpArmTwist
+    400294: Bip001 LUpArmTwist 1
+    400296: Bip001 LUpArmTwist1
+    400298: Bip001 LUpArmTwist1 1
+    400300: Bip001 Neck
+    400302: Bip001 Neck 1
+    400304: Bip001 Pelvis
+    400306: Bip001 Pelvis 1
+    400308: Bip001 Prop1
+    400310: Bip001 Prop1 1
+    400312: Bip001 Prop2
+    400314: Bip001 Prop2 1
+    400316: Bip001 R Calf
+    400318: Bip001 R Calf 1
+    400320: Bip001 R Clavicle
+    400322: Bip001 R Clavicle 1
+    400324: Bip001 R Finger0
+    400326: Bip001 R Finger0 1
+    400328: Bip001 R Finger01
+    400330: Bip001 R Finger01 1
+    400332: Bip001 R Finger02
+    400334: Bip001 R Finger02 1
+    400336: Bip001 R Finger0Nub
+    400338: Bip001 R Finger0Nub 1
+    400340: Bip001 R Finger1
+    400342: Bip001 R Finger1 1
+    400344: Bip001 R Finger11
+    400346: Bip001 R Finger11 1
+    400348: Bip001 R Finger12
+    400350: Bip001 R Finger12 1
+    400352: Bip001 R Finger1Nub
+    400354: Bip001 R Finger1Nub 1
+    400356: Bip001 R Finger2
+    400358: Bip001 R Finger2 1
+    400360: Bip001 R Finger21
+    400362: Bip001 R Finger21 1
+    400364: Bip001 R Finger22
+    400366: Bip001 R Finger22 1
+    400368: Bip001 R Finger2Nub
+    400370: Bip001 R Finger2Nub 1
+    400372: Bip001 R Finger3
+    400374: Bip001 R Finger3 1
+    400376: Bip001 R Finger31
+    400378: Bip001 R Finger31 1
+    400380: Bip001 R Finger32
+    400382: Bip001 R Finger32 1
+    400384: Bip001 R Finger3Nub
+    400386: Bip001 R Finger3Nub 1
+    400388: Bip001 R Foot
+    400390: Bip001 R Foot 1
+    400392: Bip001 R Forearm
+    400394: Bip001 R Forearm 1
+    400396: Bip001 R ForeTwist
+    400398: Bip001 R ForeTwist 1
+    400400: Bip001 R ForeTwist1
+    400402: Bip001 R ForeTwist1 1
+    400404: Bip001 R Hand
+    400406: Bip001 R Hand 1
+    400408: Bip001 R Thigh
+    400410: Bip001 R Thigh 1
+    400412: Bip001 R Toe0
+    400414: Bip001 R Toe0 1
+    400416: Bip001 R Toe0Nub
+    400418: Bip001 R Toe0Nub 1
+    400420: Bip001 R UpperArm
+    400422: Bip001 R UpperArm 1
+    400424: Bip001 RUpArmTwist
+    400426: Bip001 RUpArmTwist 1
+    400428: Bip001 RUpArmTwist1
+    400430: Bip001 RUpArmTwist1 1
+    400432: Bip001 Spine
+    400434: Bip001 Spine 1
+    400436: Bip001 Spine1
+    400438: Bip001 Spine1 1
+    400440: FireLight
+    400442: FireLight 1
+    400444: flare
+    400446: flare (1)
+    400448: flare (1) 1
+    400450: flare 1
+    400452: flare 2
+    400454: flare 3
+    400456: flare 4
+    400458: flare 5
+    400460: GameObject
+    400462: GameObject (1)
+    400464: GameObject (1) 1
+    400466: GameObject 1
+    400468: GameObject 2
+    400470: GameObject 3
+    400472: glow
+    400474: glow (1)
+    400476: glow (1) 1
+    400478: glow (1) 2
+    400480: glow (1) 3
+    400482: glow (1) 4
+    400484: glow (1) 5
+    400486: glow (2)
+    400488: glow (2) 1
+    400490: glow (3)
+    400492: glow (3) 1
+    400494: glow (3) 2
+    400496: glow (3) 3
+    400498: glow (3) 4
+    400500: glow (3) 5
+    400502: glow (4)
+    400504: glow (4) 1
+    400506: glow (4) 2
+    400508: glow (4) 3
+    400510: glow (4) 4
+    400512: glow (4) 5
+    400514: glow (5)
+    400516: glow (5) 1
+    400518: glow (7)
+    400520: glow (7) 1
+    400522: glow 1
+    400524: glow 2
+    400526: glow 3
+    400528: glow02
+    400530: glow_01
+    400532: glow_01 1
+    400534: guang_2
+    400536: guang_2 (1)
+    400538: guang_2 (1) 1
+    400540: guang_2 1
+    400542: helix_01
+    400544: helix_01 1
+    400546: helix_01 2
+    400548: helix_01 3
+    400550: helix_02_dark
+    400552: helix_02_dark 1
+    400554: helix_02_dark 2
+    400556: helix_02_dark 3
+    400558: hero_fpp_101_A_L
+    400560: hero_fpp_101_A_L 1
+    400562: hero_fpp_101_A_R
+    400564: hero_fpp_101_A_R 1
+    400566: Home
+    400568: Home 1
+    400570: lighting01
+    400572: lighting01 1
+    400574: lightning_01
+    400576: lightning_01 (1)
+    400578: lightning_01 (1) 1
+    400580: lightning_01 (1) 2
+    400582: lightning_01 (1) 3
+    400584: lightning_01 (2)
+    400586: lightning_01 (2) 1
+    400588: lightning_01 (2) 2
+    400590: lightning_01 (2) 3
+    400592: lightning_01 (2) 4
+    400594: lightning_01 (2) 5
+    400596: lightning_01 (3)
+    400598: lightning_01 (3) 1
+    400600: lightning_01 (4)
+    400602: lightning_01 (4) 1
+    400604: lightning_01 (5)
+    400606: lightning_01 (5) 1
+    400608: lightning_01 (6)
+    400610: lightning_01 (6) 1
+    400612: lightning_01 (7)
+    400614: lightning_01 (7) 1
+    400616: lightning_01 1
+    400618: lightning_01 2
+    400620: lightning_01 3
+    400622: 'lightning_03 '
+    400624: lightning_03  1
+    400626: lightning_05
+    400628: lightning_05 (1)
+    400630: lightning_05 (1) 1
+    400632: lightning_05 (1) 2
+    400634: lightning_05 (1) 3
+    400636: lightning_05 1
+    400638: lightning_05 2
+    400640: lightning_05 3
+    400642: line_01
+    400644: line_01 (1)
+    400646: line_01 (1) 1
+    400648: line_01 1
+    400650: line_01 2
+    400652: line_01 3
+    400654: muzzle
+    400656: muzzle 1
+    400658: par_01
+    400660: par_01 1
+    400662: position
+    400664: position (1)
+    400666: position (1) 1
+    400668: position (2)
+    400670: position (2) 1
+    400672: position (2) 10
+    400674: position (2) 11
+    400676: position (2) 2
+    400678: position (2) 3
+    400680: position (2) 4
+    400682: position (2) 5
+    400684: position (2) 6
+    400686: position (2) 7
+    400688: position (2) 8
+    400690: position (2) 9
+    400692: position (3)
+    400694: position (3) 1
+    400696: position (3) 2
+    400698: position (3) 3
+    400700: position 1
+    400702: position 2
+    400704: position_loop
+    400706: position_loop 1
+    400708: position_start
+    400710: position_start 1
+    400712: ribbon_01
+    400714: ribbon_01 (1)
+    400716: ribbon_01 (1) 1
+    400718: ribbon_01 1
+    400720: ribbon_02 (1)
+    400722: ribbon_02 (1) 1
+    400724: ring_02
+    400726: ring_02 1
+    400728: weapon_1513
+    400730: weapon_1513 1
+    400732: weapon_1513_2
+    400734: weapon_1513_2 1
+    400736: weapon_1513_3
+    400738: weapon_1513_3 1
+    400740: weapon_1513_4
+    400742: weapon_1513_4 1
+    400744: weapon_1513_5
+    400746: weapon_1513_5 1
+    2100000: 9513_weaponmodel_01
+    2100002: weapon_1513
+    2300000: 9513_weapon_06 2
+    2300002: 9513_weapon_model_02(Clone)
+    2300004: 9513_weapon_model_02(Clone) 1
+    3300000: 9513_weapon_06 2
+    3300002: 9513_weapon_model_02(Clone)
+    3300004: 9513_weapon_model_02(Clone) 1
+    4300000: 9513_weapon_model_02(Clone)
+    4300002: 9513_weapon_06
+    4300004: weapon_1513
+    4300006: weapon_1513_2
+    4300008: weapon_1513_3
+    4300010: weapon_1513_4
+    4300012: weapon_1513_5
+    4300014: 9513_weapon_model_02(Clone)
+    4300016: weapon_1513
+    4300018: weapon_1513_2
+    4300020: weapon_1513_3
+    4300022: weapon_1513_4
+    4300024: weapon_1513_5
+    9500000: //RootNode
+    13700000: weapon_1513
+    13700002: weapon_1513 1
+    13700004: weapon_1513_2
+    13700006: weapon_1513_2 1
+    13700008: weapon_1513_3
+    13700010: weapon_1513_3 1
+    13700012: weapon_1513_4
+    13700014: weapon_1513_4 1
+    13700016: weapon_1513_5
+    13700018: weapon_1513_5 1
+  externalObjects: {}
+  materials:
+    importMaterials: 1
+    materialName: 0
+    materialSearch: 1
+    materialLocation: 1
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    resampleCurves: 1
+    optimizeGameObjects: 0
+    motionNodeName: 
+    rigImportErrors: 
+    rigImportWarnings: 
+    animationImportErrors: 
+    animationImportWarnings: 
+    animationRetargetingWarnings: 
+    animationDoRetargetingWarnings: 0
+    importAnimatedCustomProperties: 0
+    importConstraints: 0
+    animationCompression: 1
+    animationRotationError: 0.5
+    animationPositionError: 0.5
+    animationScaleError: 0.5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    extraUserProperties: []
+    clipAnimations: []
+    isReadable: 1
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 1
+    meshCompression: 0
+    addColliders: 0
+    useSRGBMaterialColor: 1
+    importVisibility: 1
+    importBlendShapes: 1
+    importCameras: 1
+    importLights: 1
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    optimizeMeshForGPU: 1
+    keepQuads: 0
+    weldVertices: 1
+    preserveHierarchy: 0
+    indexFormat: 0
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+    useFileScale: 1
+    previousCalculatedGlobalScale: 0.01
+    hasPreviousCalculatedGlobalScale: 1
+  tangentSpace:
+    normalSmoothAngle: 60
+    normalImportMode: 0
+    tangentImportMode: 3
+    normalCalculationMode: 4
+    legacyComputeAllNormalsFromSmoothingGroupsWhenMeshHasBlendShapes: 0
+    blendShapeNormalImportMode: 1
+    normalSmoothingSource: 0
+  importAnimation: 1
+  copyAvatar: 0
+  humanDescription:
+    serializedVersion: 2
+    human: []
+    skeleton: []
+    armTwist: 0.5
+    foreArmTwist: 0.5
+    upperLegTwist: 0.5
+    legTwist: 0.5
+    armStretch: 0.05
+    legStretch: 0.05
+    feetSpacing: 0
+    rootMotionBoneName: 
+    hasTranslationDoF: 0
+    hasExtraRoot: 0
+    skeletonHasParents: 1
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  animationType: 2
+  humanoidOversampling: 1
+  additionalBone: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

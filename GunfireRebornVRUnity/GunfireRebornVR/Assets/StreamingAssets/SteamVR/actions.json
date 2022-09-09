@@ -34,7 +34,7 @@
       "requirement": "suggested"
     },
     {
-      "name": "/actions/Gameplay/in/RT_Fire_InteractUI",
+      "name": "/actions/Gameplay/in/RT_Fire",
       "type": "vector1"
     },
     {
@@ -102,6 +102,10 @@
       "type": "vector2"
     },
     {
+      "name": "/actions/Gameplay/in/InteractUI",
+      "type": "boolean"
+    },
+    {
       "name": "/actions/Gameplay/out/Haptic",
       "type": "vibration"
     }
@@ -161,14 +165,33 @@
       "controller_type": "vive_tracker_camera",
       "binding_url": "binding_vive_tracker_camera.json"
     },
-      {
-         "binding_url" : "bindings_knuckles.json",
-         "controller_type" : "knuckles"
-      }
+    {
+      "controller_type": "knuckles",
+      "binding_url": "bindings_knuckles.json"
+    }
   ],
   "localization": [
     {
-      "language_tag": "en_US"
+      "language_tag": "en_US",
+      "/actions/Gameplay/in/RT_Fire": "RT_开火",
+      "/actions/Gameplay/in/LS_Move": "LS_移动",
+      "/actions/Gameplay/in/A_Jump": "A_跳跃",
+      "/actions/Gameplay/in/X_Interact_Reload": "X_交互_装弹",
+      "/actions/Gameplay/in/Y_SwitchWeapons": "Y_切换武器",
+      "/actions/Gameplay/in/LB_PrimarySkill": "LB_主要技能",
+      "/actions/Gameplay/in/RB_SecondarySkill": "RB_次要技能",
+      "/actions/Gameplay/in/B_Dash_ReturnUI": "B_冲刺_UI返回",
+      "/actions/Gameplay/in/LT_WeaponSkill": "LT_武器技能",
+      "/actions/Gameplay/in/DPadL_InterruptCharging": "DPadL_中断充能",
+      "/actions/Gameplay/in/DPadD_SwitchFireMode": "DPadD_切换射击模式",
+      "/actions/Gameplay/in/DPadR_TeamInformation": "DPadR_队伍信息",
+      "/actions/Gameplay/in/DPadU_Ping": "DPadU_标记",
+      "/actions/Gameplay/in/RS_Rotate": "RS_转向",
+      "/actions/Gameplay/in/R3_Speak": "R3_开麦",
+      "/actions/Gameplay/in/Back_ToggleBattleMenu": "Back_打开关闭战斗菜单",
+      "/actions/Gameplay/in/Start_ToggleBackpack": "Start_打开关闭背包",
+      "/actions/Gameplay/in/Scroll": "滚轮",
+      "/actions/Gameplay/in/InteractUI": "UI交互"
     },
     {
       "language_tag": "zh-CN",
@@ -185,7 +208,6 @@
       "/actions/Gameplay/in/R3_Speak": "R3_发言",
       "/actions/Gameplay/in/RB_SecondarySkill": "RB_次要技能",
       "/actions/Gameplay/in/RS_Rotate": "RS_移动视角",
-      "/actions/Gameplay/in/RT_Fire_InteractUI": "RT_开火_UI交互",
       "/actions/Gameplay/in/Scroll": "滚动",
       "/actions/Gameplay/in/SnapTurnLeft": "平滑转向左",
       "/actions/Gameplay/in/SnapTurnRight": "平滑转向右",

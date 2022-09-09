@@ -10,7 +10,7 @@ public class VRInputDevice : InputDevice
     public SteamVR_Action_Boolean SnapTurnLeft() => SteamVR_Actions.gameplay_SnapTurnLeft;
     public SteamVR_Action_Boolean SnapTurnRight() => SteamVR_Actions.gameplay_SnapTurnRight;
     public SteamVR_Action_Single LT_WeaponSkill() => SteamVR_Actions.gameplay_LT_WeaponSkill;
-    public SteamVR_Action_Single RT_Fire_InteractUI() => SteamVR_Actions.gameplay_RT_Fire_InteractUI;
+    public SteamVR_Action_Single RT_Fire() => SteamVR_Actions.gameplay_RT_Fire;
     public SteamVR_Action_Boolean LB_PrimarySkill() => SteamVR_Actions.gameplay_LB_PrimarySkill;
     public SteamVR_Action_Boolean RB_SecondarySkill() => SteamVR_Actions.gameplay_RB_SecondarySkill;
     public SteamVR_Action_Boolean X_Interact_Reload() => SteamVR_Actions.gameplay_X_Interact_Reload;
@@ -116,7 +116,7 @@ public class VRInputDevice : InputDevice
         UpdateWithValue(InputControlType.LeftTrigger, LT_WeaponSkill().axis, updateTick, deltaTime);
 
         if (!DisableRT)
-            UpdateWithValue(InputControlType.RightTrigger, RT_Fire_InteractUI().axis, updateTick, deltaTime);
+            UpdateWithValue(InputControlType.RightTrigger, RT_Fire().axis, updateTick, deltaTime);
 
         UpdateWithState(InputControlType.RightStickButton, R3_Speak().state, updateTick, deltaTime);
 

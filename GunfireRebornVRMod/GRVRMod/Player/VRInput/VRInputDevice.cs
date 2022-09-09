@@ -1,5 +1,6 @@
 ﻿using InControl;
 using System;
+using UnityEngine;
 using Valve.VR;
 
 namespace VRMod.Player.VRInput
@@ -10,7 +11,7 @@ namespace VRMod.Player.VRInput
         public SteamVR_Action_Boolean SnapTurnLeft() => SteamVR_Actions.gameplay_SnapTurnLeft;
         public SteamVR_Action_Boolean SnapTurnRight() => SteamVR_Actions.gameplay_SnapTurnRight;
         public SteamVR_Action_Single LT_WeaponSkill() => SteamVR_Actions.gameplay_LT_WeaponSkill;
-        public SteamVR_Action_Single RT_Fire_InteractUI() => SteamVR_Actions.gameplay_RT_Fire_InteractUI;
+        public SteamVR_Action_Single RT_Fire() => SteamVR_Actions.gameplay_RT_Fire;
         public SteamVR_Action_Boolean LB_PrimarySkill() => SteamVR_Actions.gameplay_LB_PrimarySkill;
         public SteamVR_Action_Boolean RB_SecondarySkill() => SteamVR_Actions.gameplay_RB_SecondarySkill;
         public SteamVR_Action_Boolean X_Interact_Reload() => SteamVR_Actions.gameplay_X_Interact_Reload;
@@ -26,12 +27,15 @@ namespace VRMod.Player.VRInput
         public SteamVR_Action_Vector2 RS_Rotate() => SteamVR_Actions.gameplay_RS_Rotate;
         public SteamVR_Action_Boolean Back_ToggleBattleMenu() => SteamVR_Actions.gameplay_Back_ToggleBattleMenu;
         public SteamVR_Action_Boolean Start_ToggleBackpack() => SteamVR_Actions.gameplay_Start_ToggleBackpack;
+        public SteamVR_Action_Boolean InteractUI() => SteamVR_Actions.gameplay_InteractUI;
 
         public SteamVR_Action_Vector2 Scroll() => SteamVR_Actions.gameplay_Scroll;
 
         const float LowerDeadZone = 0.2f;
         const float UpperDeadZone = 0.9f;
 
+        public bool dualWieldMode = false;
+        public float dualWieldDelay = 0f;
 
         public VRInputDevice()
             : base("VR Input Device")
@@ -71,9 +75,6 @@ namespace VRMod.Player.VRInput
             AddControl(InputControlType.Back, "Back");
             AddControl(InputControlType.Start, "Start");
 
-
-            AddControl(InputControlType.ScrollWheel, "ScrollWheel");
-
         }
 
         public void UpdateInternal(ulong updateTick, float deltaTime)
@@ -89,27 +90,42 @@ namespace VRMod.Player.VRInput
             UpdateWithState(InputControlType.Action3, X_Interact_Reload().state, updateTick, deltaTime);
             UpdateWithState(InputControlType.Action4, Y_SwitchWeapons().state, updateTick, deltaTime);
 
-            UpdateWithState(InputControlType.LeftBumper, LB_PrimarySkill().state, updateTick, deltaTime);
-            UpdateWithState(InputControlType.RightBumper, RB_SecondarySkill().state, updateTick, deltaTime);
+            if (VRPlayer.Instance.isDualWield)
+            {
+                // 狗双持时要重映射按键
+                UpdateWithState(InputControlType.LeftBumper, LT_WeaponSkill().axis >= UpperDeadZone, updateTick, deltaTime);
+                if(dualWieldDelay<=0)
+                    UpdateWithState(InputControlType.RightBumper, LB_PrimarySkill().state, updateTick, deltaTime);
+                UpdateWithState(InputControlType.LeftTrigger, RB_SecondarySkill().state, updateTick, deltaTime);
+                if(dualWieldDelay>0)
+                    dualWieldDelay -= Time.deltaTime;
+            }
+            else
+            {
+                UpdateWithState(InputControlType.LeftBumper, LB_PrimarySkill().state, updateTick, deltaTime);
+                UpdateWithState(InputControlType.RightBumper, RB_SecondarySkill().state, updateTick, deltaTime);
+                UpdateWithValue(InputControlType.LeftTrigger, LT_WeaponSkill().axis, updateTick, deltaTime);
+            }
 
+            // 在菜单时用另一个脚本负责菜单交互，不需要模拟输入事件
+            if (!VRPlayer.Instance.isHome)
+                UpdateWithValue(InputControlType.RightTrigger, RT_Fire().axis, updateTick, deltaTime);
 
             UpdateWithState(InputControlType.DPadUp, DPadU_Ping().state, updateTick, deltaTime);
             UpdateWithState(InputControlType.DPadLeft, DPadL_InterruptCharging().state, updateTick, deltaTime);
             UpdateWithState(InputControlType.DPadDown, DPadD_SwitchFireMode().state, updateTick, deltaTime);
             UpdateWithState(InputControlType.DPadRight, DPadR_TeamInformation().state, updateTick, deltaTime);
 
-
-            UpdateWithValue(InputControlType.LeftTrigger, LT_WeaponSkill().axis, updateTick, deltaTime);
-
-            if(!VRPlayer.Instance || !VRPlayer.Instance.isHome)
-                UpdateWithValue(InputControlType.RightTrigger, RT_Fire_InteractUI().axis, updateTick, deltaTime);
-
             UpdateWithState(InputControlType.RightStickButton, R3_Speak().state, updateTick, deltaTime);
 
             UpdateWithState(InputControlType.Back, Back_ToggleBattleMenu().state, updateTick, deltaTime);
             UpdateWithState(InputControlType.Start, Start_ToggleBackpack().state, updateTick, deltaTime);
 
-            UpdateWithValue(InputControlType.ScrollWheel, Scroll().axis.y, updateTick, deltaTime); 
+            //UpdateWithValue(InputControlType.ScrollWheel, Scroll().axis.y, updateTick, deltaTime);
+            if(Scroll().axis.y > 0f)
+                UpdateWithState(InputControlType.DPadUp, true, updateTick, deltaTime);
+            else if (Scroll().axis.y < 0f)
+                UpdateWithState(InputControlType.DPadDown, true, updateTick, deltaTime);
         }
 
         public void CommitInternal(ulong updateTick, float deltaTime)

@@ -28,14 +28,49 @@ namespace VRMod
             return comp;
         }
 
+        public static Transform DeepFindChild(this Transform parent, string targetName)
+        {
+            Transform _result = parent.Find(targetName);
+            if (_result == null)
+            {
+                foreach (var child in parent)
+                {
+                    _result = DeepFindChild(child.Cast<Transform>(), targetName);
+                    if (_result != null)
+                    {
+                        return _result;
+                    }
+                }
+            }
+            return _result;
+        }
+
         public static bool IsPlaying(this Animator animator)
         {
-            return animator.GetCurrentAnimatorStateInfo(0).normalizedTime <1;
+            return animator.GetCurrentAnimatorStateInfo(0).m_NormalizedTime <1;
+        }
+
+        public static bool IsPlaying(this Animator animator, int hash)
+        {
+            var stateInfo = animator.GetCurrentAnimatorStateInfo(0);
+            return stateInfo.m_NormalizedTime < 1 && stateInfo.fullPathHash == hash;
+        }
+
+        public static bool IsInState(this Animator animator, int hash)
+        {
+            return animator.GetCurrentAnimatorStateInfo(0).fullPathHash == hash;
         }
 
         public static TValue GetValueOrDefault<TKey, TValue>(this IDictionary<TKey, TValue> dictionary, TKey key, TValue defaultValue)
         {
             return dictionary.TryGetValue(key, out var value) ? value : defaultValue;
+        }
+
+        public static float CalculateZoomFOV(float nonZoomedFOV, float magnification)
+        {
+            var factor = 2.0f * Mathf.Tan(0.5f * nonZoomedFOV * Mathf.Deg2Rad);
+            var zoomedFOV = 2.0f * Mathf.Atan(factor / (2.0f * magnification)) * Mathf.Rad2Deg;
+            return zoomedFOV;
         }
 
 

@@ -7,7 +7,7 @@ using Valve.VR;
 public class VRInput : BaseInput
 {
     public Camera eventCamera = null;
-    public SteamVR_Action_Single clikeButton = SteamVR_Actions.gameplay_RT_Fire_InteractUI;
+    public SteamVR_Action_Boolean clikeButton = SteamVR_Actions.gameplay_InteractUI;
 
     protected override void Awake()
     {
@@ -16,17 +16,17 @@ public class VRInput : BaseInput
 
     public override bool GetMouseButton(int button)
     {
-        return clikeButton.axis > 0.8f;
+        return clikeButton.state;
     }
 
     public override bool GetMouseButtonDown(int button)
     {
-        return clikeButton.lastAxis <= 0.8f && clikeButton.axis > 0.8f;
+        return clikeButton.stateDown;
     }
 
     public override bool GetMouseButtonUp(int button)
     {
-        return clikeButton.lastAxis > 0.8f && clikeButton.axis <= 0.8f;
+        return clikeButton.stateUp;
     }
 
     public override Vector2 mousePosition

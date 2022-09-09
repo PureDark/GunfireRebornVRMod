@@ -9,6 +9,14 @@
     <PlatformTarget>x64</PlatformTarget>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DefineConstants>$(DefineConstants)TRACE;CURVEDUI_TMP;CURVEDUI_STEAMVR_2;</DefineConstants>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <DefineConstants>$(DefineConstants)TRACE;CURVEDUI_TMP;CURVEDUI_STEAMVR_2;</DefineConstants>
+  </PropertyGroup>
+
   <ItemGroup>
     <Compile Remove="ExternalLibraries\**" />
     <EmbeddedResource Remove="ExternalLibraries\**" />
@@ -71,6 +79,9 @@
     </Reference>
     <Reference Include="Unity.RenderPipelines.Lightweight.Runtime">
       <HintPath>F:\Steam\steamapps\common\Gunfire Reborn\BepInEx\unhollowed\Unity.RenderPipelines.Lightweight.Runtime.dll</HintPath>
+    </Reference>
+    <Reference Include="Unity.TextMeshPro">
+      <HintPath>..\..\..\..\..\Steam\steamapps\common\Gunfire Reborn\BepInEx\unhollowed\Unity.TextMeshPro.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine">
       <HintPath>F:\Steam\steamapps\common\Gunfire Reborn\BepInEx\unhollowed\UnityEngine.dll</HintPath>

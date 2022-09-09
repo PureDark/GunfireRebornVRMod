@@ -1,12 +1,12 @@
 ManifestFileVersion: 0
-CRC: 3386605467
+CRC: 2460572329
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: 8eb0384ff73e0e95c126e051eae2f035
+    Hash: f1a1e7469a8202599052c1c1567dd0dc
   TypeTreeHash:
     serializedVersion: 2
-    Hash: 7adbdadb1a4f2022a89205e66eaee83a
+    Hash: 6de264787f65fb3d0b38a541ca8a4d34
 HashAppended: 0
 ClassTypes:
 - Class: 1
@@ -27,9 +27,12 @@ ClassTypes:
   Script: {instanceID: 0}
 - Class: 48
   Script: {instanceID: 0}
+- Class: 84
+  Script: {instanceID: 0}
 - Class: 120
   Script: {instanceID: 0}
 Assets:
+- Assets/GunfireReborn/Hands/Cat/1503/CircleScope.prefab
 - Assets/GunfireReborn/CustomShaders/StereoRender.shader
 - Assets/GunfireReborn/Hands/Cat/[VRCameraRig].prefab
 Dependencies: []

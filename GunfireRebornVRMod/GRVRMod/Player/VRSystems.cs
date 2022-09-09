@@ -32,8 +32,6 @@ namespace VRMod.Player
             Instance = this;
             DontDestroyOnLoad(gameObject);
 
-            //gameObject.AddComponent<ShaderFixer>();
-
             HarmonyPatches.onSceneLoaded += OnSceneLoaded;
 
             //if (DYSceneManager.GetCurSceneName().ToLower().Contains("start"))
@@ -42,10 +40,6 @@ namespace VRMod.Player
         private void Update()
         {
             //MenuFix.SetDebugUICamera();
-            if (Input.GetKeyUp(KeyCode.L))
-            {
-                Log.Info("Screen: " + Screen.width + "x" + Screen.height);
-            }
             if (Input.GetKey(KeyCode.LeftControl)&&Input.GetKeyUp(KeyCode.H))
             {
                 Camera[] cams = FindObjectsOfType<Camera>();

@@ -43,6 +43,8 @@
                     v2f o;
                     o.vertex = UnityObjectToClipPos(v.vertex);
                     o.uv = v.uv;
+                    if (_ProjectionParams.x < 0)
+                        o.uv.y = 1 - o.uv.y;
                     return o;
                 }
 
@@ -61,7 +63,7 @@
                         fixed4 nearCol = tex2D(_LeftNearTex, i.uv);
                         o.rgb = o.rgb * (1 - nearCol.a) + nearCol.rgb * nearCol.a;
                         fixed4 UICol = tex2D(_LeftUITex, i.uv);
-                        UICol.a = min(UICol.a * 2, 1);
+                        UICol.a = min(UICol.a * 2, 1); 
                         o.rgb = o.rgb * (1 - UICol.a) + UICol.rgb * UICol.a;
                     }
                     else {

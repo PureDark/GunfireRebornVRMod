@@ -71,7 +71,7 @@ public class UIPointer : MonoBehaviour
 
     private Vector3 CalculateEnd(float length)
     {
-        Debug.Log("length=" + length);
+        //Debug.Log("length=" + length);
         return transform.localPosition + new Vector3(0, 0, length);
     }
 }

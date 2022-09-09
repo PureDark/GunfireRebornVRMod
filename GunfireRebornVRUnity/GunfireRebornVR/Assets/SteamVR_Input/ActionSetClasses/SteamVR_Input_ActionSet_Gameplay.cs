@@ -73,11 +73,11 @@ namespace Valve.VR
             }
         }
         
-        public virtual SteamVR_Action_Single RT_Fire_InteractUI
+        public virtual SteamVR_Action_Single RT_Fire
         {
             get
             {
-                return SteamVR_Actions.gameplay_RT_Fire_InteractUI;
+                return SteamVR_Actions.gameplay_RT_Fire;
             }
         }
         
@@ -206,6 +206,14 @@ namespace Valve.VR
             get
             {
                 return SteamVR_Actions.gameplay_Scroll;
+            }
+        }
+        
+        public virtual SteamVR_Action_Boolean InteractUI
+        {
+            get
+            {
+                return SteamVR_Actions.gameplay_InteractUI;
             }
         }
         
