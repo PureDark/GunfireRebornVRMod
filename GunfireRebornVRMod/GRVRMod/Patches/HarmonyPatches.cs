@@ -1,11 +1,9 @@
 ﻿using BoltBehavior;
-using DYPublic.Duonet;
 using GameCoder.Engine;
 using HarmonyLib;
 using SkillBolt;
 using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics;
 using UI;
 using UIScript;
 using UnhollowerRuntimeLib;
@@ -13,6 +11,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.XR;
 using VRMod.Player;
+using VRMod.Player.VRInput;
 using VRMod.UI;
 using static VRMod.VRMod;
 
@@ -39,23 +38,6 @@ namespace VRMod.Patches
 
         public static bool UnhollowerWarningPrefix(string __0) => !__0.Contains("unsupported return type") && !__0.Contains("unsupported parameter");
 
-        [HarmonyPatch(typeof(DYSceneManager), nameof(DYSceneManager.OnSceneLoaded))]
-        internal class InjectDYSceneManager
-        {
-            private static void Postfix(DYSceneManager __instance, Scene scene, LoadSceneMode mode)
-            {
-                Log.Info("Scene Loaded: " + scene.name);
-                if (scene.name?.ToLower() == "home")
-                {
-                    //进入home要修复UI，改造为适合VR的方式
-                    MenuFix.HomeFix();
-                }
-
-                if (onSceneLoaded != null)
-                    onSceneLoaded.Invoke(scene, mode);
-            }
-        }
-
         [HarmonyPatch(typeof(CUIManager), nameof(CUIManager.Init))]
         internal class InjectVRStart
         {
@@ -70,12 +52,13 @@ namespace VRMod.Patches
             }
         }
 
+        #region UI界面开启关闭
+
         public static List<string> UIModePathes = new List<string>
         {
             UIFormName.HOME_D_PANEL,
             UIFormName.DAYCHALLENGE_PANEl,
             UIFormName.CHARATER_PANEL,
-            UIFormName.PC_Panel_HeroState,
             UIFormName.SETTING_PANEL,
             UIFormName.COLLECTION_PCPANEL,
             UIFormName.TEAM_PANEL,
@@ -89,14 +72,22 @@ namespace VRMod.Patches
             UIFormName.INSCIPRTION_SHOP,
             UIFormName.WAREND_PANEL,
             UIFormName.PC_CashBuffChoose_Panel,
-            "PC_Panel_teaminfo",
-            "PC_panel_dorpweaponcontrast"
+            UIFormName.PC_Panel_teaminfo,
+            UIFormName.PACKAGE_PANEL,
+            UIFormName.WARDROPWEAPONCONTAST,
+            UIFormName.NPC_EVENT_PANAL,
+            UIFormName.NPC_EVENT_WEAPON_PANEL,
+            UIFormName.NPC_EVENT_CHOOSE_PANEL,
+            UIFormName.ASK_RESURGENCE_PANEL,
+            UIFormName.ASK_RELICRESURGENCE_PANEL,
+            UIFormName.PC_PANEL_GROWTHCHOOSE
         };
 
-        public static List<string> HideUIModePathes = new List<string>
+        public static List<string> BattleModePathes = new List<string>
         {
-            "PC_Panel_teaminfo",
-            "PC_panel_dorpweaponcontrast"
+            UIFormName.PC_Panel_HeroState,
+            UIFormName.PANEL_CRAZE,
+            UIFormName.WAR_PANEL
         };
 
         [HarmonyPatch(typeof(CUIManager), nameof(CUIManager.showUI))]
@@ -104,9 +95,20 @@ namespace VRMod.Patches
         {
             private static void Postfix(string uiFormPath, bool playAni)
             {
-                //Log.Info("InjectShowUI: uiFormPath=" + uiFormPath);
-                if (UIModePathes.Contains(uiFormPath) && VRPlayer.Instance)
-                    VRPlayer.Instance.SetUIMode(true);
+                Log.Info("InjectShowUI: uiFormPath=" + uiFormPath);
+                if (VRPlayer.Instance)
+                {
+                    if (UIModePathes.Contains(uiFormPath))
+                        VRPlayer.Instance.SetUIMode(true);
+                    else if (BattleModePathes.Contains(uiFormPath))
+                        VRPlayer.Instance.SetUIMode(false);
+                    if (uiFormPath == UIFormName.WAREND_PANEL)
+                    {
+                        var winTextGO = CUIManager.instance.MainPopUpCanvas.transform.DeepFindChild("arttext_Win_1");
+                        if (winTextGO)
+                            Object.Destroy(winTextGO.gameObject);
+                    }
+                }
             }
         }
 
@@ -115,20 +117,20 @@ namespace VRMod.Patches
         {
             private static void Postfix(string uiFormPath)
             {
-                if (HideUIModePathes.Contains(uiFormPath) && VRPlayer.Instance)
+                if (UIModePathes.Contains(uiFormPath) && VRPlayer.Instance && !VRPlayer.Instance.isHome)
                     VRPlayer.Instance.SetUIMode(false);
             }
         }
 
-        [HarmonyPatch(typeof(s2cnetwar), nameof(s2cnetwar.GS2CWarPaused))]
-        internal class InjectGS2CWarPaused
-        {
-            private static void Postfix(s2cnetwar_GS2CWarPausedClass data)
-            {
-                if (VRPlayer.Instance)
-                    VRPlayer.Instance.SetUIMode(data.iPaused==1);
-            }
-        }
+        //[HarmonyPatch(typeof(s2cnetwar), nameof(s2cnetwar.GS2CWarPaused))]
+        //internal class InjectGS2CWarPaused
+        //{
+        //    private static void Postfix(s2cnetwar_GS2CWarPausedClass data)
+        //    {
+        //        if (VRPlayer.Instance)
+        //            VRPlayer.Instance.SetUIMode(data.iPaused == 1);
+        //    }
+        //}
 
         // 禁用原版的狙击开镜action
         [HarmonyPatch(typeof(CartoonAction700), nameof(CartoonAction700.Trigger))]
@@ -140,38 +142,124 @@ namespace VRMod.Patches
             }
         }
 
-        //[HarmonyPatch(typeof(CBehaviorAction), nameof(CBehaviorAction.Behav_HideWeaponExceptMuzzle))]
-        //internal class InjectBehav_HideWeaponExceptMuzzle
-        //{
-        //    private static bool Prefix(BehaviorNode node)
-        //    {
-        //        return false;
-        //    }
-        //}
+        #endregion
 
         #region UI效果修改
 
+        [HarmonyPatch(typeof(DYSceneManager), nameof(DYSceneManager.OnSceneLoaded))]
+        internal class InjectDYSceneManager
+        {
+            private static void Postfix(DYSceneManager __instance, Scene scene, LoadSceneMode mode)
+            {
+                Log.Info("Scene Loaded: " + scene.name);
+                if (onSceneLoaded != null)
+                    onSceneLoaded.Invoke(scene, mode);
+            }
+        }
+
+        //修正死亡画面不面向玩家
         [HarmonyPatch(typeof(CBehaviorAction), nameof(CBehaviorAction.CreateOnceUIEffect))]
         internal class InjectCreateOnceUIEffect
         {
             private static void Postfix(BehaviorNode node, Object original, float livetime, float deletedelay)
             {
-                //Log.Info("InjectCreateOnceUIEffect: original.name=" + original.name + "  livetime=" + livetime + "  deletedelay=" + deletedelay);
+                Log.Info("InjectCreateOnceUIEffect: original.name=" + original.name + "  livetime=" + livetime + "  deletedelay=" + deletedelay);
                 if (original.name == "hub_die(Clone)")
                     original.Cast<Transform>().localEulerAngles = Vector3.zero;
             }
         }
 
+        //修正所有界面角度错误
         [HarmonyPatch(typeof(CBehaviorAction), nameof(CBehaviorAction.CreateUIEffect))]
         internal class InjectCreateUIEffect
         {
             private static void Postfix(BehaviorNode node, Object original, string effectname = "")
             {
-                //Log.Info("InjectCreateUIEffect: original.name=" + original.name + "  effectname=" + effectname);
+                Log.Info("InjectCreateUIEffect: original.name=" + original.name + "  effectname=" + effectname);
                 original.Cast<Transform>().localEulerAngles = Vector3.zero;
             }
         }
 
+        // 让血条显示到怪物上方而不是canvas上
+        [HarmonyPatch(typeof(OCBloodBar), nameof(OCBloodBar.UpdatePos))]
+        internal class InjectOCBloodBarUpdatePos
+        {
+            private static bool Prefix(OCBloodBar __instance)
+            {
+                __instance.m_UpdatePos = __instance.m_CalposTran.position;
+                return false;
+            }
+        }
+
+        [HarmonyPatch(typeof(OCBloodBar), nameof(OCBloodBar.LateUpdate))]
+        internal class InjectOCBloodBarLateUpdate
+        {
+            private static void Postfix(OCBloodBar __instance)
+            {
+                if (__instance.isShowBloodBar)
+                {
+                    __instance.hpbartrans.position = __instance.m_UpdatePos;
+                    if (__instance.BloodBar.ARTrans)
+                        __instance.BloodBar.ARTrans.localRotation = Quaternion.identity;
+                    if (__instance.BloodBar.SHTrans)
+                        __instance.BloodBar.SHTrans.localRotation = Quaternion.identity;
+                    if (__instance.BloodScale)
+                        __instance.BloodScale.m_RealMaxScale = 3;
+                }
+            }
+        }
+
+        // 取消护盾回复时的特效，因为无法缩放会导致整个屏幕闪一下
+        [HarmonyPatch(typeof(CBehaviorAction), nameof(CBehaviorAction.CreateEffectOnUINode))]
+        internal class InjectCreateEffectOnUINode
+        {
+            private static void Postfix(BehaviorNode node, string uiname, string nodename, Object original, float livetime = 0f)
+            {
+                Log.Info("CreateEffectOnUINode: original.name=" + original.name + "  uiname=" + uiname + "  nodename=" + nodename + "  livetime=" + livetime);
+                if (original.name == "0" && uiname == "PanelWar" && nodename == "hp")
+                    original.Cast<Transform>().Find("postion").gameObject.active = false;
+            }
+        }
+
+
+        [HarmonyPatch(typeof(CBehaviorAction), nameof(CBehaviorAction.CreateOnceEffectOnUINode))]
+        internal class InjectCreateOnceEffectOnUINode
+        {
+            private static void Postfix(BehaviorNode node, string uiname, string nodename, Object original, float livetime, float deletedelay)
+            {
+                Log.Info("InjectCreateOnceEffectOnUINode: original.name=" + original.name + "  uiname=" + uiname + "  nodename=" + nodename + "  livetime=" + livetime + "  deletedelay=" + deletedelay);
+                if (original.name == "shieldrecover_206_UIHub(Clone)" && uiname == "PanelWar" && nodename == "hp")
+                    original.Cast<Transform>().Find("postion").gameObject.active = false;
+            }
+        }
+
+
+        [HarmonyPatch(typeof(PC_Home_Panel_logic), nameof(PC_Home_Panel_logic.OnMonsterInfo))]
+        internal class InjectMainMenuCollection
+        {
+            private static void Postfix()
+            {
+                //修复点图鉴后粒子特效无法缩小导致闪爆屏幕的问题
+                MenuFix.FixCollectionMenu();
+            }
+        }
+
+        [HarmonyPatch(typeof(PCCharaterPanelManager), nameof(PCCharaterPanelManager.ShowCharaterPanel))]
+        internal class InjectPCCharaterPanelManager
+        {
+            private static void Postfix()
+            {
+                //修复选人界面的粒子特效朝向
+                MenuFix.FixCharacterMenu();
+            }
+        }
+
+        #endregion
+
+
+        #region 双持相关修改/射线检测
+
+        // 通过双持UI的启用来判定是否开启双持模式
         [HarmonyPatch(typeof(CBehaviorAction), nameof(CBehaviorAction.CreateEffect))]
         internal class InjectCreateEffect
         {
@@ -185,18 +273,14 @@ namespace VRMod.Patches
             }
         }
 
-        #endregion
-
-        //[HarmonyPatch(typeof(Game.CUnityUtility), nameof(Game.CUnityUtility.RayCastByScreenCenterPos))]
-        //internal class InjectRayCastByScreenCenterPos
-        //{
-        //    private static void Prefix(Camera camera, float dis, int mask, int filterMask)
-        //    {
-        //        //Log.Info("InjectRayCastByScreenCenterPos: camera.name=" + camera.name + "  dis=" + dis + "  mask=" + mask + "  filterMask=" + filterMask);
-        //    }
-        //}
-
-        #region 双持射线检测
+        [HarmonyPatch(typeof(Game.CUnityUtility), nameof(Game.CUnityUtility.RayCastByScreenCenterPos))]
+        internal class InjectRayCastByScreenCenterPos
+        {
+            private static void Prefix(Camera camera, float dis, int mask, int filterMask)
+            {
+                Log.Info("InjectRayCastByScreenCenterPos: camera.name=" + camera.name + "  dis=" + dis + "  mask=" + mask + "  filterMask=" + filterMask);
+            }
+        }
 
         // 狗的双持需要特别注入来修改用来检测的射线
 
@@ -209,11 +293,8 @@ namespace VRMod.Patches
             private static void Prefix(CSkillBase skill, CCartoonBase cartoon)
             {
                 Log.Info("InjectCrtArgSightAccPos: skill.WeaponTran.name=" + skill.WeaponTran.name + "  cartoon.animatorTrans.name=" + cartoon.animatorTrans);
-                if (VRPlayer.Instance.isDualWield)
-                {
-                    isCrtArgSightAccPos = true;
-                    isRightRay = (skill.WeaponTran.name == HeroCtrlMgr.HeroObj.PlayerCom.GetCurWeaponTran(HeroCtrlMgr.HeroObj.PlayerCom.CurWeaponID).name);
-                }
+                isCrtArgSightAccPos = true;
+                isRightRay = (skill.WeaponTran.name == HeroCtrlMgr.HeroObj.PlayerCom.GetCurWeaponTran(HeroCtrlMgr.HeroObj.PlayerCom.CurWeaponID).name);
             }
             private static void Postfix()
             {
@@ -230,6 +311,10 @@ namespace VRMod.Patches
                 if (isCrtArgSightAccPos)
                 {
                     __result = isRightRay ? VRPlayer.Instance.RightHand.aimRay : VRPlayer.Instance.LeftHand.aimRay;
+                    if(isRightRay)
+                        VRInputManager.Instance.VibrateRight(0.1f);
+                    else
+                        VRInputManager.Instance.VibrateLeft(0.1f);
                     Log.Info("InjectGetRayByScreenPos: isCrtArgSightAccPos=" + isCrtArgSightAccPos + "  isRightRay=" + isRightRay);
                     return false;
                 }
@@ -259,6 +344,10 @@ namespace VRMod.Patches
                 {
                     Log.Info("InjectCrtArgCameraCenterPos: skill.WeaponTran.name=" + skill.WeaponTran.name);
                     isCrtArgCameraCenterPos = true;
+                    if (isRightRay)
+                        VRInputManager.Instance.VibrateRight(0.3f);
+                    else
+                        VRInputManager.Instance.VibrateLeft(0.3f);
                     isRightRay = (skill.WeaponTran.name == HeroCtrlMgr.HeroObj.PlayerCom.GetCurWeaponTran(HeroCtrlMgr.HeroObj.PlayerCom.CurWeaponID).name);
                 }
             }
@@ -332,8 +421,7 @@ namespace VRMod.Patches
 
         #endregion
 
-
-
+        #region 彩虹射线修复
 
         [HarmonyPatch(typeof(BezierLineRenderer), nameof(BezierLineRenderer.Awake))]
         internal class InjectBezierLineRendererAwake
@@ -353,20 +441,15 @@ namespace VRMod.Patches
             }
         }
 
+        #endregion
 
-
-
+        #region CG相机修复
         [HarmonyPatch(typeof(CBehaviorAction), nameof(CBehaviorAction.ActiveCGCamera))]
         internal class InjectActiveCGCamera
         {
             private static void Prefix(BehaviorNode node, string cgname, bool isactive)
             {
-                Log.Info("ActiveCGCamera");
-                if (node != null && node.Own != null)
-                    Log.Info("ActiveCGCamera: " + node.Own.name);
-
-                Log.Info("ActiveCGCamera: cgname=" + cgname);
-                Log.Info("ActiveCGCamera: original.name=" + isactive);
+                Log.Info("ActiveCGCamera: cgname=" + cgname + " isactive=" + isactive);
             }
         }
 
@@ -375,10 +458,13 @@ namespace VRMod.Patches
         {
             private static void Prefix(BehaviorNode node, Object original, string cgname, Vector3 stratpos)
             {
-                Log.Info("CreateCGCamera");
-                if (node!=null&& node.Own!=null)
-                    Log.Info("CreateCGCamera: " + node.Own.name);
-
+                Camera cam = original.Cast<Transform>().GetComponentInChildren<Camera>();
+                if (cam != null)
+                {
+                    cam.stereoTargetEye = StereoTargetEyeMask.None;
+                    cam.enabled = false;
+                    VRPlayer.Instance.SetCGCamera(true, cam);
+                }
                 Log.Info("CreateCGCamera: cgname=" + cgname);
 
                 if (original != null)
@@ -391,31 +477,16 @@ namespace VRMod.Patches
         {
             private static void Prefix(BehaviorNode node)
             {
+                VRPlayer.Instance.SetCGCamera(false);
                 Log.Info("DestoryCGCamera");
                 if (node != null && node.Own != null)
                     Log.Info("DestoryCGCamera: " + node.Own.name);
             }
         }
 
-        [HarmonyPatch(typeof(PC_Home_Panel_logic), nameof(PC_Home_Panel_logic.OnMonsterInfo))]
-        internal class InjectMainMenuCollection
-        {
-            private static void Postfix()
-            {
-                //修复点图鉴后粒子特效无法缩小导致闪爆屏幕的问题
-                MenuFix.FixCollectionMenu();
-            }
-        }
+        #endregion
 
-        [HarmonyPatch(typeof(PCCharaterPanelManager), nameof(PCCharaterPanelManager.ShowCharaterPanel))]
-        internal class InjectPCCharaterPanelManager
-        {
-            private static void Postfix()
-            {
-                //修复选人界面的粒子特效朝向
-                MenuFix.FixCharacterMenu();
-            }
-        }
+        #region MISC
 
         [HarmonyPatch(typeof(CameraCtrl), nameof(CameraCtrl.Recoil))]
         internal class InjectCameraCtrl
@@ -455,5 +526,7 @@ namespace VRMod.Patches
             //在VR里要帮玩家把开头的更新路线提示点掉，才能加载进酒馆主界面
             //CUIManager.instance.transform.Find("Canvas_PC(Clone)/MenuRoot")?.gameObject.GetComponentInChildren<M1Button>()?.onClick?.Invoke();
         }
+
+        #endregion
     }
 }

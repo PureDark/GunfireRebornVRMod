@@ -103,10 +103,6 @@ namespace VRPatcher
 
         private static bool EnableVROptions(string path)
         {
-
-
-
-
             AssetsManager assetsManager = new AssetsManager();
             AssetsFileInstance assetsFileInstance = assetsManager.LoadAssetsFile(path, false, "");
             assetsManager.LoadClassDatabase(Path.Combine(VREnabler.VRPatcherPath, "cldb.dat"));

@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 using UI;
-using UnityEngine.Rendering.PostProcessing;
+using static VRMod.VRMod;
 
 namespace VRMod.UI
 {
@@ -17,7 +17,6 @@ namespace VRMod.UI
 
         public static void HomeFix()
         {
-
             // 第一次初始化一定是在Home场景，处理一下相机
             var CamPoint = GameObject.Find("CamPoint_Camera");
             if (CamPoint)
@@ -32,13 +31,11 @@ namespace VRMod.UI
 
             var canvasRoot = CUIManager.instance.transform.Find("Canvas_PC(Clone)");
             canvasRoot.transform.localScale = new Vector3(0.002f,0.002f,0.002f);
-            canvasRoot.transform.position = Vector3.zero;
 
             // 原来的UICamera可以禁用掉了，但是gameObject不能禁用，需要上面的PostProcessingVolume
             var UICamera = canvasRoot.Find("Camera");
-            //UICamera.gameObject.active = false;
             UICamera.GetComponent<Camera>().stereoTargetEye = StereoTargetEyeMask.None;
-            UICamera.GetComponent<Camera>().enabled = false;
+            //UICamera.GetComponent<Camera>().enabled = false;
 
             // 将主菜单转为世界坐标，才能在VR里使用菜单
             var canvases = canvasRoot.gameObject.GetComponentsInChildren<Canvas>(true);
@@ -65,15 +62,15 @@ namespace VRMod.UI
             }
 
             // 如果已经有上一次的武器图鉴和怪物图鉴存在，销毁掉
-            //var weapon = CUIManager.instance.MainDialogCanvas.transform.Find("Weapon");
-            //if(weapon)
-            //    Object.Destroy(weapon.gameObject);
-            //var monster = CUIManager.instance.MainDialogCanvas.transform.Find("Monster");
-            //if (monster)
-            //    Object.Destroy(monster.gameObject);
+            var weapon = CUIManager.instance.MainDialogCanvas.transform.Find("Weapon");
+            if (weapon)
+                Object.Destroy(weapon.gameObject);
+            var monster = CUIManager.instance.MainDialogCanvas.transform.Find("Monster");
+            if (monster)
+                Object.Destroy(monster.gameObject);
             //武器图鉴和怪物图鉴的模型要显示到UI所在的位置
             var ModelRoot = GameObject.Find("3000101");
-            var weapon = ModelRoot.transform.Find("Weapon");
+            weapon = ModelRoot.transform.Find("Weapon");
             if (weapon != null)
             {
                 weapon.parent = CUIManager.instance.MainDialogCanvas.transform;
@@ -82,7 +79,7 @@ namespace VRMod.UI
                 weapon.localScale = new Vector3(1000, 1000, 1000);
             }
 
-            var monster = ModelRoot.transform.Find("Monster");
+            monster = ModelRoot.transform.Find("Monster");
             if (monster != null)
             {
                 monster.parent = CUIManager.instance.MainDialogCanvas.transform;

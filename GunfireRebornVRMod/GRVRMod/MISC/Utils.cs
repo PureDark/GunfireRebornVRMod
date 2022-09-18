@@ -1,12 +1,28 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using System.Text;
 using UnityEngine;
+using static System.Collections.Specialized.BitVector32;
 
 namespace VRMod
 {
     internal static class Utils
     {
+        public static void SaveRTToFile(RenderTexture rt, string name)
+        {
+            RenderTexture.active = rt;
+            Texture2D tex = new Texture2D(rt.width, rt.height, TextureFormat.RGBA32, false);
+            tex.ReadPixels(new Rect(0, 0, rt.width, rt.height), 0, 0);
+            RenderTexture.active = null;
+
+            byte[] bytes;
+            bytes = tex.EncodeToPNG();
+
+            string path = Application.streamingAssetsPath + "/" + name + ".png";
+            System.IO.File.WriteAllBytes(path, bytes);
+            Debug.Log("Saved to " + path);
+        }
 
         public static void SetLayerRecursively(this GameObject inst, int layer)
         {
@@ -14,6 +30,13 @@ namespace VRMod
             int children = inst.transform.childCount;
             for (int i = 0; i < children; ++i)
                 inst.transform.GetChild(i).gameObject.SetLayerRecursively(layer);
+        }
+
+
+        public static Vector3 GetFlatDirection(this Vector3 forward)
+        {
+            forward.y = 0;
+            return forward.normalized;
         }
 
         public static T GetOrAddComponent<T>(this GameObject gameObject) where T : Component

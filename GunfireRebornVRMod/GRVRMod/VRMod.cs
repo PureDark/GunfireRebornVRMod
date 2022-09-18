@@ -36,7 +36,6 @@ namespace VRMod
             Instance = this;
             Log.Setup(base.Log);
 
-            HarmonyPatches.PatchAll();
             if (SteamVRRunningCheck())
             {
                 InitVR();
@@ -50,8 +49,8 @@ namespace VRMod
         private void InitVR()
         {
             vrEnabled = true;
-            VRAssets.Init();
             HarmonyPatches.PatchAll();
+            VRAssets.Init();
             SetupIL2CPPClassInjections();
         }
 

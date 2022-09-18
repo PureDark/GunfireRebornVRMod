@@ -18,10 +18,13 @@ namespace VRMod.Player.MotionControlls
         private LineRenderer ray;
         public Transform muzzle;
         public Camera eventCamera;
-        public bool uiMode = false;
         public EventSystem eventSystem;
         public StandaloneInputModule inputModule;
         public LayerMask rayCastMask = -967074285;
+        public Shader savedLaserShader;
+
+        public bool uiMode = false;
+        public bool hideLaser = false;
 
         public Ray aimRay
         {
@@ -43,6 +46,7 @@ namespace VRMod.Player.MotionControlls
             this.model = transform.Find("Model");
             this.ray = transform.GetComponentInChildren<LineRenderer>();
             this.ray.sortingOrder = 999;
+            this.savedLaserShader = this.ray.material.shader;
             this.muzzle = ray.transform;
             this.eventCamera = muzzle.GetComponent<Camera>();
 
@@ -66,10 +70,24 @@ namespace VRMod.Player.MotionControlls
             this.inputModule = inputModule;
         }
 
+        public void SetUIMode(bool uiMode)
+        {
+            this.uiMode = uiMode;
+        }
+
         private void LateUpdate()
         {
-            if (ray.gameObject.activeSelf)
+            if (hideLaser)
             {
+                ray.enabled = false;
+            }
+            else if (ray.gameObject.activeSelf)
+            {
+            if (uiMode)
+                ray.material.shader = VRAssets.LaserUnlit;
+            else
+                ray.material.shader = savedLaserShader;
+                ray.enabled = true;
                 ray.SetPosition(0, muzzle.position);
                 ray.SetPosition(1, GetRayHitPosition());
             }

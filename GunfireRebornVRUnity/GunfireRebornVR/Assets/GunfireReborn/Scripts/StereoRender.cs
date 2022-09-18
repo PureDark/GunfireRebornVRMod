@@ -8,16 +8,18 @@ using Valve.VR;
 using System;
 
 [ExecuteInEditMode]
-public class StereoRender : MonoBehaviour, IAfterTransparentPass
+public class StereoRender : MonoBehaviour, IAfterOpaquePass
 {
-    private RenderTexture leftFarRT, rightFarRT;
-    private RenderTexture leftNearRT, rightNearRT;
-    private RenderTexture leftUIRT, rightUIRT;
+
+    private Camera _camera;
+    public RenderTexture leftFarRT, rightFarRT;
+    public RenderTexture leftNearRT, rightNearRT;
+    public RenderTexture leftUIRT, rightUIRT;
     public StereoRenderPass stereoPass;
     public float separation = 0.031f;
     private float nearCamClipStart = 0.02f;
-    private float nearCamClipEnd = 0.5f;
-    private float farCamClipStart = 0.5f;
+    private float nearCamClipEnd = 0.3f;
+    private float farCamClipStart = 0.3f;
     private float farCamClipEnd = 800f;
     private float UICamClipStart = 0.02f;
     private float UICamClipEnd = 100f;
@@ -25,6 +27,8 @@ public class StereoRender : MonoBehaviour, IAfterTransparentPass
     public void Awake()
     {
         var cullingMask = -966787561;
+
+        _camera = gameObject.GetComponent<Camera>();
 
         var head = transform.Find("Head");
         if (!head)
@@ -48,6 +52,7 @@ public class StereoRender : MonoBehaviour, IAfterTransparentPass
         leftFarCam.fieldOfView = 109.363f;
         leftFarCam.nearClipPlane = farCamClipStart;
         leftFarCam.farClipPlane = farCamClipEnd;
+        leftFarCam.depth = 0;
 
         var leftNearEye = leftFarEye.Find("LeftNearEye");
         if (!leftNearEye)
@@ -64,6 +69,7 @@ public class StereoRender : MonoBehaviour, IAfterTransparentPass
         leftNearCam.fieldOfView = 109.363f;
         leftNearCam.nearClipPlane = nearCamClipStart;
         leftNearCam.farClipPlane = nearCamClipEnd;
+        leftNearCam.depth = 1;
 
         var leftUITran = leftFarEye.Find("LeftUICam");
         if (!leftUITran)
@@ -77,7 +83,7 @@ public class StereoRender : MonoBehaviour, IAfterTransparentPass
         leftUICam.stereoTargetEye = StereoTargetEyeMask.None;
         leftUICam.clearFlags = CameraClearFlags.SolidColor;
         leftUICam.backgroundColor = new Color(0, 0, 0, 0);
-        leftUICam.fieldOfView =  109.363f;
+        leftUICam.fieldOfView = 109.363f;
         leftUICam.nearClipPlane = UICamClipStart;
         leftUICam.farClipPlane = UICamClipEnd;
 
@@ -96,6 +102,7 @@ public class StereoRender : MonoBehaviour, IAfterTransparentPass
         rightFarCam.fieldOfView = 109.363f;
         rightFarCam.nearClipPlane = farCamClipStart;
         rightFarCam.farClipPlane = farCamClipEnd;
+        rightFarCam.depth = 0;
 
 
         var rightNearEye = rightFarEye.Find("RightNearEye");
@@ -111,9 +118,10 @@ public class StereoRender : MonoBehaviour, IAfterTransparentPass
         rightNearCam.stereoTargetEye = StereoTargetEyeMask.None;
         rightNearCam.clearFlags = CameraClearFlags.SolidColor;
         rightNearCam.backgroundColor = new Color(0, 0, 0, 0);
-        rightNearCam.fieldOfView =  109.363f;
+        rightNearCam.fieldOfView = 109.363f;
         rightNearCam.nearClipPlane = nearCamClipStart;
         rightNearCam.farClipPlane = nearCamClipEnd;
+        rightNearCam.depth = 1;
 
         var rightUITran = leftFarEye.Find("RightUICam");
         if (!rightUITran)
@@ -152,13 +160,13 @@ public class StereoRender : MonoBehaviour, IAfterTransparentPass
         int width = (XRSettings.eyeTextureWidth <= 0) ? 2208 : XRSettings.eyeTextureWidth;
         int height = (XRSettings.eyeTextureHeight <= 0) ? 2452 : XRSettings.eyeTextureHeight;
         if (leftFarRT == null)
-            leftFarRT = new RenderTexture(width, height, 8, RenderTextureFormat.ARGB32);
+            leftFarRT = new RenderTexture(width, height, 24, RenderTextureFormat.ARGB32);
         if (rightFarRT == null)
-            rightFarRT = new RenderTexture(width, height, 8, RenderTextureFormat.ARGB32);
+            rightFarRT = new RenderTexture(width, height, 24, RenderTextureFormat.ARGB32);
         if (leftNearRT == null)
-            leftNearRT = new RenderTexture(width, height, 8, RenderTextureFormat.ARGB32);
+            leftNearRT = new RenderTexture(width, height, 24, RenderTextureFormat.ARGB32);
         if (rightNearRT == null)
-            rightNearRT = new RenderTexture(width, height, 8, RenderTextureFormat.ARGB32);
+            rightNearRT = new RenderTexture(width, height, 24, RenderTextureFormat.ARGB32);
         if (leftUIRT == null)
             leftUIRT = new RenderTexture(width, height, 24, RenderTextureFormat.ARGB32);
         if (rightUIRT == null)
@@ -175,80 +183,119 @@ public class StereoRender : MonoBehaviour, IAfterTransparentPass
         rightNearCam.targetTexture = rightNearRT;
         leftUICam.targetTexture = leftUIRT;
         rightUICam.targetTexture = rightUIRT;
+
+        stereoPass = new StereoRenderPass(this);
+
     }
 
-    public ScriptableRenderPass GetPassToEnqueue(RenderTextureDescriptor baseDescriptor, RenderTargetHandle colorHandle, RenderTargetHandle depthHandle)
+    void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.L))
+        {
+            Debug.Log("L Pressed!");
+            Debug.Log("Stereo enabled = " + _camera.stereoEnabled);
+
+            var t = OpenVR.System.GetProjectionMatrix(EVREye.Eye_Left, 0.1f, 300f);
+            var string1 = t.m0 + " " + t.m1 + " " + t.m2 + " " + t.m3 + " " + t.m4 + " " + t.m5 + " " + t.m6 + " " + t.m7 + " " + t.m8 + " " + t.m9 + " " + t.m10 + " " + t.m11 + " " + t.m12 + " " + t.m13 + " " + t.m14 + " " + t.m15;
+            t = OpenVR.System.GetProjectionMatrix(EVREye.Eye_Right, 0.1f, 300f);
+            var string2 = t.m0 + " " + t.m1 + " " + t.m2 + " " + t.m3 + " " + t.m4 + " " + t.m5 + " " + t.m6 + " " + t.m7 + " " + t.m8 + " " + t.m9 + " " + t.m10 + " " + t.m11 + " " + t.m12 + " " + t.m13 + " " + t.m14 + " " + t.m15;
+
+
+            Debug.Log("Left projectionMatrix = " + _camera.GetStereoProjectionMatrix(Camera.StereoscopicEye.Left));
+            Debug.Log("Right projectionMatrix = " + _camera.GetStereoProjectionMatrix(Camera.StereoscopicEye.Right));
+            Debug.Log("Left projectionMatrixO = " + string1);
+            Debug.Log("Right projectionMatrixO = " + string2);
+        }
+    }
+
+    public ScriptableRenderPass GetPassToEnqueue(RenderTextureDescriptor baseDescriptor, RenderTargetHandle colorAttachmentHandle, RenderTargetHandle depthAttachmentHandle)
     {
         if (stereoPass == null)
-            stereoPass = new StereoRenderPass(this, baseDescriptor, colorHandle);
+            stereoPass = new StereoRenderPass(this);
+        stereoPass.Setup(baseDescriptor, colorAttachmentHandle);
         return stereoPass;
     }
 
+    public void Execute(ScriptableRenderer renderer, ScriptableRenderContext context, ref RenderingData renderingData)
+    {
+        if (stereoPass.isRendering)
+            stereoPass.Execute(renderer, context, ref renderingData);
+    }
+
+    //因为IL2CPP的限制，没法直接继承ScriptableRenderPass，转为注入在管线中没有特别大作用的pass
+    //在StereoRenderPassPatches里将StartXRRenderingPass和EndXRRenderingPass都禁用了
     public class StereoRenderPass : ScriptableRenderPass
     {
+
         private static readonly string k_RenderTag = "Render Stereo Texture";
         //获取shader中的属性
         private static readonly int TempTargetId = Shader.PropertyToID("_TempTargetVREye");
         private StereoRender stereoRender;
         private Material stereoMaterial;
+        public bool isRendering;
+        public float lastTime = 0;
 
         RenderTextureDescriptor baseDescriptor;
         RenderTargetHandle colorHandle;
 
-        //构造函数初始化给shader和材质赋值
-        public StereoRenderPass(StereoRender stereoRender, RenderTextureDescriptor baseDescriptor, RenderTargetHandle colorHandle)
+        public StereoRenderPass(StereoRender stereoRender)
         {
+            this.stereoRender = stereoRender;
+
             var shader = Shader.Find("PureDark/StereoRender");
             if (shader == null)
             {
                 Debug.LogError("Shader not found.");
                 return;
             }
-            this.stereoRender = stereoRender;
-
             stereoMaterial = CoreUtils.CreateEngineMaterial(shader);
-            stereoMaterial.SetTexture("_LeftFarTex", stereoRender.leftFarRT);
-            stereoMaterial.SetTexture("_RightFarTex", stereoRender.rightFarRT);
-            stereoMaterial.SetTexture("_LeftNearTex", stereoRender.leftNearRT);
-            stereoMaterial.SetTexture("_RightNearTex", stereoRender.rightNearRT);
-            stereoMaterial.SetTexture("_LeftUITex", stereoRender.leftUIRT);
-            stereoMaterial.SetTexture("_RightUITex", stereoRender.rightUIRT);
+            stereoMaterial.SetTexture("_LeftFirstTex", stereoRender.leftNearRT);
+            stereoMaterial.SetTexture("_RightFirstTex", stereoRender.rightNearRT);
+            stereoMaterial.SetTexture("_LeftLastTex", stereoRender.leftUIRT);
+            stereoMaterial.SetTexture("_RightLastTex", stereoRender.rightUIRT);
+            stereoMaterial.SetFloat("_AlphaMultiplier", 2);
+        }
+
+        //获得渲染目标的引用
+        public void Setup(RenderTextureDescriptor baseDescriptor, RenderTargetHandle colorHandle)
+        {
             this.baseDescriptor = baseDescriptor;
             this.colorHandle = colorHandle;
-            Debug.Log("baseDescriptor:" + baseDescriptor.width + "x" + baseDescriptor.height);
-            Debug.Log("XRSettings:" + XRSettings.eyeTextureWidth + "x" + XRSettings.eyeTextureHeight);
+            isRendering = true;
+            // 因为Postprocessing一直会替换主相机的culling mask，要替换回0，不需要主相机渲染任何东西
+            stereoRender._camera.cullingMask = 0;
         }
 
         public override void Execute(ScriptableRenderer renderer, ScriptableRenderContext context, ref RenderingData renderingData)
         {
-            if (!stereoRender || !stereoRender.enabled)
+            if (!stereoRender.enabled)
                 return;
             if (stereoMaterial == null)
             {
                 Debug.LogError("Material not created.");
                 return;
             }
+
             //获取命令缓冲区并为其分配名称
             var cmd = CommandBufferPool.Get(k_RenderTag);
             //定义渲染过程
-            Render(cmd, ref renderingData);
+            Render(cmd);
             //执行渲染命令
             context.ExecuteCommandBuffer(cmd);
             //释放该渲染命令缓冲区
             CommandBufferPool.Release(cmd);
+
+            isRendering = false;
         }
 
-        void Render(CommandBuffer cmd, ref RenderingData renderingData)
+        void Render(CommandBuffer cmd)
         {
-            //从渲染数据中得到相机数据
-            ref var cameraData = ref renderingData.cameraData;
+            //获得屏幕RT
             var source = colorHandle.Identifier();
             int destination = TempTargetId;
-            //var leftEyeID = new RenderTargetIdentifier(zoomBlur.LeftEye);
-            //var RightEyeID = new RenderTargetIdentifier(zoomBlur.RightEye);
             //获取宽高
-            var w = cameraData.camera.scaledPixelWidth;
-            var h = cameraData.camera.scaledPixelHeight;
+            var w = baseDescriptor.width;
+            var h = baseDescriptor.height;
             //使用临时纹理复制当前屏幕纹理
             cmd.GetTemporaryRT(destination, w, h, 0, FilterMode.Point, RenderTextureFormat.Default);
             cmd.Blit(source, destination);
@@ -258,3 +305,4 @@ public class StereoRender : MonoBehaviour, IAfterTransparentPass
     }
 
 }
+

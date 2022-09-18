@@ -18,14 +18,22 @@
          "sources" : []
       },
       "/actions/gameplay" : {
-         "chords" : [],
+         "chords" : [
+            {
+               "inputs" : [
+                  [ "/user/hand/right/input/grip", "click" ],
+                  [ "/user/hand/right/input/b", "click" ]
+               ],
+               "output" : "/actions/gameplay/in/dpadu_ping"
+            }
+         ],
          "haptics" : [
             {
-               "output" : "/actions/gameplay/out/haptic",
+               "output" : "/actions/gameplay/out/hapticleft",
                "path" : "/user/hand/left/output/haptic"
             },
             {
-               "output" : "/actions/gameplay/out/haptic",
+               "output" : "/actions/gameplay/out/hapticright",
                "path" : "/user/hand/right/output/haptic"
             }
          ],
@@ -71,7 +79,7 @@
             {
                "inputs" : {
                   "click" : {
-                     "output" : "/actions/gameplay/in/dpadu_ping"
+                     "output" : "/actions/gameplay/in/r3_speak"
                   },
                   "position" : {
                      "output" : "/actions/gameplay/in/rs_rotate"
@@ -211,24 +219,6 @@
             },
             {
                "inputs" : {
-                  "click" : {
-                     "output" : "/actions/gameplay/in/interactui"
-                  }
-               },
-               "mode" : "button",
-               "path" : "/user/hand/left/input/trigger"
-            },
-            {
-               "inputs" : {
-                  "click" : {
-                     "output" : "/actions/gameplay/in/interactui"
-                  }
-               },
-               "mode" : "button",
-               "path" : "/user/hand/right/input/trigger"
-            },
-            {
-               "inputs" : {
                   "north" : {
                      "output" : "/actions/gameplay/in/a_jump"
                   }
@@ -246,6 +236,38 @@
                   }
                },
                "mode" : "trigger",
+               "path" : "/user/hand/right/input/trigger"
+            },
+            {
+               "inputs" : {
+                  "pull" : {
+                     "output" : "/actions/gameplay/in/lt_dualwieldfire"
+                  }
+               },
+               "mode" : "trigger",
+               "path" : "/user/hand/left/input/trigger"
+            },
+            {
+               "inputs" : {
+                  "click" : {
+                     "output" : "/actions/gameplay/in/rb_dualwield2ndskill"
+                  }
+               },
+               "mode" : "button",
+               "parameters" : {
+                  "click_activate_threshold" : "1",
+                  "click_deactivate_threshold" : "0.8",
+                  "force_input" : "force"
+               },
+               "path" : "/user/hand/left/input/grip"
+            },
+            {
+               "inputs" : {
+                  "click" : {
+                     "output" : "/actions/gameplay/in/interactui"
+                  }
+               },
+               "mode" : "button",
                "path" : "/user/hand/right/input/trigger"
             }
          ]
@@ -268,7 +290,7 @@
    "category" : "steamvr_input",
    "controller_type" : "knuckles",
    "description" : "",
-   "name" : "为 Index Controller 保存的 GunfireReborn 配置",
+   "name" : "GunfireReborn Index Controller",
    "options" : {},
    "simulated_actions" : []
 }

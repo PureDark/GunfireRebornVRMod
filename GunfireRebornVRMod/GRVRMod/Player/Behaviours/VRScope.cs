@@ -19,6 +19,7 @@ namespace VRMod.Player.Behaviours
         private float scaleLerp = 0f;
 
         public bool IsScoping { get; private set; }
+        public bool IsShowing { get; private set; }
 
         public void Setup(RifleWeaponData weaponData)
         {
@@ -38,11 +39,11 @@ namespace VRMod.Player.Behaviours
             if (!circleScope || weaponData == null)
                 return;
 
-            if(Time.timeScale == 0 && IsScoping)
+            if(VRPlayer.Instance.isUIMode && IsScoping)
             {
                 SetIsScoping(false);
             }
-            else if(Time.timeScale > 0 && !IsScoping)
+            else if(!VRPlayer.Instance.isUIMode && !IsScoping)
             {
                 SetIsScoping(true);
             }
@@ -53,9 +54,9 @@ namespace VRMod.Player.Behaviours
                 VRPlayer.Instance.RightHand.eventCamera.transform.rotation = Quaternion.LookRotation(VRPlayer.Instance.RightHand.eventCamera.transform.forward, Vector3.up);
             }
 
-            bool show = VRInputManager.Instance.vrDevice.LT_WeaponSkill().axis > 0.9f;
-            if (scaleLerp != (show ? 1f : 0f))
-                scaleLerp = Mathf.Clamp(scaleLerp + (show ? Time.unscaledDeltaTime : -Time.unscaledDeltaTime) * 6, 0f, 1f);
+            IsShowing = VRInputManager.Instance.vrDevice.LT_WeaponSkill.axis > 0.9f && !VRPlayer.Instance.isUIMode;
+            if (scaleLerp != (IsShowing ? 1f : 0f))
+                scaleLerp = Mathf.Clamp(scaleLerp + (IsShowing ? Time.unscaledDeltaTime : -Time.unscaledDeltaTime) * 6, 0f, 1f);
             circleScope.transform.localScale = Vector3.Lerp(Vector3.zero, weaponData.scopeScale, scaleLerp);
         }
 

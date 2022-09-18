@@ -106,6 +106,7 @@
     <Compile Include="Assets\CurvedUI\Scripts\Experimental\CurvedUITMPInputFieldCaret.cs" />
     <Compile Include="Assets\CurvedUI\Scripts\Experimental\CurvedUITMPSubmesh.cs" />
     <Compile Include="Assets\CurvedUI\Scripts\OptionalDependencyAttribute.cs" />
+    <Compile Include="Assets\GunfireReborn\Scripts\StereoMergeRender.cs" />
     <Compile Include="Assets\GunfireReborn\Scripts\StereoRender.cs" />
     <Compile Include="Assets\GunfireReborn\Scripts\Test.cs" />
     <Compile Include="Assets\GunfireReborn\Scripts\UIPointer.cs" />
@@ -117,6 +118,7 @@
     <None Include="Assets\CurvedUI\Demo Scenes\Demo Scenes Content\OverlayBlend.shader" />
     <None Include="Assets\GunfireReborn\CustomShaders\StereoRender.shader" />
     <None Include="Assets\GunfireReborn\CustomShaders\LWRPUnlit.shader" />
+    <None Include="Assets\GunfireReborn\CustomShaders\PreRenderRT.shader" />
     <None Include="Assets\CurvedUI\CurvedUI_changelog.txt" />
     <Reference Include="Unity.RenderPipelines.Core.Editor">
       <HintPath>F:/GithubMods/GunfireReborn/GunfireRebornVR/GunfireRebornVRUnity/GunfireRebornVR/Library/ScriptAssemblies/Unity.RenderPipelines.Core.Editor.dll</HintPath>

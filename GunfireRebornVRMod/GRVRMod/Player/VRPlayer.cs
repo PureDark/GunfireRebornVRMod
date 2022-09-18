@@ -14,6 +14,7 @@ using VRMod.Player.Behaviours;
 using VRMod.Player.GameData;
 using VRMod.Player.MotionControlls;
 using VRMod.Player.VRInput;
+using VRMod.UI;
 using VRMod.UI.Pointers;
 using static VRMod.Player.MotionControlls.HandController;
 using static VRMod.VRMod;
@@ -34,11 +35,9 @@ namespace VRMod.Player
         public HandController LeftHand { get; private set; }
         public HandController RightHand { get; private set; }
         public StereoRender StereoRender { get; private set; }
-        public VRBattleUI vrBattleUI { get; private set; }
-
-        public bool IsReadyForBattle { get; private set; }
 
         public bool isHome = false;
+        public bool isHomeFixed = false;
         public bool isUIMode = false;
 
         private void Awake()
@@ -51,7 +50,6 @@ namespace VRMod.Player
             }
             Instance = this;
             isHome = true;
-
             SteamVR_Settings.instance.poseUpdateMode = SteamVR_UpdateModes.OnLateUpdate;
             SteamVR.Initialize(false);
 
@@ -73,6 +71,9 @@ namespace VRMod.Player
                 StereoRender = Head.gameObject.AddComponent<StereoRender>();
 
                 ScreenCam = Head.Find("ScreenCam")?.GetComponent<Camera>();
+                ScreenCam.clearFlags = CameraClearFlags.SolidColor;
+                ScreenCam.backgroundColor = new Color(0, 0, 0, 0);
+                ScreenCam.cullingMask = 0;
 
                 LeftHand = transform.Find("LeftHand").gameObject.AddComponent<HandController>();
                 RightHand = transform.Find("RightHand").gameObject.AddComponent<HandController>();
@@ -82,12 +83,14 @@ namespace VRMod.Player
 
             Origin = transform.parent;
             SetOriginHome();
+            SetupHome();
 
             CUIManager.instance.gameObject.transform.parent = Origin;
             var canvasRoot = CUIManager.instance.transform.Find("Canvas_PC(Clone)");
             canvasRoot.position = new Vector3(32.8f, 3.7f, 16f);
             canvasRoot.localEulerAngles = new Vector3(0, 0, 0);
             DontDestroyOnLoad(Origin);
+            Log.Info("SystemInfo.graphicsMultiThreaded=" + SystemInfo.graphicsMultiThreaded);
         }
 
         public void ToggleEventCamera(bool force = false)
@@ -130,43 +133,70 @@ namespace VRMod.Player
 
         void FixedUpdate()
         {
-            if (!isHome)
+            if (!isHome && !isUIMode && !isInCG)
             {
                 // 每秒转50度，太快再后期调整吧
-                if (VRInputManager.Instance.vrDevice.RightStick.State)
-                    Origin.Rotate(Vector3.up, VRInputManager.Instance.vrDevice.RightStick.X);
-                else if(VRInputManager.Instance.vrDevice.SnapTurnLeft().stateDown)
-                    Origin.Rotate(Vector3.up, -60);
-                else if (VRInputManager.Instance.vrDevice.SnapTurnRight().stateDown)
-                    Origin.Rotate(Vector3.up, 60);
+                if (VRInputManager.Device.RightStick.State)
+                    Origin.Rotate(Vector3.up, VRInputManager.Device.RightStick.X);
+                else if(VRInputManager.Device.SnapTurnLeft.stateDown)
+                    Origin.Rotate(Vector3.up, -45);
+                else if (VRInputManager.Device.SnapTurnRight.stateDown)
+                    Origin.Rotate(Vector3.up, 45);
+            }
+            if (isHome && !isHomeFixed)
+            {
+                if (!GameObject.Find("CamPoint_Camera"))
+                    return;
+                ScreenCam.gameObject.active = true;
+                //ScreenCam.enabled = true;
+                MenuFix.HomeFix();
+                ToggleEventCamera(true);
+                SetUIMode(true);
+                isHomeFixed = true;
             }
         }
+
+        #region Motion Controls
 
         public Vector3 offsetOverride = new Vector3(0, -0.08f, -0.15f);
         private NewPlayerObject heroObj;
         public List<BezierLineRenderer> bezierLineRenderers = new List<BezierLineRenderer>();
 
-        private int lastWeaponSID;
+        public VRBattleUI vrBattleUI;
+        public bool IsReadyForBattle;
+
+        private int lastWeaponID;
         private float aimSwitchDelay = 1f;
 
+        private FPSCamMotionCtrl fpsCamMotionCtrl;
         private Transform HeroSkillHand;
         private Animator HeroSkillHandAnimator;
         private Transform HeroWeaponHand;
         private Animator HeroWeaponHandAnimator;
         private Transform WeaponLeftHand;
         private Animator WeaponAnimator;
+        private Transform Muzzle;
+
+        // 左手的模型，直接从技能手复制一份
+        private Transform LeftHandMesh;
 
         private bool isInIdleState = false;
         private bool isEnteringPrimarySkillState = false;
         private bool isInPrimarySkillState = false;
         private bool isExitingPrimarySkillState = false;
+        private bool isTwoHanded = false;
+        private bool isInCG = false;
+        private Transform CGCamera;
+
+        private Vector3 velocity = Vector3.zero;
+        private Quaternion deriv = Quaternion.identity;
+        private VRScope vrScope;
 
         public bool isDualWield { get { return dualWieldAKGameObj? dualWieldAKGameObj.enabled : false; } }
 
         private AkGameObj dualWieldAKGameObj;
 
         public Dictionary<int, float> states = new Dictionary<int, float>();
-
 
         public void SetDualWield(Transform dualWieldTrans)
         {
@@ -179,7 +209,6 @@ namespace VRMod.Player
         // 在LateUpdate里才能覆盖英雄身体的位置和朝向
         void LateUpdate()
         {
-            
             if (Input.GetKeyUp(KeyCode.J))
             {
                 ToggleEventCamera();
@@ -187,6 +216,7 @@ namespace VRMod.Player
             if (Input.GetKeyUp(KeyCode.P))
             {
                 ScreenCam.enabled = !ScreenCam.enabled;
+                //ScreenCam.cullingMask = (ScreenCam.cullingMask == 0) ? -1 : 0;
             }
             if (Input.GetKeyUp(KeyCode.KeypadPlus))
             {
@@ -212,8 +242,16 @@ namespace VRMod.Player
             {
                 offsetOverride = new Vector3(offsetOverride.x + 0.01f, offsetOverride.y, offsetOverride.z);
             }
-            if (!isUIMode && !isHome && IsReadyForBattle && HeroCameraManager.HeroTran)
+            if (isInCG)
             {
+                Origin.position = CGCamera.position;
+                Origin.rotation = Quaternion.LookRotation(CGCamera.forward.GetFlatDirection(), Vector3.up);
+            }
+            else if (!isUIMode && !isHome && IsReadyForBattle && HeroCameraManager.HeroTran)
+            {
+                // 时刻检查并禁用FPSCam的镜头控制脚本
+                fpsCamMotionCtrl.enabled = false;
+
                 // 默认大小在第一人称下看着太大了，需要缩小一点
                 CameraManager.MainCamera.localScale = new Vector3(0.67f, 0.67f, 0.67f);
 
@@ -228,7 +266,7 @@ namespace VRMod.Player
                 var hand = RightHand;
 
                 // 左手用技能时转为左手瞄准，松开后延迟0.5秒变回右手
-                bool isLeftHandPressed = VRInputManager.Instance.vrDevice.RB_SecondarySkill().state || VRInputManager.Instance.vrDevice.LB_PrimarySkill().state;
+                bool isLeftHandPressed = VRInputManager.Device.RB_SecondarySkill.state || VRInputManager.Device.LB_PrimarySkill.state;
 
                 bool isSecondarySkill = HeroSkillHandAnimator.IsPlaying(heroData.secondarySkillHash);
 
@@ -253,7 +291,7 @@ namespace VRMod.Player
                     aimSwitchDelay = 0.5f;
                 if (aimSwitchDelay > 0 || isSecondarySkill || isPrimarySkill)
                 {
-                    aimSwitchDelay -= Time.deltaTime;
+                    aimSwitchDelay -= 0.013f;
                     hand = LeftHand;
                 }
 
@@ -265,13 +303,13 @@ namespace VRMod.Player
                 bool hideWeaponLeftHand = false;
 
                 // 不放技能时默认隐藏技能手
-                if (HeroSkillHand != null)
+                if (HeroSkillHand)
                 {
                     bool isPlaying = aimSwitchDelay > 0 || isSecondarySkill || isPrimarySkill;
                     HeroSkillHand.localScale = isPlaying ? Vector3.one : Vector3.zero;
                     hideWeaponLeftHand = isPlaying;
                 }
-                if (HeroWeaponHand != null)
+                if (HeroWeaponHand)
                 {
                     bool isPlaying = HeroWeaponHandAnimator.IsPlaying() || isSecondarySkill || isPrimarySkill;
                     HeroWeaponHand.localScale = HeroWeaponHandAnimator.IsPlaying() ? Vector3.one : Vector3.zero;
@@ -287,15 +325,19 @@ namespace VRMod.Player
                         states.Add(state.fullPathHash, WeaponAnimator.GetCurrentAnimatorStateInfo(0).m_NormalizedTime);
                 }
 
+                if (LeftHandMesh)
+                    LeftHandMesh.localScale = hideWeaponLeftHand || isDualWield ? Vector3.zero : new Vector3(0.67f, 0.67f, 0.67f);
+
                 var currWeapon = HeroCameraManager.HeroObj.PlayerCom.GetCurWeapon(HeroCameraManager.HeroObj.PlayerCom.CurWeaponID);
 
                 var weaponIsShow = true;
                 switch (heroData.sid)
                 {
                     case 206:
+                    case 207:
                     case 213:
                     case 215:
-                        // 鸟、狐狸、龟龟
+                        // 鸟、老虎、龟龟、狐狸
                         // 放主要技能时隐藏武器双手
                         if (currWeapon != null)
                         {
@@ -320,16 +362,19 @@ namespace VRMod.Player
                     var weaponSID = HeroCameraManager.HeroObj.PlayerCom.CurWeaponSID;
                     var weaponData = WeaponDatas.GetWeaponData(weaponSID);
                     // 切枪时初始化枪械相关引用
-                    if (weaponSID != lastWeaponSID)
+                    if (HeroCameraManager.HeroObj.PlayerCom.CurWeaponID != lastWeaponID)
                     {
-                        lastWeaponSID = weaponSID;
+                        lastWeaponID = HeroCameraManager.HeroObj.PlayerCom.CurWeaponID;
                         WeaponLeftHand = currWeapon.MainWeapon.Find("Home/hero_fpp_101_A_L");
                         WeaponAnimator = currWeapon.MainWeapon.GetComponentInChildren<Animator>();
+                        if (weaponData.weaponType == WeaponDatas.WeaponType.Gauntlet)
+                            Muzzle = currWeapon.MainWeapon.DeepFindChild(((WeaponDatas.GauntletWeaponData)weaponData).muzzle);
+                        else
+                            Muzzle = currWeapon.MainWeapon.Find("muzzle");
                         if (weaponData.hideMuzzle)
                         {
-                            var muzzle = currWeapon.MainWeapon.Find("Home/muzzle");
-                            if (muzzle)
-                                muzzle.gameObject.active = false;
+                            if (Muzzle)
+                                Muzzle.gameObject.active = false;
                         }
 
                         // 如果是狙击枪，则要加上VR里可用的狙击瞄具
@@ -338,7 +383,10 @@ namespace VRMod.Player
                             var rifleWeaponData = (WeaponDatas.RifleWeaponData)weaponData;
                             var scopeRoot = currWeapon.MainWeapon.DeepFindChild(rifleWeaponData.scopeParent);
                             if (scopeRoot != null)
-                                scopeRoot.gameObject.GetOrAddComponent<VRScope>().Setup(rifleWeaponData);
+                            {
+                                vrScope = scopeRoot.gameObject.GetOrAddComponent<VRScope>();
+                                vrScope.Setup(rifleWeaponData);
+                            }
                         }
                         vrBattleUI.UpdateCrossHair();
                     }
@@ -365,11 +413,10 @@ namespace VRMod.Player
             else if (!isHome && CameraManager.MainCamera != null)
             {
                 CameraManager.MainCamera.localScale = Vector3.zero;
-                // 还原双持时可能造成的瞄准线偏转
                 RightHand.muzzle.localEulerAngles = new Vector3(36, 0, 0);
             }
 
-            // 需要在LateUpdate里更新彩虹的射线，才能正常显示
+            // 需要在LateUpdate里更新彩虹的射线，起点才正常
             foreach(var lineRenderer in bezierLineRenderers)
             {
                 if (lineRenderer && !lineRenderer.playSight)
@@ -383,22 +430,24 @@ namespace VRMod.Player
         {
             bool twohanded = false;
             //如果是非单手武器,则进行双持判定
-            if (handType == HandType.Right && !forceOneHanded && weaponData.HoldingStyle == WeaponDatas.HoldingStyle.TwoHanded)
+            if (!isDualWield && handType == HandType.Right && !forceOneHanded && weaponData.HoldingStyle == WeaponDatas.HoldingStyle.TwoHanded)
             {
                 var LeftHandPos = LeftHand.model.position;
                 if((weaponData.weaponType == WeaponDatas.WeaponType.Minigun))
                 {
                     var minigunData = (WeaponDatas.MinigunWeaponData) weaponData;
                     LeftHandPos = LeftHand.model.position 
-                        + weapon.right * minigunData.leftHandOffset.x 
-                        + weapon.up * minigunData.leftHandOffset.y 
-                        + weapon.forward * minigunData.leftHandOffset.z;
+                        + Vector3.Cross(Vector3.up, RightHand.model.forward) * minigunData.leftHandOffset.x 
+                        + Vector3.up * minigunData.leftHandOffset.y 
+                        + RightHand.model.forward * minigunData.leftHandOffset.z;
                 }
                 var guidingVector = LeftHandPos - RightHand.model.position;
                 float angleBetweenHands = Vector3.Angle(RightHand.model.forward, guidingVector);
 
-                // 角度小于50度则进行双持
-                if (angleBetweenHands <= 50f)
+                float angle = (isTwoHanded) ? 65f : 30f;
+
+                // 根据角度判定双持，小角度贴上后要较大角度才会分开
+                if (angleBetweenHands <= angle)
                 {
                     var offset = weaponData.offset;
                     if (offset == Vector3.zero)
@@ -412,23 +461,38 @@ namespace VRMod.Player
                         RightHand.muzzle.rotation = weapon.rotation;
                         weapon.position = LeftHand.model.position + weapon.right * offset.x + weapon.up * offset.y + weapon.forward * (offset.z - bowData.leftHandForwardDistance);
                     }
+                    else if (weaponData.weaponType == WeaponDatas.WeaponType.SniperRifle && vrScope & vrScope.IsShowing)
+                    {
+                        var targetPosition = RightHand.model.position + weapon.right * offset.x + weapon.up * offset.y + weapon.forward * offset.z;
+                        weapon.position = Vector3.SmoothDamp(weapon.position, targetPosition, ref velocity, 0.3f) + weapon.forward * 0.05f;
+                        weapon.Rotate(-weaponData.rotationEuler, Space.Self);
+                        weapon.rotation = weapon.rotation.SmoothDamp(Quaternion.LookRotation(guidingVector, RightHand.model.up), ref deriv, 0.3f);
+                        weapon.Rotate(weaponData.rotationEuler, Space.Self);
+                    }
                     else
                     {
                         if ((weaponData.weaponType == WeaponDatas.WeaponType.Minigun))
                             weapon.rotation = Quaternion.LookRotation(guidingVector, Vector3.up);
                         else
                             weapon.rotation = Quaternion.LookRotation(guidingVector, RightHand.model.up);
+                        weapon.Rotate(weaponData.rotationEuler, Space.Self);
                         RightHand.muzzle.rotation = weapon.rotation;
                         weapon.position = RightHand.model.position + weapon.right * offset.x + weapon.up * offset.y + weapon.forward * offset.z;
                     }
                     if (WeaponLeftHand != null)
                         WeaponLeftHand.gameObject.active = true;
+                    if (LeftHandMesh != null)
+                        LeftHandMesh.gameObject.active = false;
                     twohanded = true;
+                    isTwoHanded = true;
+                    LeftHand.hideLaser = true;
                 }
             }
 
             if(!twohanded)
             {
+                LeftHand.hideLaser = false;
+                isTwoHanded = false;
                 var offset = weaponData.offset;
                 if (offset == Vector3.zero)
                     offset = offsetOverride;
@@ -443,6 +507,7 @@ namespace VRMod.Player
                         var bowData = (WeaponDatas.BowWeaponData)weaponData;
                         weapon.rotation = RightHand.model.rotation;
                         weapon.Rotate(0, 0, bowData.zAngle, Space.Self);
+                        weapon.position = RightHand.model.position + weapon.right * offset.x + weapon.up * offset.y + weapon.forward * offset.z;
                     }
                     else if (weaponData.weaponType == WeaponDatas.WeaponType.Melee)
                     {
@@ -450,7 +515,7 @@ namespace VRMod.Player
                         if(WeaponAnimator && WeaponAnimator.IsInState(meleeData.idleHash))
                         {
                             weapon.rotation = RightHand.model.rotation;
-                            weapon.Rotate(meleeData.idleEuler.x, meleeData.idleEuler.y, meleeData.idleEuler.z, Space.Self);
+                            weapon.Rotate(meleeData.idleEuler, Space.Self);
                             weapon.position = RightHand.model.position + weapon.right * offset.x + weapon.up * offset.y + weapon.forward * offset.z;
                         }
                         else
@@ -458,6 +523,31 @@ namespace VRMod.Player
                             weapon.rotation = RightHand.model.rotation;
                             weapon.position = RightHand.model.position + weapon.right * meleeData.attackOffset.x + weapon.up * meleeData.attackOffset.y + weapon.forward * meleeData.attackOffset.z;
                         }
+                    }
+                    else if (weaponData.weaponType == WeaponDatas.WeaponType.Gauntlet)
+                    {
+                        // 手套需要修正激光的位置和朝向
+                        var gauntletData = (WeaponDatas.GauntletWeaponData)weaponData;
+                        weapon.rotation = RightHand.model.rotation;
+                        weapon.Rotate(weaponData.rotationEuler, Space.Self);
+                        weapon.position = RightHand.model.position + weapon.right * offset.x + weapon.up * offset.y + weapon.forward * offset.z;
+                        if (!Muzzle)
+                            Muzzle = weapon.DeepFindChild(gauntletData.muzzle);
+                        if (Muzzle)
+                        {
+                            Muzzle.localPosition = gauntletData.muzzlePosition;
+                            var distance = Mathf.Max(Vector3.Distance(RightHand.model.position, RightHand.GetRayHitPosition()), 0);
+                            if(distance > 2)
+                                Muzzle.localEulerAngles = gauntletData.muzzleRotation;
+                        }
+                    }
+                    else if (weaponData.weaponType == WeaponDatas.WeaponType.SniperRifle && vrScope & vrScope.IsShowing)
+                    {
+                        var targetPosition = RightHand.model.position + weapon.right * offset.x + weapon.up * offset.y + weapon.forward * offset.z;
+                        weapon.position = Vector3.SmoothDamp(weapon.position, targetPosition, ref velocity, 0.3f) + weapon.forward* 0.05f;
+                        weapon.Rotate(-weaponData.rotationEuler, Space.Self);
+                        weapon.rotation = weapon.rotation.SmoothDamp(RightHand.model.rotation, ref deriv, 0.3f);
+                        weapon.Rotate(weaponData.rotationEuler, Space.Self);
                     }
                     else
                     {
@@ -470,69 +560,130 @@ namespace VRMod.Player
                 }
                 else
                 {
-                    // 只有狗的双持会需要在左手附上武器
                     LeftHand.muzzle.localEulerAngles = new Vector3(36, 0, 0);
-                    weapon.rotation = LeftHand.model.rotation;
-                    weapon.position = LeftHand.model.position + weapon.right * -offset.x + weapon.up * offset.y + weapon.forward * offset.z;
+                    // 只有狗的双持会需要在左手附上武器
+                    if (weaponData.weaponType == WeaponDatas.WeaponType.Gauntlet)
+                    {
+                        // 手套需要修正激光的位置和朝向
+                        var gauntletData = (WeaponDatas.GauntletWeaponData)weaponData;
+                        weapon.rotation = LeftHand.model.rotation;
+                        weapon.Rotate(weaponData.rotationEuler.x, -weaponData.rotationEuler.y, weaponData.rotationEuler.z, Space.Self);
+                        weapon.position = LeftHand.model.position + weapon.right * -offset.x + weapon.up * offset.y + weapon.forward * offset.z;
+                        Muzzle.localPosition = gauntletData.muzzlePosition;
+                        var distance = Mathf.Max(Vector3.Distance(LeftHand.model.position, LeftHand.GetRayHitPosition()) - 3, 0);
+                        Muzzle.localEulerAngles = Vector3.Lerp(Vector3.zero, -gauntletData.muzzleRotation, Mathf.Min(distance / 12f, 1));
+                    }
+                    else
+                    {
+                        weapon.rotation = LeftHand.model.rotation;
+                        weapon.Rotate(weaponData.rotationEuler.x, -weaponData.rotationEuler.y, weaponData.rotationEuler.z, Space.Self);
+                        weapon.position = LeftHand.model.position + weapon.right * -offset.x + weapon.up * offset.y + weapon.forward * offset.z;
+                    }
                     var weaponRightHand = weapon.Find("Home/hero_fpp_101_A_R");
                     if (weaponRightHand != null && weaponData.weaponType != WeaponDatas.WeaponType.Talisman)
                         weaponRightHand.gameObject.active = false;
                 }
+                if (LeftHandMesh != null && !isDualWield)
+                    LeftHandMesh.gameObject.active = true;
             }
         }
+
+        #endregion
 
         public void SetUIMode(bool uiMode)
         {
             isUIMode = uiMode;
-            LeftHand.uiMode = uiMode;
-            RightHand.uiMode = uiMode;
-            LeftHand.model.gameObject.active = uiMode && !IsReadyForBattle;
-            RightHand.model.gameObject.active = uiMode && !IsReadyForBattle;
+            LeftHand.SetUIMode(uiMode);
+            RightHand.SetUIMode(uiMode);
+            LeftHand.model.Find("cat_hand_model").gameObject.active = isHome;
+            RightHand.model.Find("cat_hand_model").gameObject.active = isHome;
+            LeftHand.model.gameObject.active = !uiMode || isHome;
+            RightHand.model.gameObject.active = !uiMode || isHome;
+            // 还原双持时可能造成的瞄准线偏转
+            if (uiMode)
+            {
+                RightHand.muzzle.localEulerAngles = new Vector3(36, 0, 0);
+                RightHand.muzzle.gameObject.layer = Layer.UI;
+            }
+            else
+                RightHand.muzzle.gameObject.layer = Layer.Default;
             VRBattleUI.SetUIMode(uiMode);
         }
+
+        public void SetCGCamera(bool isInCG, Camera cgCamera = null)
+        {
+            this.isInCG = isInCG;
+            SetUIMode(isInCG);
+            if (isInCG)
+            {
+                this.CGCamera = cgCamera.transform;
+                //Head.parent = cgCamera.transform;
+                //Head.localPosition = Vector3.zero;
+                //Head.localRotation = Quaternion.identity;
+                //ScreenCam.cullingMask = cgCamera.cullingMask;
+                StereoRender.SetCameraMask(cgCamera.cullingMask);
+            }
+            else
+            {
+                //Head.parent = gameObject.transform;
+                //Head.localPosition = Vector3.zero;
+                //Head.localRotation = Quaternion.identity;
+                //ScreenCam.cullingMask = -1;
+                StereoRender.SetCameraMask(StereoRender.defaultCullingMask);
+            }
+        }
+
+        public Vignette vignette;
 
         public void OnSceneLoaded(Scene scene, LoadSceneMode mode)
         {
             if (scene.name?.ToLower() == "home")
-            {
-                isHome = true;
-                IsReadyForBattle = false;
-                lastWeaponSID = 0;
-                SetOriginHome();
-                Destroy(vrBattleUI);
-                MelonCoroutines.Start(HomePre());
-            }
+                SetupHome();
             else
-            {
                 isHome = false;
-            }
 
-            if(RegexManager.IsNumber(scene.name))
-            {
+            if (RegexManager.IsNumber(scene.name))
                 MelonCoroutines.Start(BattlePrep());
-            }
         }
 
-        public IEnumerator HomePre()
+        private void SetupHome()
         {
-            yield return new WaitForSeconds(0.5f);
+            isHome = true;
+            isHomeFixed = false;
+            IsReadyForBattle = false;
+            lastWeaponID = 0;
+            SetOriginHome();
+            if (vrBattleUI)
+            {
+                Destroy(vrBattleUI);
+                vrBattleUI = null;
+            }
+            if (LeftHandMesh)
+            {
+                Destroy(LeftHandMesh.gameObject);
+                LeftHandMesh = null;
+            }
+            bezierLineRenderers.Clear();
+            MelonCoroutines.Start(DOFFix());
+        }
 
-            SetUIMode(true);
-
+        public IEnumerator DOFFix()
+        {
+            while(!CUIManager.instance.UICamera.GetComponent<PostProcessVolume>().profile.HasSettings<DepthOfField>() && isHome)
+                yield return new WaitForSeconds(0.1f);
             // 在VR里景深效果只会让你变成近视眼
             CUIManager.instance.UICamera.GetComponent<PostProcessVolume>().profile.RemoveSettings<DepthOfField>();
-            ToggleEventCamera(true);
-            ScreenCam.gameObject.active = true;
-            ScreenCam.enabled = true;
+            vignette = CUIManager.instance.UICamera.GetComponent<PostProcessVolume>().profile.GetSetting<Vignette>();
         }
 
         public IEnumerator BattlePrep()
         {
             while (HeroCameraManager.HeroObj == null || HeroCameraManager.HeroTran == null)
-                yield return new WaitForSeconds(0.2f);
-
+                yield return new WaitForSeconds(0.1f);
             // UI
+            ToggleEventCamera(true);
             SetUIMode(false);
+            //vignette = CUIManager.instance.UICamera.GetComponent<PostProcessVolume>().profile.GetSetting<Vignette>();
             Camera[] cams = FindObjectsOfType<Camera>();
             foreach (Camera c in cams)
             {
@@ -542,17 +693,33 @@ namespace VRMod.Player
             vrBattleUI = Head.gameObject.GetOrAddComponent<VRBattleUI>();
             vrBattleUI.Setup();
             Origin.position = HeroCameraManager.HeroTran.position;
-
-            CameraManager.MainCamera.GetComponent<FPSCamMotionCtrl>().enabled = false;
+            fpsCamMotionCtrl = CameraManager.MainCamera.GetComponent<FPSCamMotionCtrl>();
+            fpsCamMotionCtrl.enabled = false;
             cams = CameraManager.MainCamera.GetComponentsInChildren<Camera>();
             foreach (Camera c in cams)
             {
                 c.enabled = false;
             }
 
+            // 目标点使用UI相机来进行位置计算
+            HeroWarSign.UISignManager.signCamera = CUIManager.instance.UICamera;
+
             // 储存技能手Transform的引用
             HeroSkillHand = HeroCameraManager.HeroObj.PlayerCom.GetHeroHandTran();
             HeroSkillHandAnimator = HeroSkillHand.GetComponent<Animator>();
+
+            var LeftHandRenderers = HeroSkillHand.GetComponentsInChildren<SkinnedMeshRenderer>();
+            LeftHandMesh = LeftHand.model.Find("LeftHandMesh");
+            if (!LeftHandMesh)
+            {
+                LeftHandMesh = new GameObject("LeftHandMesh").transform;
+                LeftHandMesh.parent = LeftHand.model;
+            }
+            LeftHandMesh.localScale = new Vector3(0.67f, 0.67f, 0.67f);
+            LeftHandMesh.localPosition = new Vector3(0.5631f, -0.0083f, -0.35f);
+            LeftHandMesh.localEulerAngles = new Vector3(0f, 202.2307f, 180f);
+            LeftHandMesh.gameObject.GetOrAddComponent<MeshFilter>().mesh = LeftHandRenderers[0].sharedMesh;
+            LeftHandMesh.gameObject.GetOrAddComponent<MeshRenderer>().material = LeftHandRenderers[0].sharedMaterial;
 
             foreach (var child in CameraManager.MainCamera)
             {
@@ -563,7 +730,7 @@ namespace VRMod.Player
                 }
             }
             ScreenCam.gameObject.active = true;
-            ScreenCam.enabled = true;
+            //ScreenCam.enabled = false;
             IsReadyForBattle = true;
         }
 

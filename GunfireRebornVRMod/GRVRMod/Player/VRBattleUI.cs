@@ -2,7 +2,9 @@
 using System;
 using UI;
 using UnityEngine;
+using UnityEngine.SocialPlatforms;
 using VRMod.Player.MotionControlls;
+using static RootMotion.FinalIK.RagdollUtility;
 
 namespace VRMod.Player
 {
@@ -26,6 +28,11 @@ namespace VRMod.Player
 
         public Transform coinmessage;
         public Transform cashmessage;
+
+        public Transform Target_tips;
+        public Transform Shockwave1, Shockwave2;
+
+        public Transform SimLineStart;
 
         private Transform canvasRootTarget;
         private Transform hpTarget;
@@ -86,13 +93,17 @@ namespace VRMod.Player
         {
             leftCrossHair = null;
             rightCrossHair = null;
+            if (HeroCameraManager.HeroObj == null || HeroCameraManager.HeroObj.PlayerCom == null)
+                return;
+            var mainWeapon = HeroCameraManager.HeroObj.PlayerCom.GetCurWeapon(HeroCameraManager.HeroObj.PlayerCom.CurWeaponID);
+            var deputyWeapon = HeroCameraManager.HeroObj.PlayerCom.GetCurWeapon(HeroCameraManager.HeroObj.PlayerCom.DeputyWeaponID);
             foreach (var child in CUIManager.instance.SightCanvas.transform)
             {
                 var childTrans = child.Cast<Transform>();
-                if (childTrans.name.StartsWith("Panel_Sight_" + HeroCameraManager.HeroObj.PlayerCom.DeputyWeaponSID))
-                    leftCrossHair = childTrans;
-                else if(childTrans.name.StartsWith("Panel_Sight_" + HeroCameraManager.HeroObj.PlayerCom.CurWeaponSID))
+                if (mainWeapon != null && childTrans.name == "Panel_Sight_" + HeroCameraManager.HeroObj.PlayerCom.CurWeaponSID + "_" + mainWeapon.ClientPos)
                     rightCrossHair = childTrans;
+                else if(deputyWeapon != null && childTrans.name.StartsWith("Panel_Sight_" + HeroCameraManager.HeroObj.PlayerCom.DeputyWeaponSID + "_" + deputyWeapon.ClientPos))
+                    leftCrossHair = childTrans;
             }
         }
 
@@ -126,6 +137,7 @@ namespace VRMod.Player
                     cashmessage.localScale = new Vector3(0.35f, 0.35f, 0.35f);
                     minimap.localScale = new Vector3(0.1f, 0.1f, 0.1f);
 
+                    canvasRootTarget = VRPlayer.Instance.Origin.Find("canvasRootTarget");
                     if (!canvasRootTarget)
                     {
                         canvasRootTarget = new GameObject("canvasRootTarget").transform;
@@ -133,6 +145,8 @@ namespace VRMod.Player
                         canvasRootTarget.position = canvasRoot.position;
                         canvasRootTarget.rotation = canvasRoot.rotation;
                     }
+
+                    hpTarget = VRPlayer.Instance.Origin.Find("hpTarget");
                     if (!hpTarget)
                     {
                         hpTarget = new GameObject("hpTarget").transform;
@@ -169,6 +183,17 @@ namespace VRMod.Player
                         }
                     }
 
+                    Target_tips = PC_Panel_war.Find("Target_tips");
+                    SimLineStart = CameraManager.MainCamera.DeepFindChild("SimLineStart");
+                    if (hero_skill_1)
+                    {
+                        var psrs = hero_skill_1.GetComponentsInChildren<ParticleSystemRenderer>(true);
+                        foreach (var psr in psrs)
+                        {
+                            psr.alignment = ParticleSystemRenderSpace.Local;
+                        }
+                    }
+
                     // 重新排列UI的渲染顺序
                     hero_skill_1.SetAsFirstSibling();
                     hp.SetAsLastSibling();
@@ -183,6 +208,14 @@ namespace VRMod.Player
             }
         }
 
+        void OnDestroy()
+        {
+            if (canvasRootTarget)
+                Destroy(canvasRootTarget.gameObject);
+            if (hpTarget)
+                Destroy(hpTarget.gameObject);
+        }
+
         //public static Vector3 overridePos = new Vector3(0.15f, -0.15f, -0.1f);
         //public static Vector3 overridePos2 = new Vector3(0.15f, -0.15f, -0.1f);
 
@@ -190,7 +223,11 @@ namespace VRMod.Player
         {
             if (VRPlayer.Instance.isHome)
             {
-                Destroy(this);
+                return;
+            }
+            if (PC_Panel_war == null || PC_Panel_war.parent != CUIManager.instance.MenuCanvas.transform)
+            {
+                setup = true;
                 return;
             }
             if (canvasRoot && !VRPlayer.Instance.isUIMode)
@@ -207,7 +244,7 @@ namespace VRMod.Player
             // 小地图显示到左手手腕，像手表一样查看
             if (minimap)
             {
-                minimap.position = LeftHand.model.position - LeftHand.model.right*0.1f - LeftHand.model.forward * 0.2f - LeftHand.model.up * 0.1f;
+                minimap.position = LeftHand.model.position - LeftHand.model.right*0.1f - LeftHand.model.forward * 0.16f - LeftHand.model.up * 0.1f;
                 minimap.rotation = Quaternion.LookRotation(LeftHand.model.right, -LeftHand.model.up);
                 bool show = Vector3.Angle(minimap.forward, minimap.position - Head.transform.position) <= 45;
                 if (minimapScaleLerp != (show ? 1f : 0f))
@@ -287,6 +324,38 @@ namespace VRMod.Player
                 foxChargingAim.position = LeftHand.GetRayHitPosition(8);
                 foxChargingAim.rotation = Quaternion.LookRotation(foxChargingAim.position - LeftHand.muzzle.position);
             }
+
+            // 手雷投掷抛物线需要一些偏移
+            if (SimLineStart)
+            {
+                SimLineStart.position = Head.position + Head.right * -0.3f + Head.up * 0.1f;
+            }
+
+            // 目标点需要重置一下朝向
+            if (!Target_tips && PC_Panel_war)
+                Target_tips = PC_Panel_war.Find("Target_tips");
+            if (Target_tips)
+            {
+                if (Target_tips.parent != PC_Panel_war)
+                {
+                    Target_tips = null;
+                    Shockwave1 = null;
+                    Shockwave2 = null;
+                }
+                else
+                {
+                    if (!Shockwave1)
+                        Shockwave1 = Target_tips.Find("UICourse_ponit/position");
+                    if (!Shockwave2)
+                        Shockwave2 = Target_tips.Find("UICourse_ponit (1)/position");
+                    if (Shockwave1)
+                        Shockwave1.gameObject.active = false;
+                    if (Shockwave2)
+                        Shockwave2.gameObject.active = false;
+                    Target_tips.localRotation = Quaternion.identity;
+                }
+            }
+
             //if (hero_skill_1)
             //{
             //    var parent = hero_skill_1.parent;

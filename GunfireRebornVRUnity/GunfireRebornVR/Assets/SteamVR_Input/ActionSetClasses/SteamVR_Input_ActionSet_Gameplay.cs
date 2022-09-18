@@ -217,11 +217,35 @@ namespace Valve.VR
             }
         }
         
-        public virtual SteamVR_Action_Vibration Haptic
+        public virtual SteamVR_Action_Single LT_DualWieldFire
         {
             get
             {
-                return SteamVR_Actions.gameplay_Haptic;
+                return SteamVR_Actions.gameplay_LT_DualWieldFire;
+            }
+        }
+        
+        public virtual SteamVR_Action_Boolean RB_DualWield2ndSkill
+        {
+            get
+            {
+                return SteamVR_Actions.gameplay_RB_DualWield2ndSkill;
+            }
+        }
+        
+        public virtual SteamVR_Action_Vibration HapticLeft
+        {
+            get
+            {
+                return SteamVR_Actions.gameplay_HapticLeft;
+            }
+        }
+        
+        public virtual SteamVR_Action_Vibration HapticRight
+        {
+            get
+            {
+                return SteamVR_Actions.gameplay_HapticRight;
             }
         }
     }

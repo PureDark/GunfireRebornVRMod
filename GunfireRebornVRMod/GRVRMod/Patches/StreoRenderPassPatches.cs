@@ -15,27 +15,12 @@ namespace VRMod.Patches
         }
     }
 
-    [HarmonyPatch(typeof(RenderTransparentForwardPass), nameof(RenderTransparentForwardPass.Setup))]
-    internal class InjectRenderTransparentForwardPassSetup
-    {
-        private static void Prefix(RenderTextureDescriptor baseDescriptor, RenderTargetHandle colorAttachmentHandle, RenderTargetHandle depthAttachmentHandle, RendererConfiguration configuration)
-        {
-            if (VRPlayer.Instance && VRPlayer.Instance.StereoRender)
-            { 
-                VRPlayer.Instance.StereoRender.stereoPass.Setup(baseDescriptor, colorAttachmentHandle);
-            }
-        }
-    }
-
     [HarmonyPatch(typeof(EndXRRenderingPass), nameof(EndXRRenderingPass.Execute))]
     internal class InjectEndXRRenderingPassExecute
     {
         private static bool Prefix(ScriptableRenderer renderer, ref ScriptableRenderContext context, ref RenderingData renderingData)
         {
-            if (VRPlayer.Instance && VRPlayer.Instance.StereoRender)
-            {
-                VRPlayer.Instance.StereoRender.stereoPass.Execute(renderer, context, ref renderingData);
-            }
+            VRPlayer.Instance.StereoRender.Execute(renderer, context, ref renderingData);
             return false;
         }
     }

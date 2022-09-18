@@ -1,6 +1,7 @@
 ﻿using InControl;
 using System;
 using UnityEngine;
+using Valve.VR;
 using static VRMod.VRMod;
 
 namespace VRMod.Player.VRInput
@@ -74,9 +75,28 @@ namespace VRMod.Player.VRInput
                 vrDevice.CommitInternal(updateTick, deltaTime);
         }
 
+        public void VibrateLeft(float duration)
+        {
+            vrDevice.VibrateLeft(duration);
+        }
+        public void VibrateRight(float duration)
+        {
+            vrDevice.VibrateRight(duration);
+        }
+
+        public void Vibrate(float leftDuration, float rightDuration)
+        {
+            vrDevice.VibrateInternal(leftDuration, rightDuration);
+        }
+
+        public void Vibrate(float intensity)
+        {
+            vrDevice.VibrateInternal(intensity);
+        }
+
         #region Static interface.
 
-        public static InputDevice Device
+        public static VRInputDevice Device
         {
             get { return Instance.vrDevice; }
         }

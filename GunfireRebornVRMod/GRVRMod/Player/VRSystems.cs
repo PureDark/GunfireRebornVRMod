@@ -8,6 +8,8 @@ using GameCoder.Engine;
 using BepInEx.IL2CPP.Utils;
 using VRMod.UI;
 using static VRMod.VRMod;
+using DuoyiQaLib;
+using UnityEngine.Rendering;
 
 namespace VRMod.Player
 {
@@ -37,6 +39,8 @@ namespace VRMod.Player
             //if (DYSceneManager.GetCurSceneName().ToLower().Contains("start"))
             //    MonoBehaviourExtensions.StartCoroutine(this, HarmonyPatches.ClickStartScreenContinue());
         }
+
+        public GameProfilerEntry gameProfilerEntry;
         private void Update()
         {
             //MenuFix.SetDebugUICamera();

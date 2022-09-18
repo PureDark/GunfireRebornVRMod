@@ -10,7 +10,7 @@ namespace VRMod.Assets
 
         public static AssetBundle LoadAssetBundle(string name)
         {
-            assetBundle = AssetBundle.LoadFromFile(Application.streamingAssetsPath + "/" + name);
+            assetBundle = AssetBundle.LoadFromFile(Application.streamingAssetsPath + "/../../BepInEx/plugins//PureDark.VRMod/" + name);
             assets = assetBundle.LoadAllAssets();
             foreach (var asset in assets)
             {

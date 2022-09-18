@@ -67,7 +67,13 @@ namespace Valve.VR
         
         private static SteamVR_Action_Boolean p_gameplay_InteractUI;
         
-        private static SteamVR_Action_Vibration p_gameplay_Haptic;
+        private static SteamVR_Action_Single p_gameplay_LT_DualWieldFire;
+        
+        private static SteamVR_Action_Boolean p_gameplay_RB_DualWield2ndSkill;
+        
+        private static SteamVR_Action_Vibration p_gameplay_HapticLeft;
+        
+        private static SteamVR_Action_Vibration p_gameplay_HapticRight;
         
         public static SteamVR_Action_Pose gameplay_Pose
         {
@@ -269,11 +275,35 @@ namespace Valve.VR
             }
         }
         
-        public static SteamVR_Action_Vibration gameplay_Haptic
+        public static SteamVR_Action_Single gameplay_LT_DualWieldFire
         {
             get
             {
-                return SteamVR_Actions.p_gameplay_Haptic.GetCopy<SteamVR_Action_Vibration>();
+                return SteamVR_Actions.p_gameplay_LT_DualWieldFire.GetCopy<SteamVR_Action_Single>();
+            }
+        }
+        
+        public static SteamVR_Action_Boolean gameplay_RB_DualWield2ndSkill
+        {
+            get
+            {
+                return SteamVR_Actions.p_gameplay_RB_DualWield2ndSkill.GetCopy<SteamVR_Action_Boolean>();
+            }
+        }
+        
+        public static SteamVR_Action_Vibration gameplay_HapticLeft
+        {
+            get
+            {
+                return SteamVR_Actions.p_gameplay_HapticLeft.GetCopy<SteamVR_Action_Vibration>();
+            }
+        }
+        
+        public static SteamVR_Action_Vibration gameplay_HapticRight
+        {
+            get
+            {
+                return SteamVR_Actions.p_gameplay_HapticRight.GetCopy<SteamVR_Action_Vibration>();
             }
         }
         
@@ -305,7 +335,10 @@ namespace Valve.VR
                     SteamVR_Actions.gameplay_Start_ToggleBackpack,
                     SteamVR_Actions.gameplay_Scroll,
                     SteamVR_Actions.gameplay_InteractUI,
-                    SteamVR_Actions.gameplay_Haptic};
+                    SteamVR_Actions.gameplay_LT_DualWieldFire,
+                    SteamVR_Actions.gameplay_RB_DualWield2ndSkill,
+                    SteamVR_Actions.gameplay_HapticLeft,
+                    SteamVR_Actions.gameplay_HapticRight};
             Valve.VR.SteamVR_Input.actionsIn = new Valve.VR.ISteamVR_Action_In[] {
                     SteamVR_Actions.gameplay_Pose,
                     SteamVR_Actions.gameplay_SkeletonLeftHand,
@@ -331,11 +364,15 @@ namespace Valve.VR
                     SteamVR_Actions.gameplay_Back_ToggleBattleMenu,
                     SteamVR_Actions.gameplay_Start_ToggleBackpack,
                     SteamVR_Actions.gameplay_Scroll,
-                    SteamVR_Actions.gameplay_InteractUI};
+                    SteamVR_Actions.gameplay_InteractUI,
+                    SteamVR_Actions.gameplay_LT_DualWieldFire,
+                    SteamVR_Actions.gameplay_RB_DualWield2ndSkill};
             Valve.VR.SteamVR_Input.actionsOut = new Valve.VR.ISteamVR_Action_Out[] {
-                    SteamVR_Actions.gameplay_Haptic};
+                    SteamVR_Actions.gameplay_HapticLeft,
+                    SteamVR_Actions.gameplay_HapticRight};
             Valve.VR.SteamVR_Input.actionsVibration = new Valve.VR.SteamVR_Action_Vibration[] {
-                    SteamVR_Actions.gameplay_Haptic};
+                    SteamVR_Actions.gameplay_HapticLeft,
+                    SteamVR_Actions.gameplay_HapticRight};
             Valve.VR.SteamVR_Input.actionsPose = new Valve.VR.SteamVR_Action_Pose[] {
                     SteamVR_Actions.gameplay_Pose};
             Valve.VR.SteamVR_Input.actionsBoolean = new Valve.VR.SteamVR_Action_Boolean[] {
@@ -355,10 +392,12 @@ namespace Valve.VR
                     SteamVR_Actions.gameplay_R3_Speak,
                     SteamVR_Actions.gameplay_Back_ToggleBattleMenu,
                     SteamVR_Actions.gameplay_Start_ToggleBackpack,
-                    SteamVR_Actions.gameplay_InteractUI};
+                    SteamVR_Actions.gameplay_InteractUI,
+                    SteamVR_Actions.gameplay_RB_DualWield2ndSkill};
             Valve.VR.SteamVR_Input.actionsSingle = new Valve.VR.SteamVR_Action_Single[] {
                     SteamVR_Actions.gameplay_RT_Fire,
-                    SteamVR_Actions.gameplay_LT_WeaponSkill};
+                    SteamVR_Actions.gameplay_LT_WeaponSkill,
+                    SteamVR_Actions.gameplay_LT_DualWieldFire};
             Valve.VR.SteamVR_Input.actionsVector2 = new Valve.VR.SteamVR_Action_Vector2[] {
                     SteamVR_Actions.gameplay_LS_Move,
                     SteamVR_Actions.gameplay_RS_Rotate,
@@ -389,7 +428,9 @@ namespace Valve.VR
                     SteamVR_Actions.gameplay_Back_ToggleBattleMenu,
                     SteamVR_Actions.gameplay_Start_ToggleBackpack,
                     SteamVR_Actions.gameplay_Scroll,
-                    SteamVR_Actions.gameplay_InteractUI};
+                    SteamVR_Actions.gameplay_InteractUI,
+                    SteamVR_Actions.gameplay_LT_DualWieldFire,
+                    SteamVR_Actions.gameplay_RB_DualWield2ndSkill};
         }
         
         private static void PreInitActions()
@@ -419,7 +460,10 @@ namespace Valve.VR
             SteamVR_Actions.p_gameplay_Start_ToggleBackpack = ((SteamVR_Action_Boolean)(SteamVR_Action.Create<SteamVR_Action_Boolean>("/actions/Gameplay/in/Start_ToggleBackpack")));
             SteamVR_Actions.p_gameplay_Scroll = ((SteamVR_Action_Vector2)(SteamVR_Action.Create<SteamVR_Action_Vector2>("/actions/Gameplay/in/Scroll")));
             SteamVR_Actions.p_gameplay_InteractUI = ((SteamVR_Action_Boolean)(SteamVR_Action.Create<SteamVR_Action_Boolean>("/actions/Gameplay/in/InteractUI")));
-            SteamVR_Actions.p_gameplay_Haptic = ((SteamVR_Action_Vibration)(SteamVR_Action.Create<SteamVR_Action_Vibration>("/actions/Gameplay/out/Haptic")));
+            SteamVR_Actions.p_gameplay_LT_DualWieldFire = ((SteamVR_Action_Single)(SteamVR_Action.Create<SteamVR_Action_Single>("/actions/Gameplay/in/LT_DualWieldFire")));
+            SteamVR_Actions.p_gameplay_RB_DualWield2ndSkill = ((SteamVR_Action_Boolean)(SteamVR_Action.Create<SteamVR_Action_Boolean>("/actions/Gameplay/in/RB_DualWield2ndSkill")));
+            SteamVR_Actions.p_gameplay_HapticLeft = ((SteamVR_Action_Vibration)(SteamVR_Action.Create<SteamVR_Action_Vibration>("/actions/Gameplay/out/HapticLeft")));
+            SteamVR_Actions.p_gameplay_HapticRight = ((SteamVR_Action_Vibration)(SteamVR_Action.Create<SteamVR_Action_Vibration>("/actions/Gameplay/out/HapticRight")));
         }
     }
 }

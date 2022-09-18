@@ -106,7 +106,19 @@
       "type": "boolean"
     },
     {
-      "name": "/actions/Gameplay/out/Haptic",
+      "name": "/actions/Gameplay/in/LT_DualWieldFire",
+      "type": "vector1"
+    },
+    {
+      "name": "/actions/Gameplay/in/RB_DualWield2ndSkill",
+      "type": "boolean"
+    },
+    {
+      "name": "/actions/Gameplay/out/HapticLeft",
+      "type": "vibration"
+    },
+    {
+      "name": "/actions/Gameplay/out/HapticRight",
       "type": "vibration"
     }
   ],
@@ -173,25 +185,29 @@
   "localization": [
     {
       "language_tag": "en_US",
-      "/actions/Gameplay/in/RT_Fire": "RT_开火",
-      "/actions/Gameplay/in/LS_Move": "LS_移动",
-      "/actions/Gameplay/in/A_Jump": "A_跳跃",
-      "/actions/Gameplay/in/X_Interact_Reload": "X_交互_装弹",
-      "/actions/Gameplay/in/Y_SwitchWeapons": "Y_切换武器",
-      "/actions/Gameplay/in/LB_PrimarySkill": "LB_主要技能",
-      "/actions/Gameplay/in/RB_SecondarySkill": "RB_次要技能",
-      "/actions/Gameplay/in/B_Dash_ReturnUI": "B_冲刺_UI返回",
-      "/actions/Gameplay/in/LT_WeaponSkill": "LT_武器技能",
-      "/actions/Gameplay/in/DPadL_InterruptCharging": "DPadL_中断充能",
-      "/actions/Gameplay/in/DPadD_SwitchFireMode": "DPadD_切换射击模式",
-      "/actions/Gameplay/in/DPadR_TeamInformation": "DPadR_队伍信息",
-      "/actions/Gameplay/in/DPadU_Ping": "DPadU_标记",
-      "/actions/Gameplay/in/RS_Rotate": "RS_转向",
-      "/actions/Gameplay/in/R3_Speak": "R3_开麦",
-      "/actions/Gameplay/in/Back_ToggleBattleMenu": "Back_打开关闭战斗菜单",
-      "/actions/Gameplay/in/Start_ToggleBackpack": "Start_打开关闭背包",
-      "/actions/Gameplay/in/Scroll": "滚轮",
-      "/actions/Gameplay/in/InteractUI": "UI交互"
+      "/actions/Gameplay/in/LB_PrimarySkill": "LB_PrimarySkill",
+      "/actions/Gameplay/in/RB_SecondarySkill": "RB_SecondarySkill",
+      "/actions/Gameplay/in/Y_SwitchWeapons": "Y_SwitchWeapon",
+      "/actions/Gameplay/in/X_Interact_Reload": "X_Interact/Reload",
+      "/actions/Gameplay/in/A_Jump": "A_Jump",
+      "/actions/Gameplay/in/RT_Fire": "RT_Fire",
+      "/actions/Gameplay/in/LS_Move": "LS_Move",
+      "/actions/Gameplay/in/B_Dash_ReturnUI": "B_Dash_ReturnUI",
+      "/actions/Gameplay/in/LT_WeaponSkill": "LT_WeaponSkill",
+      "/actions/Gameplay/in/DPadL_InterruptCharging": "DPadL_InterruptCharging",
+      "/actions/Gameplay/in/DPadD_SwitchFireMode": "DPadD_SwitchFireMode",
+      "/actions/Gameplay/in/DPadR_TeamInformation": "DPadR_TeamInformation",
+      "/actions/Gameplay/in/DPadU_Ping": "DPadU_Ping",
+      "/actions/Gameplay/in/RS_Rotate": "RS_Rotate",
+      "/actions/Gameplay/in/R3_Speak": "R3_Speak",
+      "/actions/Gameplay/in/Back_ToggleBattleMenu": "Back_ToggleBattleMenu",
+      "/actions/Gameplay/in/Start_ToggleBackpack": "Start_ToggleBackpack",
+      "/actions/Gameplay/in/Scroll": "Scroll",
+      "/actions/Gameplay/in/LT_DualWieldFire": "LT_DualWieldFire",
+      "/actions/Gameplay/in/RB_DualWield2ndSkill": "RB_DualWield2ndSkill",
+      "/actions/Gameplay/in/InteractUI": "InteractUI",
+      "/actions/Gameplay/out/HapticLeft": "HapticLeft",
+      "/actions/Gameplay/out/HapticRight": "HapticRight"
     },
     {
       "language_tag": "zh-CN",
@@ -213,7 +229,10 @@
       "/actions/Gameplay/in/SnapTurnRight": "平滑转向右",
       "/actions/Gameplay/in/Start_ToggleBackpack": "Start_打开关闭背包",
       "/actions/Gameplay/in/X_Interact_Reload": "X_交互/再装填",
-      "/actions/Gameplay/in/Y_SwitchWeapons": "Y_交换主副武器"
+      "/actions/Gameplay/in/Y_SwitchWeapons": "Y_交换主副武器",
+      "/actions/Gameplay/in/InteractUI": "UI交互",
+      "/actions/Gameplay/out/HapticLeft": "左手震动",
+      "/actions/Gameplay/out/HapticRight": "右手震动"
     }
   ]
 }
