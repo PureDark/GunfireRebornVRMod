@@ -155,7 +155,7 @@ namespace VRPatcher
                                     File.WriteAllBytes(path, memoryStream2.ToArray());
                                 }
                             }
-                            return true;
+                            return EnableSinglePass(path);
                         }
                     }
                 }
@@ -166,6 +166,38 @@ namespace VRPatcher
             }
             VREnabler.Logger.LogError("VR enable location not found!");
             return false;
+        }
+
+        private static bool EnableSinglePass(string path)
+        {
+            var pos = FindBytes(path, new Byte[] { 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF });
+            pos -= 40;
+            VREnabler.Logger.LogInfo("VR Mode Hex Position = " + pos.ToString("X4"));
+            if (pos < 0)
+                return false;
+            using (var stream = new FileStream(path, FileMode.Open, FileAccess.ReadWrite))
+            {
+                stream.Position = pos;
+                stream.WriteByte(0x01);
+            }
+            VREnabler.Logger.LogInfo("Single pass mode enabled!");
+            return true;
+        }
+
+        private static long FindBytes(string fileName, byte[] bytes)
+        {
+            long i, j;
+            using (FileStream fs = File.OpenRead(fileName))
+            {
+                for (i = 0; i < fs.Length - bytes.Length; i++)
+                {
+                    fs.Seek(i, SeekOrigin.Begin);
+                    for (j = 0; j < bytes.Length; j++)
+                        if (fs.ReadByte() != bytes[j]) break;
+                    if (j == bytes.Length) break;
+                }
+            }
+            return i;
         }
 
         private static bool CopyFiles(string destinationPath, string[] fileNames, string embedFolder, bool replaceIfDifferent = false)

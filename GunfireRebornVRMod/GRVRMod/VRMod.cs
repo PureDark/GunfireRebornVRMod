@@ -13,6 +13,10 @@ using VRMod.Player.MotionControlls;
 using BepInEx.Logging;
 using VRMod.UI;
 using VRMod.Player.Behaviours;
+using UnityEngine;
+using UnityEngine.SceneManagement;
+using System;
+using Valve.VR;
 
 namespace VRMod
 {
@@ -23,7 +27,6 @@ namespace VRMod
         public const string NAME = "VRMod";
         public const string AUTHOR = "PureDark/暗暗十分/突破天际的金闪闪";
         public const string VERSION = "1.0.0";
-        public const bool DEBUG = true;
 
         public static VRMod Instance { get; private set; }
 
@@ -52,6 +55,17 @@ namespace VRMod
             HarmonyPatches.PatchAll();
             VRAssets.Init();
             SetupIL2CPPClassInjections();
+            SceneManager.sceneLoaded += new Action<Scene, LoadSceneMode>(OnSceneLoaded);
+        }
+
+        public void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+        {
+            if (!VRSystems.Instance)
+            {
+                //VR相关的入口，在CUIManager初始化时进行注入
+                new GameObject("VR_Globals").AddComponent<VRSystems>();
+                MenuFix.Prefix();
+            }
         }
 
         private void SetupIL2CPPClassInjections()

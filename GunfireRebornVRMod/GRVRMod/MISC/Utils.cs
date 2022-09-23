@@ -23,6 +23,15 @@ namespace VRMod
             System.IO.File.WriteAllBytes(path, bytes);
             Debug.Log("Saved to " + path);
         }
+        public static void SaveTexToFile(Texture2D tex, string name)
+        {
+            byte[] bytes;
+            bytes = tex.EncodeToPNG();
+
+            string path = Application.streamingAssetsPath + "/" + name + ".png";
+            System.IO.File.WriteAllBytes(path, bytes);
+            Debug.Log("Saved to " + path);
+        }
 
         public static void SetLayerRecursively(this GameObject inst, int layer)
         {

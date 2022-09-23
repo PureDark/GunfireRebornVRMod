@@ -1,4 +1,5 @@
-﻿using BoltBehavior;
+﻿using AI.BehaviorTree;
+using BoltBehavior;
 using GameCoder.Engine;
 using HarmonyLib;
 using SkillBolt;
@@ -38,19 +39,19 @@ namespace VRMod.Patches
 
         public static bool UnhollowerWarningPrefix(string __0) => !__0.Contains("unsupported return type") && !__0.Contains("unsupported parameter");
 
-        [HarmonyPatch(typeof(CUIManager), nameof(CUIManager.Init))]
-        internal class InjectVRStart
-        {
-            private static void Postfix()
-            {
-                if (!VRSystems.Instance)
-                {
-                    //VR相关的入口，在CUIManager初始化时进行注入
-                    new GameObject("VR_Globals").AddComponent<VRSystems>();
-                    MenuFix.Prefix();
-                }
-            }
-        }
+        //[HarmonyPatch(typeof(CUIManager), nameof(CUIManager.Init))]
+        //internal class InjectVRStart
+        //{
+        //    private static void Postfix()
+        //    {
+        //        if (!VRSystems.Instance)
+        //        {
+        //            //VR相关的入口，在CUIManager初始化时进行注入
+        //            new GameObject("VR_Globals").AddComponent<VRSystems>();
+        //            MenuFix.Prefix();
+        //        }
+        //    }
+        //}
 
         #region UI界面开启关闭
 
@@ -117,7 +118,8 @@ namespace VRMod.Patches
         {
             private static void Postfix(string uiFormPath)
             {
-                if (UIModePathes.Contains(uiFormPath) && VRPlayer.Instance && !VRPlayer.Instance.isHome)
+                Log.Info("InjectHideUI: uiFormPath=" + uiFormPath);
+                if (UIModePathes.Contains(uiFormPath) && uiFormPath != UIFormName.ASK_RESURGENCE_PANEL && VRPlayer.Instance && !VRPlayer.Instance.isHome)
                     VRPlayer.Instance.SetUIMode(false);
             }
         }
@@ -157,6 +159,33 @@ namespace VRMod.Patches
             }
         }
 
+        [HarmonyPatch(typeof(CBehaviorAction), nameof(CBehaviorAction.CreateContiEffectOffset))]
+        internal class InjectCreateCreateContiEffectOffset
+        {
+            private static void Postfix(BehaviorNode node, Object original, Define.POSITION_TYPE posType, Define.TARGET_TYPE targetType, Vector3 offset, string parent, bool createOnce, string effectname, bool isHeroVoiceSwitch, bool isNeedLimitScale, float scaleThres)
+            {
+                Log.Info("InjectCreateCreateContiEffectOffset: original.name=" + original.name + "  posType=" + posType + "  targetType=" + targetType + "  parent=" + parent + "  effectname=" + effectname);
+            }
+        }
+
+        [HarmonyPatch(typeof(CBehaviorAction), nameof(CBehaviorAction.CreateEffectOffSet))]
+        internal class InjectCreateCreateEffectOffSet
+        {
+            private static void Postfix(BehaviorNode node, Object original, Define.POSITION_TYPE posType, Define.TARGET_TYPE targetType, float livetime, float deletedelay, string parent, Vector3 offSet)
+            {
+                Log.Info("InjectCreateCreateEffectOffSet: original.name=" + original.name + "  posType=" + posType + "  targetType=" + targetType + "  parent=" + parent + "  livetime=" + livetime);
+            }
+        }
+
+        [HarmonyPatch(typeof(CBehaviorAction), nameof(CBehaviorAction.CreateOnceEffect))]
+        internal class InjectCreateCreateOnceEffect
+        {
+            private static void Postfix(BehaviorNode node, Object original, Define.POSITION_TYPE posType, Define.TARGET_TYPE targetType, float livetime, float deletedelay, string parent)
+            {
+                Log.Info("InjectCreateCreateOnceEffect: original.name=" + original.name + "  posType=" + posType + "  targetType=" + targetType + "  parent=" + parent + "  livetime=" + livetime);
+            }
+        }
+
         //修正死亡画面不面向玩家
         [HarmonyPatch(typeof(CBehaviorAction), nameof(CBehaviorAction.CreateOnceUIEffect))]
         internal class InjectCreateOnceUIEffect
@@ -177,6 +206,8 @@ namespace VRMod.Patches
             {
                 Log.Info("InjectCreateUIEffect: original.name=" + original.name + "  effectname=" + effectname);
                 original.Cast<Transform>().localEulerAngles = Vector3.zero;
+                //if (original.name == "0" && effectname == "shieldbreak")
+                //    original.Cast<Transform>().Find("postion").gameObject.active = false;
             }
         }
 
@@ -443,6 +474,28 @@ namespace VRMod.Patches
 
         #endregion
 
+        #region 手套射线修复
+
+        [HarmonyPatch(typeof(RayLineLaser), nameof(RayLineLaser.Awake))]
+        internal class InjectRayLineLaserAwake
+        {
+            private static void Postfix(RayLineLaser __instance)
+            {
+                VRPlayer.Instance.rayLineLasers.Add(__instance);
+            }
+        }
+
+        [HarmonyPatch(typeof(RayLineLaser), nameof(RayLineLaser.Update))]
+        internal class InjectRayLineLaserUpdate
+        {
+            private static bool Prefix()
+            {
+                return VRPlayer.Instance.allowUpdateRayLineLaser;
+            }
+        }
+
+        #endregion
+
         #region CG相机修复
         [HarmonyPatch(typeof(CBehaviorAction), nameof(CBehaviorAction.ActiveCGCamera))]
         internal class InjectActiveCGCamera
@@ -481,6 +534,38 @@ namespace VRMod.Patches
                 Log.Info("DestoryCGCamera");
                 if (node != null && node.Own != null)
                     Log.Info("DestoryCGCamera: " + node.Own.name);
+            }
+        }
+
+        #endregion
+
+        #region 教程相机修复
+
+        [HarmonyPatch(typeof(GuideManager), nameof(GuideManager.CreateCGCamera))]
+        internal class InjectGuideManagerCreateCGCamera
+        {
+            private static void Prefix(string cgname)
+            {
+                Transform cameraRoot = GuideManager.GetCameraRoot();
+                Transform transform = cameraRoot.Find(cgname);
+                Camera cam = transform.GetComponentInChildren<Camera>();
+                if (cam != null)
+                {
+                    cam.stereoTargetEye = StereoTargetEyeMask.None;
+                    cam.enabled = false;
+                    VRPlayer.Instance.SetCGCamera(true, cam);
+                    Log.Info("GuideManagerCreateCGCamera: cgname=" + cgname);
+                    VRSystems.Instance.SetGuideCanvas(GuideManager.GetGuideRoot().GetComponentInChildren<Canvas>());
+                }
+            }
+        }
+
+        [HarmonyPatch(typeof(GuideManager), nameof(GuideManager.CGCameraStopCallBack))]
+        internal class InjectGuideManagerCGCameraStopCallBack
+        {
+            private static void Prefix()
+            {
+                VRPlayer.Instance.SetCGCamera(false);
             }
         }
 

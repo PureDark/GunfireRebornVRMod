@@ -90,7 +90,6 @@ namespace VRMod.Player
             canvasRoot.position = new Vector3(32.8f, 3.7f, 16f);
             canvasRoot.localEulerAngles = new Vector3(0, 0, 0);
             DontDestroyOnLoad(Origin);
-            Log.Info("SystemInfo.graphicsMultiThreaded=" + SystemInfo.graphicsMultiThreaded);
         }
 
         public void ToggleEventCamera(bool force = false)
@@ -156,11 +155,16 @@ namespace VRMod.Player
             }
         }
 
+
+
+
         #region Motion Controls
 
         public Vector3 offsetOverride = new Vector3(0, -0.08f, -0.15f);
         private NewPlayerObject heroObj;
         public List<BezierLineRenderer> bezierLineRenderers = new List<BezierLineRenderer>();
+        public List<RayLineLaser> rayLineLasers = new List<RayLineLaser>();
+        public bool allowUpdateRayLineLaser = false;
 
         public VRBattleUI vrBattleUI;
         public bool IsReadyForBattle;
@@ -244,8 +248,10 @@ namespace VRMod.Player
             }
             if (isInCG)
             {
-                Origin.position = CGCamera.position;
+                Origin.position = CGCamera.position - Vector3.up * GetPlayerHeight();
                 Origin.rotation = Quaternion.LookRotation(CGCamera.forward.GetFlatDirection(), Vector3.up);
+                if(LeftHandMesh)
+                    LeftHandMesh.gameObject.active = false;
             }
             else if (!isUIMode && !isHome && IsReadyForBattle && HeroCameraManager.HeroTran)
             {
@@ -325,9 +331,6 @@ namespace VRMod.Player
                         states.Add(state.fullPathHash, WeaponAnimator.GetCurrentAnimatorStateInfo(0).m_NormalizedTime);
                 }
 
-                if (LeftHandMesh)
-                    LeftHandMesh.localScale = hideWeaponLeftHand || isDualWield ? Vector3.zero : new Vector3(0.67f, 0.67f, 0.67f);
-
                 var currWeapon = HeroCameraManager.HeroObj.PlayerCom.GetCurWeapon(HeroCameraManager.HeroObj.PlayerCom.CurWeaponID);
 
                 var weaponIsShow = true;
@@ -361,6 +364,12 @@ namespace VRMod.Player
 
                     var weaponSID = HeroCameraManager.HeroObj.PlayerCom.CurWeaponSID;
                     var weaponData = WeaponDatas.GetWeaponData(weaponSID);
+                    // 如果使用如律令要把左手隐藏
+                    hideWeaponLeftHand |= weaponData.weaponType == WeaponDatas.WeaponType.Talisman;
+
+                    if (LeftHandMesh)
+                        LeftHandMesh.localScale = hideWeaponLeftHand || isDualWield ? Vector3.zero : new Vector3(0.67f, 0.67f, 0.67f);
+
                     // 切枪时初始化枪械相关引用
                     if (HeroCameraManager.HeroObj.PlayerCom.CurWeaponID != lastWeaponID)
                     {
@@ -421,6 +430,13 @@ namespace VRMod.Player
             {
                 if (lineRenderer && !lineRenderer.playSight)
                     lineRenderer.Draw();
+            }
+            // 需要在LateUpdate里更新手套的激光射线，起点才正常
+            foreach (var rayLineLaser in rayLineLasers)
+            {
+                allowUpdateRayLineLaser = true;
+                rayLineLaser.Update();
+                allowUpdateRayLineLaser = false;
             }
         }
 
@@ -537,7 +553,7 @@ namespace VRMod.Player
                         {
                             Muzzle.localPosition = gauntletData.muzzlePosition;
                             var distance = Mathf.Max(Vector3.Distance(RightHand.model.position, RightHand.GetRayHitPosition()), 0);
-                            if(distance > 2)
+                            if (distance > 2)
                                 Muzzle.localEulerAngles = gauntletData.muzzleRotation;
                         }
                     }
@@ -569,9 +585,15 @@ namespace VRMod.Player
                         weapon.rotation = LeftHand.model.rotation;
                         weapon.Rotate(weaponData.rotationEuler.x, -weaponData.rotationEuler.y, weaponData.rotationEuler.z, Space.Self);
                         weapon.position = LeftHand.model.position + weapon.right * -offset.x + weapon.up * offset.y + weapon.forward * offset.z;
-                        Muzzle.localPosition = gauntletData.muzzlePosition;
-                        var distance = Mathf.Max(Vector3.Distance(LeftHand.model.position, LeftHand.GetRayHitPosition()) - 3, 0);
-                        Muzzle.localEulerAngles = Vector3.Lerp(Vector3.zero, -gauntletData.muzzleRotation, Mathf.Min(distance / 12f, 1));
+                        if (!Muzzle)
+                            Muzzle = weapon.DeepFindChild(gauntletData.muzzle);
+                        if (Muzzle)
+                        {
+                            Muzzle.localPosition = gauntletData.muzzlePosition;
+                            var distance = Mathf.Max(Vector3.Distance(RightHand.model.position, RightHand.GetRayHitPosition()), 0);
+                            if (distance > 2)
+                                Muzzle.localEulerAngles = gauntletData.muzzleRotation;
+                        }
                     }
                     else
                     {

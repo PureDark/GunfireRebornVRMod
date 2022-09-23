@@ -1,27 +1,28 @@
-﻿using UnityEngine;
-using UnityEngine.Experimental.Rendering.LightweightPipeline;
-using UnityEngine.Experimental.Rendering;
-using UnityEngine.Rendering;
-using UnityEngine.XR;
-using System;
-using VRMod.Assets;
-using Valve.VR;
-using UnhollowerBaseLib.Attributes;
-using static VRMod.VRMod;
+﻿using System;
 using UI;
+using UnhollowerBaseLib.Attributes;
+using UnityEngine;
+using UnityEngine.Experimental.Rendering;
+using UnityEngine.Experimental.Rendering.LightweightPipeline;
+using UnityEngine.Rendering;
 using UnityEngine.Rendering.PostProcessing;
+using UnityEngine.XR;
+using Valve.VR;
+using VRMod.Assets;
+using static VRMod.VRMod;
 
 namespace VRMod.Player
 {
-    // 在OpaquePass之后插入渲染双眼画面的PASS，要在post processing前
+    // 在TransparentPass之后插入渲染双眼画面的PASS
     [Il2CppImplements(typeof(IAfterTransparentPass))]
     public class StereoRender : MonoBehaviour/*, IAfterTransparentPass*/
     {
         public StereoRender(IntPtr value) : base(value) { }
 
-        private Camera _camera;
-        private Camera LeftCam, RightCam;
-        public RenderTexture leftFarRT, rightFarRT;
+        public Camera HeadCam;
+        public Camera LeftCam, RightCam;
+        public Camera LeftUICam, RightUICam;
+        public RenderTexture leftRT, rightRT;
         public RenderTexture leftUIRT, rightUIRT;
         public StereoRenderPass stereoPass;
         public float separation = 0.031f;
@@ -30,13 +31,12 @@ namespace VRMod.Player
         private float UICamClipStart = 0.1f;
         private float UICamClipEnd = 100f;
         public static int defaultCullingMask;
+        private int currentWidth, currentHeight;
 
         public void Awake()
         {
             defaultCullingMask = -966787561;
             defaultCullingMask |= 1 << Layer.Weapon;
-
-            _camera = gameObject.GetComponent<Camera>();
 
             var uiPPLayer = CUIManager.instance.UICamera.GetComponent<PostProcessLayer>();
 
@@ -57,120 +57,90 @@ namespace VRMod.Player
             head.localPosition = Vector3.zero;
             head.localRotation = Quaternion.identity;
 
-            var leftFarEye = head.Find("LeftEye");
-            if (!leftFarEye)
-                leftFarEye = new GameObject("LeftEye").transform;
+            var leftEye = head.Find("LeftEye");
+            if (!leftEye)
+                leftEye = new GameObject("LeftEye").transform;
 
-            leftFarEye.parent = head;
-            leftFarEye.localPosition = new Vector3(-separation, 0, 0);
-            leftFarEye.localEulerAngles = new Vector3(0, 0, 0);
-            leftFarEye.gameObject.GetOrAddComponent<OutLinePassMgr>();
+            leftEye.parent = head;
+            leftEye.localPosition = new Vector3(-separation, 0, 0);
+            leftEye.localEulerAngles = new Vector3(0, 0, 0);
+            leftEye.gameObject.GetOrAddComponent<OutLinePassMgr>();
 
-            mPostProcessLayer = leftFarEye.gameObject.AddComponent<PostProcessLayer>();
+            mPostProcessLayer = leftEye.gameObject.AddComponent<PostProcessLayer>();
             mPostProcessLayer.m_Resources = uiPPLayer.m_Resources;
             mPostProcessLayer.volumeLayer = uiPPLayer.volumeLayer;
 
-            var leftFarCam = leftFarEye.gameObject.GetOrAddComponent<Camera>();
-            leftFarCam.cullingMask = defaultCullingMask;
-            leftFarCam.stereoTargetEye = StereoTargetEyeMask.None;
-            leftFarCam.clearFlags = CameraClearFlags.SolidColor;
-            leftFarCam.fieldOfView = (SteamVR.instance.fieldOfView > 0) ? SteamVR.instance.fieldOfView : 109.363f;
-            leftFarCam.nearClipPlane = farCamClipStart;
-            leftFarCam.farClipPlane = farCamClipEnd;
-            leftFarCam.depth = 0;
+            LeftCam = leftEye.gameObject.GetOrAddComponent<Camera>();
+            LeftCam.cullingMask = defaultCullingMask;
+            LeftCam.stereoTargetEye = StereoTargetEyeMask.None;
+            LeftCam.clearFlags = CameraClearFlags.SolidColor;
+            LeftCam.backgroundColor = new Color(0, 0, 0, 0);
+            LeftCam.fieldOfView = (SteamVR.instance.fieldOfView > 0) ? SteamVR.instance.fieldOfView : 109.363f;
+            LeftCam.nearClipPlane = farCamClipStart;
+            LeftCam.farClipPlane = farCamClipEnd;
+            LeftCam.depth = 0;
 
-            var leftUITran = leftFarEye.Find("LeftUICam");
+            var leftUITran = leftEye.Find("LeftUICam");
             if (!leftUITran)
                 leftUITran = new GameObject("LeftUICam").transform;
-            leftUITran.parent = leftFarEye;
+            leftUITran.parent = leftEye;
             leftUITran.localPosition = new Vector3(0, 0, 0);
             leftUITran.localEulerAngles = new Vector3(0, 0, 0);
             leftUITran.gameObject.GetOrAddComponent<OutLinePassMgr>();
 
-            var leftUICam = leftUITran.gameObject.GetOrAddComponent<Camera>();
-            leftUICam.cullingMask = 1 << Layer.UI;
-            leftUICam.stereoTargetEye = StereoTargetEyeMask.None;
-            leftUICam.clearFlags = CameraClearFlags.SolidColor;
-            leftUICam.backgroundColor = new Color(0, 0, 0, 0);
-            leftUICam.fieldOfView = (SteamVR.instance.fieldOfView > 0) ? SteamVR.instance.fieldOfView : 109.363f;
-            leftUICam.nearClipPlane = UICamClipStart;
-            leftUICam.farClipPlane = UICamClipEnd;
+            LeftUICam = leftUITran.gameObject.GetOrAddComponent<Camera>();
+            LeftUICam.cullingMask = 1 << Layer.UI;
+            LeftUICam.stereoTargetEye = StereoTargetEyeMask.None;
+            LeftUICam.clearFlags = CameraClearFlags.SolidColor;
+            LeftUICam.backgroundColor = new Color(0, 0, 0, 0);
+            LeftUICam.fieldOfView = (SteamVR.instance.fieldOfView > 0) ? SteamVR.instance.fieldOfView : 109.363f;
+            LeftUICam.nearClipPlane = UICamClipStart;
+            LeftUICam.farClipPlane = UICamClipEnd;
 
 
-            var rightFarEye = head.Find("RightEye");
-            if (!rightFarEye)
-                rightFarEye = new GameObject("RightEye").transform;
-            rightFarEye.parent = head;
-            rightFarEye.localPosition = new Vector3(separation, 0, 0);
-            rightFarEye.localEulerAngles = new Vector3(0, 0, 0);
-            rightFarEye.gameObject.GetOrAddComponent<OutLinePassMgr>();
+            var rightEye = head.Find("RightEye");
+            if (!rightEye)
+                rightEye = new GameObject("RightEye").transform;
+            rightEye.parent = head;
+            rightEye.localPosition = new Vector3(separation, 0, 0);
+            rightEye.localEulerAngles = new Vector3(0, 0, 0);
+            rightEye.gameObject.GetOrAddComponent<OutLinePassMgr>();
 
-            mPostProcessLayer = rightFarEye.gameObject.AddComponent<PostProcessLayer>();
+            mPostProcessLayer = rightEye.gameObject.AddComponent<PostProcessLayer>();
             mPostProcessLayer.m_Resources = uiPPLayer.m_Resources;
             mPostProcessLayer.volumeLayer = uiPPLayer.volumeLayer;
 
-            var rightFarCam = rightFarEye.gameObject.GetOrAddComponent<Camera>();
-            rightFarCam.cullingMask = defaultCullingMask;
-            rightFarCam.stereoTargetEye = StereoTargetEyeMask.None;
-            rightFarCam.clearFlags = CameraClearFlags.SolidColor;
-            rightFarCam.fieldOfView = (SteamVR.instance.fieldOfView > 0) ? SteamVR.instance.fieldOfView : 109.363f;
-            rightFarCam.nearClipPlane = farCamClipStart;
-            rightFarCam.farClipPlane = farCamClipEnd;
-            rightFarCam.depth = 0;
+            RightCam = rightEye.gameObject.GetOrAddComponent<Camera>();
+            RightCam.cullingMask = defaultCullingMask;
+            RightCam.stereoTargetEye = StereoTargetEyeMask.None;
+            RightCam.clearFlags = CameraClearFlags.SolidColor;
+            RightCam.backgroundColor = new Color(0, 0, 0, 0);
+            RightCam.fieldOfView = (SteamVR.instance.fieldOfView > 0) ? SteamVR.instance.fieldOfView : 109.363f;
+            RightCam.nearClipPlane = farCamClipStart;
+            RightCam.farClipPlane = farCamClipEnd;
+            RightCam.depth = 0;
 
-            var rightUITran = leftFarEye.Find("RightUICam");
+            var rightUITran = leftEye.Find("RightUICam");
             if (!rightUITran)
                 rightUITran = new GameObject("RightUICam").transform;
-            rightUITran.parent = rightFarEye;
+            rightUITran.parent = rightEye;
             rightUITran.localPosition = new Vector3(0, 0, 0);
             rightUITran.localEulerAngles = new Vector3(0, 0, 0);
             rightUITran.gameObject.GetOrAddComponent<OutLinePassMgr>();
 
-            var rightUICam = rightUITran.gameObject.GetOrAddComponent<Camera>();
-            rightUICam.cullingMask = 1 << Layer.UI;
-            rightUICam.stereoTargetEye = StereoTargetEyeMask.None;
-            rightUICam.clearFlags = CameraClearFlags.SolidColor;
-            rightUICam.backgroundColor = new Color(0, 0, 0, 0);
-            rightUICam.fieldOfView = (SteamVR.instance.fieldOfView > 0) ? SteamVR.instance.fieldOfView : 109.363f;
-            rightUICam.nearClipPlane = UICamClipStart;
-            rightUICam.farClipPlane = UICamClipEnd;
+            RightUICam = rightUITran.gameObject.GetOrAddComponent<Camera>();
+            RightUICam.cullingMask = 1 << Layer.UI;
+            RightUICam.stereoTargetEye = StereoTargetEyeMask.None;
+            RightUICam.clearFlags = CameraClearFlags.SolidColor;
+            RightUICam.backgroundColor = new Color(0, 0, 0, 0);
+            RightUICam.fieldOfView = (SteamVR.instance.fieldOfView > 0) ? SteamVR.instance.fieldOfView : 109.363f;
+            RightUICam.nearClipPlane = UICamClipStart;
+            RightUICam.farClipPlane = UICamClipEnd;
 
-
-            var headCam = GetComponent<Camera>();
-
-            headCam.nearClipPlane = farCamClipStart;
-            headCam.farClipPlane = farCamClipEnd;
-            leftFarCam.projectionMatrix = headCam.GetStereoProjectionMatrix(Camera.StereoscopicEye.Left);
-            rightFarCam.projectionMatrix = headCam.GetStereoProjectionMatrix(Camera.StereoscopicEye.Right);
-
-            headCam.nearClipPlane = UICamClipStart;
-            headCam.farClipPlane = UICamClipEnd;
-            leftUICam.projectionMatrix = headCam.GetStereoProjectionMatrix(Camera.StereoscopicEye.Left);
-            rightUICam.projectionMatrix = headCam.GetStereoProjectionMatrix(Camera.StereoscopicEye.Right);
-
-            int width = (XRSettings.eyeTextureWidth <= 0) ? 2208 : XRSettings.eyeTextureWidth;
-            int height = (XRSettings.eyeTextureHeight <= 0) ? 2452 : XRSettings.eyeTextureHeight;
-            if (leftFarRT == null)
-                leftFarRT = new RenderTexture(width, height, 24, RenderTextureFormat.DefaultHDR);
-            if (rightFarRT == null)
-                rightFarRT = new RenderTexture(width, height, 24, RenderTextureFormat.DefaultHDR);
-            if (leftUIRT == null)
-                leftUIRT = new RenderTexture(width, height, 24, RenderTextureFormat.DefaultHDR);
-            if (rightUIRT == null)
-                rightUIRT = new RenderTexture(width, height, 24, RenderTextureFormat.DefaultHDR);
-            leftFarRT.antiAliasing = 4;
-            rightFarRT.antiAliasing = 4;
-            leftUIRT.antiAliasing = 4;
-            rightUIRT.antiAliasing = 4;
-            leftFarCam.targetTexture = leftFarRT;
-            rightFarCam.targetTexture = rightFarRT;
-            leftUICam.targetTexture = leftUIRT;
-            rightUICam.targetTexture = rightUIRT;
+            UpdateProjectionMatrix();
+            UpdateResolution();
 
             stereoPass = new StereoRenderPass(this);
-
-            LeftCam = leftFarCam;
-            RightCam = rightFarCam;
 
             Log.Info("XRSettings:" + XRSettings.eyeTextureWidth + "x" + XRSettings.eyeTextureHeight);
         }
@@ -179,6 +149,56 @@ namespace VRMod.Player
         {
             LeftCam.cullingMask = mask;
             RightCam.cullingMask = mask;
+        }
+
+        public void UpdateProjectionMatrix()
+        {
+            HeadCam = GetComponent<Camera>();
+
+            HeadCam.nearClipPlane = farCamClipStart;
+            HeadCam.farClipPlane = farCamClipEnd;
+            LeftCam.projectionMatrix = HeadCam.GetStereoProjectionMatrix(Camera.StereoscopicEye.Left);
+            RightCam.projectionMatrix = HeadCam.GetStereoProjectionMatrix(Camera.StereoscopicEye.Right);
+
+            HeadCam.nearClipPlane = UICamClipStart;
+            HeadCam.farClipPlane = UICamClipEnd;
+            LeftUICam.projectionMatrix = HeadCam.GetStereoProjectionMatrix(Camera.StereoscopicEye.Left);
+            RightUICam.projectionMatrix = HeadCam.GetStereoProjectionMatrix(Camera.StereoscopicEye.Right);
+        }
+
+        public void UpdateResolution()
+        {
+            currentWidth = (XRSettings.eyeTextureWidth <= 0) ? 2208 : XRSettings.eyeTextureWidth;
+            currentHeight = (XRSettings.eyeTextureHeight <= 0) ? 2452 : XRSettings.eyeTextureHeight;
+            if (leftRT != null)
+                Destroy(leftRT);
+            if (rightRT != null)
+                Destroy(rightRT);
+            if (leftUIRT != null)
+                Destroy(leftUIRT);
+            if (rightUIRT != null)
+                Destroy(rightUIRT);
+            leftRT = new RenderTexture(currentWidth, currentHeight, 24, RenderTextureFormat.DefaultHDR);
+            rightRT = new RenderTexture(currentWidth, currentHeight, 24, RenderTextureFormat.DefaultHDR);
+            leftUIRT = new RenderTexture(currentWidth, currentHeight, 24, RenderTextureFormat.DefaultHDR);
+            rightUIRT = new RenderTexture(currentWidth, currentHeight, 24, RenderTextureFormat.DefaultHDR);
+            leftRT.antiAliasing = 4;
+            rightRT.antiAliasing = 4;
+            leftUIRT.antiAliasing = 4;
+            rightUIRT.antiAliasing = 4;
+            LeftCam.targetTexture = leftRT;
+            RightCam.targetTexture = rightRT;
+            LeftUICam.targetTexture = leftUIRT;
+            RightUICam.targetTexture = rightUIRT;
+        }
+
+        public void FixedUpdate()
+        {
+            if (currentWidth < XRSettings.eyeTextureWidth || currentHeight < XRSettings.eyeTextureHeight)
+            {
+                UpdateResolution();
+                stereoPass.UpdateResolution();
+            }
         }
 
         public StereoRenderPass GetPassToEnqueue(RenderTextureDescriptor baseDescriptor, RenderTargetHandle colorAttachmentHandle, RenderTargetHandle depthAttachmentHandle)
@@ -221,8 +241,14 @@ namespace VRMod.Player
                     return;
                 }
                 stereoMaterial = CoreUtils.CreateEngineMaterial(shader);
-                stereoMaterial.SetTexture("_LeftFirstTex", stereoRender.leftFarRT);
-                stereoMaterial.SetTexture("_RightFirstTex", stereoRender.rightFarRT);
+                UpdateResolution();
+            }
+
+
+            public void UpdateResolution()
+            {
+                stereoMaterial.SetTexture("_LeftFirstTex", stereoRender.leftRT);
+                stereoMaterial.SetTexture("_RightFirstTex", stereoRender.rightRT);
                 stereoMaterial.SetTexture("_LeftLastTex", stereoRender.leftUIRT);
                 stereoMaterial.SetTexture("_RightLastTex", stereoRender.rightUIRT);
                 stereoMaterial.SetFloat("_AlphaMultiplier", 2);
@@ -235,7 +261,7 @@ namespace VRMod.Player
                 this.colorHandle = colorHandle;
                 isRendering = true;
                 // 因为Postprocessing一直会替换主相机的culling mask，要替换回0，不需要主相机渲染任何东西
-                stereoRender._camera.cullingMask = 0;
+                stereoRender.HeadCam.cullingMask = 0;
             }
 
             public override void Execute(ScriptableRenderer renderer, ScriptableRenderContext context, ref RenderingData renderingData)
@@ -248,31 +274,15 @@ namespace VRMod.Player
                     return;
                 }
 
-                //获取命令缓冲区并为其分配名称
                 var cmd = CommandBufferPool.Get(k_RenderTag);
-                //定义渲染过程
-                Render(cmd);
-                //执行渲染命令
+                var source = colorHandle.Identifier();
+                int destination = TempTargetId;
+                cmd.GetTemporaryRT(destination, baseDescriptor);
+                cmd.Blit(destination, source, stereoMaterial, 0);
                 context.ExecuteCommandBuffer(cmd);
-                //释放该渲染命令缓冲区
                 CommandBufferPool.Release(cmd);
 
                 isRendering = false;
-            }
-
-            void Render(CommandBuffer cmd)
-            {
-                //获得屏幕RT
-                var source = colorHandle.Identifier();
-                int destination = TempTargetId;
-                //获取宽高
-                var w = baseDescriptor.width;
-                var h = baseDescriptor.height;
-                //使用临时纹理复制当前屏幕纹理
-                cmd.GetTemporaryRT(destination, w, h, 0, FilterMode.Point, RenderTextureFormat.Default);
-                cmd.Blit(source, destination);
-                //使用材质的0pass渲染到临时纹理并复制到屏幕纹理
-                cmd.Blit(destination, source, stereoMaterial, 0);
             }
         }
 

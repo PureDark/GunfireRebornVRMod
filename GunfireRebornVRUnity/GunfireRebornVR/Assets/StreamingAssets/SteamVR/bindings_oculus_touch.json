@@ -202,6 +202,9 @@
                   }
                },
                "mode" : "button",
+               "parameters" : {
+                  "click_activate_threshold" : "0.75"
+               },
                "path" : "/user/hand/right/input/trigger"
             }
          ]

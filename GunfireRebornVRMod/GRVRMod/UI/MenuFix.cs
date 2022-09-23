@@ -8,10 +8,18 @@ namespace VRMod.UI
     {
         public static void Prefix()
         {
+            var UICamera = GetUICamera();
+            if (UICamera != null)
+                UICamera.stereoTargetEye = StereoTargetEyeMask.None;
+        }
+
+        public static Camera GetUICamera()
+        {
             var canvasRoot = CUIManager.instance.transform.Find("Canvas_PC(Clone)");
             var UICamera = canvasRoot.Find("Camera");
-            if(UICamera != null)
-                UICamera.GetComponent<Camera>().stereoTargetEye = StereoTargetEyeMask.None;
+            if (UICamera != null)
+                return UICamera.GetComponent<Camera>();
+            return null;
         }
 
 

@@ -123,19 +123,15 @@ namespace VRMod.Player.MotionControlls
             if (!eventSystem || !inputModule || !inputModule.inputOverride)
                 return 0f;
 
-            // Get data
             PointerEventData eventData = new PointerEventData(eventSystem);
             eventData.position = inputModule.inputOverride.mousePosition;
 
-            // Raycast using data
             List<RaycastResult> results = new List<RaycastResult>();
             eventSystem.RaycastAll(eventData, results);
 
-            // Get closest
             RaycastResult cloestResult = FindFirstRaycast(results);
             float distance = cloestResult.distance;
 
-            // Clamp
             distance = Valve.VR.Mathf.Clamp(distance, 0.0f, 5);
 
             return distance;

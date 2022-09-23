@@ -13,7 +13,7 @@ namespace VRMod.Player.GameData
     /// </summary>
     public class WeaponDatas
     {
-        public static WeaponData defaultWeaponData = new WeaponData(0, "", Vector3.zero);
+        public static WeaponData defaultWeaponData = new WeaponData(0, "", new Vector3(0, -0.08f, -0.18f));
 
         public enum WeaponType
         {

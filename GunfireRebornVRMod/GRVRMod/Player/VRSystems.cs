@@ -10,6 +10,8 @@ using VRMod.UI;
 using static VRMod.VRMod;
 using DuoyiQaLib;
 using UnityEngine.Rendering;
+using System.Collections;
+using UI;
 
 namespace VRMod.Player
 {
@@ -22,6 +24,7 @@ namespace VRMod.Player
         public VRSystems(IntPtr value) : base(value) { }
 
         public static VRSystems Instance { get; private set; }
+        public Canvas GuideCanvas;
 
         private void Awake()
         {
@@ -37,10 +40,9 @@ namespace VRMod.Player
             HarmonyPatches.onSceneLoaded += OnSceneLoaded;
 
             //if (DYSceneManager.GetCurSceneName().ToLower().Contains("start"))
-            //    MonoBehaviourExtensions.StartCoroutine(this, HarmonyPatches.ClickStartScreenContinue());
+            //    MelonCoroutines.Start(this, HarmonyPatches.ClickStartScreenContinue());
         }
 
-        public GameProfilerEntry gameProfilerEntry;
         private void Update()
         {
             //MenuFix.SetDebugUICamera();
@@ -53,7 +55,28 @@ namespace VRMod.Player
                 }
                 VRPlayer.Instance.Camera.stereoTargetEye = StereoTargetEyeMask.Both;
             }
+            if (GuideCanvas)
+            {
+                var isGuideAnim = GuideCanvas.transform.Find("OP_ani_UI").gameObject.active || GuideCanvas.transform.Find("ED_ani_UI").gameObject.active;
+                if (isGuideAnim)
+                {
+                    TogglePlayerCam(true);
+                    GuideCanvas.transform.position = CUIManager.instance.m_UIRoot.position;
+                    GuideCanvas.transform.rotation = CUIManager.instance.m_UIRoot.rotation;
+                    GuideCanvas.transform.localScale = CUIManager.instance.m_UIRoot.localScale;
+                }
+                else
+                {
+                    TogglePlayerCam(false);
+                }
+            }
 
+        }
+
+        public void SetGuideCanvas(Canvas canvas)
+        {
+            GuideCanvas = canvas;
+            VRSystems.Instance.GuideCanvas.renderMode = RenderMode.WorldSpace;
         }
 
         private void CreateCameraRig()
@@ -71,8 +94,22 @@ namespace VRMod.Player
         {
             if(scene.name == "home")
             {
+                GuideCanvas = null;
                 CreateCameraRig();
-                HarmonyPatches.onSceneLoaded -= OnSceneLoaded;
+            }
+        }
+
+        private void TogglePlayerCam(bool toggle)
+        {
+            if (toggle)
+            {
+                VRPlayer.Instance.StereoRender.LeftCam.cullingMask = 0;
+                VRPlayer.Instance.StereoRender.RightCam.cullingMask = 0;
+            }
+            else
+            {
+                VRPlayer.Instance.StereoRender.LeftCam.cullingMask = StereoRender.defaultCullingMask;
+                VRPlayer.Instance.StereoRender.RightCam.cullingMask = StereoRender.defaultCullingMask;
             }
         }
 

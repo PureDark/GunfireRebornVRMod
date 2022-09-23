@@ -10,7 +10,7 @@ namespace VRMod.Player.VRInput
     public class VRInputDevice : InputDevice
     {
         public VRInputDevice(IntPtr value) : base(value) { }
-        public SteamVR_Action_Boolean SnapTurnLeft =SteamVR_Actions.gameplay_SnapTurnLeft;
+        public SteamVR_Action_Boolean SnapTurnLeft = SteamVR_Actions.gameplay_SnapTurnLeft;
         public SteamVR_Action_Boolean SnapTurnRight = SteamVR_Actions.gameplay_SnapTurnRight;
         public SteamVR_Action_Single LT_WeaponSkill = SteamVR_Actions.gameplay_LT_WeaponSkill;
         public SteamVR_Action_Single RT_Fire = SteamVR_Actions.gameplay_RT_Fire;
@@ -92,7 +92,7 @@ namespace VRMod.Player.VRInput
 
             var rightStickVector = RS_Rotate.axis;
             UpdateRightStickWithValue(rightStickVector, updateTick, deltaTime);
-            if(VRPlayer.Instance.isUIMode)
+            if(VRPlayer.Instance.isUIMode && !VRPlayer.Instance.isHome)
                 UpdateWithState(InputControlType.Action1, InteractUI.state, updateTick, deltaTime);
             else
                 UpdateWithState(InputControlType.Action1, A_Jump.state, updateTick, deltaTime);
@@ -100,10 +100,10 @@ namespace VRMod.Player.VRInput
             UpdateWithState(InputControlType.Action3, X_Interact_Reload.state, updateTick, deltaTime);
             UpdateWithState(InputControlType.Action4, Y_SwitchWeapons.state, updateTick, deltaTime);
 
+            // 狗双持时要重映射按键
             if (VRPlayer.Instance.isDualWield)
             {
                 UpdateWithState(InputControlType.LeftBumper, false, updateTick, deltaTime);
-                // 狗双持时要重映射按键
                 if (dualWieldDelay<=0)
                     UpdateWithState(InputControlType.RightBumper, RB_DualWield2ndSkill.state, updateTick, deltaTime);
                 UpdateWithValue(InputControlType.LeftTrigger, LT_DualWieldFire.axis, updateTick, deltaTime);
