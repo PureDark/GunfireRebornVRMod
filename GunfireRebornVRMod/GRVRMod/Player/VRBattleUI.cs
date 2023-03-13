@@ -4,7 +4,9 @@ using UI;
 using UnityEngine;
 using UnityEngine.SocialPlatforms;
 using VRMod.Player.MotionControlls;
+using VRMod.Settings;
 using static RootMotion.FinalIK.RagdollUtility;
+using static VRMod.VRMod;
 
 namespace VRMod.Player
 {
@@ -13,18 +15,18 @@ namespace VRMod.Player
         public VRBattleUI(IntPtr value) : base(value) { }
         public Transform Head;
         public HandController LeftHand, RightHand;
-        public Transform canvasRoot;
-        public Transform PC_Panel_war;
-        public Transform minimap;
-        public Transform hp;
-        public Transform curweapon;
-        public Transform Fastmove_tips;
-        public Transform button_grenade;
-        public Transform button_aim;
-        public Transform hero_skill_1;
-        public Transform leftCrossHair;
-        public Transform rightCrossHair;
-        public Transform foxChargingAim;
+        public Transform? canvasRoot;
+        public Transform? PC_Panel_war;
+        public Transform? minimap;
+        public Transform? hp;
+        public Transform? curweapon;
+        public Transform? Fastmove_tips;
+        public Transform? button_grenade;
+        public Transform? button_aim;
+        public Transform? hero_skill_1;
+        public Transform? leftCrossHair;
+        public Transform? rightCrossHair;
+        public Transform? foxChargingAim;
 
         public Transform coinmessage;
         public Transform cashmessage;
@@ -37,7 +39,7 @@ namespace VRMod.Player
         private Transform canvasRootTarget;
         private Transform hpTarget;
 
-        public float distance = 3.0f;
+        public float distance = 3.5f;
         public float smoothTime = 0.3f;
         private float minimapScaleLerp = 0f;
         private float coinScaleLerp = 0f;
@@ -111,7 +113,9 @@ namespace VRMod.Player
         {
             if (setup)
             {
+                distance = ModConfig.UIDistance.Value;
                 canvasRoot = CUIManager.instance.m_UIRoot;
+                canvasRoot.transform.localScale = new Vector3(0.002f, 0.002f, 0.002f) * ModConfig.UIScale.Value;
                 PC_Panel_war = CUIManager.instance.MenuCanvas.transform.Find("PC_Panel_war");
                 if (PC_Panel_war)
                 {
@@ -119,9 +123,9 @@ namespace VRMod.Player
                     PC_Panel_war.GetComponent<Animator>().enabled = false;
                     PC_Panel_war.Find("bullet_tips").gameObject.active = false;
                     hp = PC_Panel_war.Find("hp");
-                    Fastmove_tips = PC_Panel_war.Find("Fastmove_tips");
-                    button_grenade = PC_Panel_war.Find("button_grenade");
-                    button_aim = PC_Panel_war.Find("button_aim");
+                    Fastmove_tips = PC_Panel_war.Find("lay_skill/lay_fastmove");
+                    button_grenade = PC_Panel_war.Find("lay_skill/lay_grenade");
+                    button_aim = PC_Panel_war.Find("lay_skill/button_aim");
                     curweapon = PC_Panel_war.Find("curweapon");
                     hero_skill_1 = PC_Panel_war.Find("hero_skill_1");
                     coinmessage = PC_Panel_war.Find("coinmessage");
@@ -232,7 +236,7 @@ namespace VRMod.Player
             }
             if (canvasRoot && !VRPlayer.Instance.isUIMode)
             {
-                var targetPosition = Head.position + VRPlayer.Instance.GetFlatForwardDirection() * 3.5f;
+                var targetPosition = Head.position + VRPlayer.Instance.GetFlatForwardDirection() * distance;
                 canvasRootTarget.position = Vector3.SmoothDamp(canvasRootTarget.position, targetPosition, ref canvasRootVelocity, smoothTime);
                 canvasRoot.position = canvasRootTarget.position;
 

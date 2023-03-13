@@ -1,10 +1,10 @@
-﻿using AI.BehaviorTree;
-using BoltBehavior;
+﻿using BoltBehavior;
 using GameCoder.Engine;
 using HarmonyLib;
 using SkillBolt;
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using UI;
 using UIScript;
 using UnhollowerRuntimeLib;
@@ -14,6 +14,7 @@ using UnityEngine.XR;
 using VRMod.Player;
 using VRMod.Player.VRInput;
 using VRMod.UI;
+using static UnityEngine.UI.Image;
 using static VRMod.VRMod;
 
 namespace VRMod.Patches
@@ -81,7 +82,8 @@ namespace VRMod.Patches
             UIFormName.NPC_EVENT_CHOOSE_PANEL,
             UIFormName.ASK_RESURGENCE_PANEL,
             UIFormName.ASK_RELICRESURGENCE_PANEL,
-            UIFormName.PC_PANEL_GROWTHCHOOSE
+            UIFormName.PC_PANEL_GROWTHCHOOSE,
+            UIFormName.PACKAGE_PANEL
         };
 
         public static List<string> BattleModePathes = new List<string>
@@ -156,6 +158,10 @@ namespace VRMod.Patches
                 Log.Info("Scene Loaded: " + scene.name);
                 if (onSceneLoaded != null)
                     onSceneLoaded.Invoke(scene, mode);
+                if (scene.name == "1030102")
+                    VRPlayer.Instance.CannonFix = true;
+                else
+                    VRPlayer.Instance.CannonFix = false;
             }
         }
 
@@ -165,6 +171,8 @@ namespace VRMod.Patches
             private static void Postfix(BehaviorNode node, Object original, Define.POSITION_TYPE posType, Define.TARGET_TYPE targetType, Vector3 offset, string parent, bool createOnce, string effectname, bool isHeroVoiceSwitch, bool isNeedLimitScale, float scaleThres)
             {
                 Log.Info("InjectCreateCreateContiEffectOffset: original.name=" + original.name + "  posType=" + posType + "  targetType=" + targetType + "  parent=" + parent + "  effectname=" + effectname);
+                if (original.name == "60632")
+                    original.Cast<Transform>().gameObject.active = false;
             }
         }
 
@@ -174,6 +182,8 @@ namespace VRMod.Patches
             private static void Postfix(BehaviorNode node, Object original, Define.POSITION_TYPE posType, Define.TARGET_TYPE targetType, float livetime, float deletedelay, string parent, Vector3 offSet)
             {
                 Log.Info("InjectCreateCreateEffectOffSet: original.name=" + original.name + "  posType=" + posType + "  targetType=" + targetType + "  parent=" + parent + "  livetime=" + livetime);
+                if (original.name == "60632")
+                    original.Cast<Transform>().gameObject.active = false;
             }
         }
 
@@ -183,6 +193,8 @@ namespace VRMod.Patches
             private static void Postfix(BehaviorNode node, Object original, Define.POSITION_TYPE posType, Define.TARGET_TYPE targetType, float livetime, float deletedelay, string parent)
             {
                 Log.Info("InjectCreateCreateOnceEffect: original.name=" + original.name + "  posType=" + posType + "  targetType=" + targetType + "  parent=" + parent + "  livetime=" + livetime);
+                if (original.name == "60632")
+                    original.Cast<Transform>().gameObject.active = false;
             }
         }
 
@@ -195,6 +207,8 @@ namespace VRMod.Patches
                 Log.Info("InjectCreateOnceUIEffect: original.name=" + original.name + "  livetime=" + livetime + "  deletedelay=" + deletedelay);
                 if (original.name == "hub_die(Clone)")
                     original.Cast<Transform>().localEulerAngles = Vector3.zero;
+                if (original.name == "60632")
+                    original.Cast<Transform>().gameObject.active = false;
             }
         }
 
@@ -208,6 +222,8 @@ namespace VRMod.Patches
                 original.Cast<Transform>().localEulerAngles = Vector3.zero;
                 //if (original.name == "0" && effectname == "shieldbreak")
                 //    original.Cast<Transform>().Find("postion").gameObject.active = false;
+                if (original.name == "60632")
+                    original.Cast<Transform>().gameObject.active = false;
             }
         }
 
@@ -240,6 +256,16 @@ namespace VRMod.Patches
             }
         }
 
+        // 取消新更新的血条受伤特效
+        [HarmonyPatch(typeof(BarHurtEffectController), nameof(BarHurtEffectController.AddHurtEffect))]
+        internal class InjectBarHurtEffectControllerAddHurtEffect
+        {
+            private static bool Prefix(int aniType)
+            {
+                return false;
+            }
+        }
+
         // 取消护盾回复时的特效，因为无法缩放会导致整个屏幕闪一下
         [HarmonyPatch(typeof(CBehaviorAction), nameof(CBehaviorAction.CreateEffectOnUINode))]
         internal class InjectCreateEffectOnUINode
@@ -247,6 +273,8 @@ namespace VRMod.Patches
             private static void Postfix(BehaviorNode node, string uiname, string nodename, Object original, float livetime = 0f)
             {
                 Log.Info("CreateEffectOnUINode: original.name=" + original.name + "  uiname=" + uiname + "  nodename=" + nodename + "  livetime=" + livetime);
+                if (original.name == "60632")
+                    original.Cast<Transform>().gameObject.active = false;
                 if (original.name == "0" && uiname == "PanelWar" && nodename == "hp")
                     original.Cast<Transform>().Find("postion").gameObject.active = false;
             }
@@ -259,6 +287,8 @@ namespace VRMod.Patches
             private static void Postfix(BehaviorNode node, string uiname, string nodename, Object original, float livetime, float deletedelay)
             {
                 Log.Info("InjectCreateOnceEffectOnUINode: original.name=" + original.name + "  uiname=" + uiname + "  nodename=" + nodename + "  livetime=" + livetime + "  deletedelay=" + deletedelay);
+                if (original.name == "60632")
+                    original.Cast<Transform>().gameObject.active = false;
                 if (original.name == "shieldrecover_206_UIHub(Clone)" && uiname == "PanelWar" && nodename == "hp")
                     original.Cast<Transform>().Find("postion").gameObject.active = false;
             }
@@ -296,7 +326,9 @@ namespace VRMod.Patches
         {
             private static void Postfix(BehaviorNode node, Object original, Define.POSITION_TYPE posType, Define.TARGET_TYPE targetType, string parent = "", bool createOnce = false, string effectname = "", bool isHeroVoiceSwitch = false)
             {
-                //Log.Info("InjectCreateEffect: original.name=" + original.name + "  effectname=" + effectname + "  parent=" + parent);
+                Log.Info("InjectCreateEffect: original.name=" + original.name + "  effectname=" + effectname + "  parent=" + parent);
+                if (original.name == "60632")
+                    original.Cast<Transform>().gameObject.active = false;
                 if (original.name == "HeroSkill_1301_Caster(Clone)" && VRPlayer.Instance)
                 {
                     VRPlayer.Instance.SetDualWield(original.Cast<Transform>());
@@ -304,14 +336,14 @@ namespace VRMod.Patches
             }
         }
 
-        [HarmonyPatch(typeof(Game.CUnityUtility), nameof(Game.CUnityUtility.RayCastByScreenCenterPos))]
-        internal class InjectRayCastByScreenCenterPos
-        {
-            private static void Prefix(Camera camera, float dis, int mask, int filterMask)
-            {
-                Log.Info("InjectRayCastByScreenCenterPos: camera.name=" + camera.name + "  dis=" + dis + "  mask=" + mask + "  filterMask=" + filterMask);
-            }
-        }
+        //[HarmonyPatch(typeof(Game.CUnityUtility), nameof(Game.CUnityUtility.RayCastByScreenCenterPos))]
+        //internal class InjectRayCastByScreenCenterPos
+        //{
+        //    private static void Prefix(Camera camera, float dis, int mask, int filterMask)
+        //    {
+        //        Log.Info("InjectRayCastByScreenCenterPos: camera.name=" + camera.name + "  dis=" + dis + "  mask=" + mask + "  filterMask=" + filterMask);
+        //    }
+        //}
 
         // 狗的双持需要特别注入来修改用来检测的射线
 
@@ -323,7 +355,7 @@ namespace VRMod.Patches
         {
             private static void Prefix(CSkillBase skill, CCartoonBase cartoon)
             {
-                Log.Info("InjectCrtArgSightAccPos: skill.WeaponTran.name=" + skill.WeaponTran.name + "  cartoon.animatorTrans.name=" + cartoon.animatorTrans);
+                //Log.Info("InjectCrtArgSightAccPos: skill.WeaponTran.name=" + skill.WeaponTran.name + "  cartoon.animatorTrans.name=" + cartoon.animatorTrans);
                 isCrtArgSightAccPos = true;
                 isRightRay = (skill.WeaponTran.name == HeroCtrlMgr.HeroObj.PlayerCom.GetCurWeaponTran(HeroCtrlMgr.HeroObj.PlayerCom.CurWeaponID).name);
             }
@@ -346,7 +378,7 @@ namespace VRMod.Patches
                         VRInputManager.Instance.VibrateRight(0.1f);
                     else
                         VRInputManager.Instance.VibrateLeft(0.1f);
-                    Log.Info("InjectGetRayByScreenPos: isCrtArgSightAccPos=" + isCrtArgSightAccPos + "  isRightRay=" + isRightRay);
+                    //Log.Info("InjectGetRayByScreenPos: isCrtArgSightAccPos=" + isCrtArgSightAccPos + "  isRightRay=" + isRightRay);
                     return false;
                 }
                 return true;
@@ -354,14 +386,14 @@ namespace VRMod.Patches
         }
 
 
-        [HarmonyPatch(typeof(CArgBase), nameof(CArgBase.CrtArgSightFakerAnglePos))]
-        internal class InjectCrtArgSightFakerAnglePos
-        {
-            private static void Prefix(CSkillBase skill, CCartoonBase cartoon)
-            {
-                Log.Info("InjectCrtArgSightFakerAnglePos: skill.WeaponTran.name=" + skill.WeaponTran.name + "  cartoon.animatorTrans.name=" + cartoon.animatorTrans);
-            }
-        }
+        //[HarmonyPatch(typeof(CArgBase), nameof(CArgBase.CrtArgSightFakerAnglePos))]
+        //internal class InjectCrtArgSightFakerAnglePos
+        //{
+        //    private static void Prefix(CSkillBase skill, CCartoonBase cartoon)
+        //    {
+        //        Log.Info("InjectCrtArgSightFakerAnglePos: skill.WeaponTran.name=" + skill.WeaponTran.name + "  cartoon.animatorTrans.name=" + cartoon.animatorTrans);
+        //    }
+        //}
 
 
         public static bool isCrtArgCameraCenterPos = false;
@@ -373,7 +405,7 @@ namespace VRMod.Patches
             {
                 if(skill.WeaponTran!= null)
                 {
-                    Log.Info("InjectCrtArgCameraCenterPos: skill.WeaponTran.name=" + skill.WeaponTran.name);
+                    //Log.Info("InjectCrtArgCameraCenterPos: skill.WeaponTran.name=" + skill.WeaponTran.name);
                     isCrtArgCameraCenterPos = true;
                     if (isRightRay)
                         VRInputManager.Instance.VibrateRight(0.3f);
@@ -397,21 +429,21 @@ namespace VRMod.Patches
                 if (isCrtArgCameraCenterPos)
                 {
                     __result = isRightRay ? VRPlayer.Instance.RightHand.aimRay : VRPlayer.Instance.LeftHand.aimRay;
-                    Log.Info("InjectGetCameraCenterRay: isCrtArgCameraCenterPos=" + isCrtArgCameraCenterPos + "  isRightRay=" + isRightRay);
+                    //Log.Info("InjectGetCameraCenterRay: isCrtArgCameraCenterPos=" + isCrtArgCameraCenterPos + "  isRightRay=" + isRightRay);
                     return false;
                 }
                 return true;
             }
         }
 
-        [HarmonyPatch(typeof(HeroWarSign.SightLineSign), nameof(HeroWarSign.SightLineSign.CrtArgSightAccPos))]
-        internal class InjectSightLineSign
-        {
-            private static void Prefix(CSkillBase skill)
-            {
-                Log.Info("InjectSightLineSign: skill.WeaponTran.name=" + skill.WeaponTran.name);
-            }
-        }
+        //[HarmonyPatch(typeof(HeroWarSign.SightLineSign), nameof(HeroWarSign.SightLineSign.CrtArgSightAccPos))]
+        //internal class InjectSightLineSign
+        //{
+        //    private static void Prefix(CSkillBase skill)
+        //    {
+        //        Log.Info("InjectSightLineSign: skill.WeaponTran.name=" + skill.WeaponTran.name);
+        //    }
+        //}
 
 
         public static bool isCastingRayCartoon = false;
@@ -423,7 +455,7 @@ namespace VRMod.Patches
             {
                 if (skill.WeaponTran != null)
                 {
-                    Log.Info("InjectUpdateRay: skill.WeaponTran.name=" + skill.WeaponTran.name);
+                    //Log.Info("InjectUpdateRay: skill.WeaponTran.name=" + skill.WeaponTran.name);
                     isCastingRayCartoon = true;
                     isRightRay = (skill.WeaponTran.name == HeroCtrlMgr.HeroObj.PlayerCom.GetCurWeaponTran(HeroCtrlMgr.HeroObj.PlayerCom.CurWeaponID).name);
                 }
@@ -443,7 +475,7 @@ namespace VRMod.Patches
                 if (isCastingRayCartoon)
                 {
                     __result = isRightRay ? VRPlayer.Instance.RightHand.aimRay : VRPlayer.Instance.LeftHand.aimRay;
-                    Log.Info("InjectGetRayByScreenCenterPos: isCastingRayCartoon=" + isCastingRayCartoon + "  isRightRay=" + isRightRay);
+                    //Log.Info("InjectGetRayByScreenCenterPos: isCastingRayCartoon=" + isCastingRayCartoon + "  isRightRay=" + isRightRay);
                     return false;
                 }
                 return true;
@@ -454,23 +486,23 @@ namespace VRMod.Patches
 
         #region 彩虹射线修复
 
-        [HarmonyPatch(typeof(BezierLineRenderer), nameof(BezierLineRenderer.Awake))]
-        internal class InjectBezierLineRendererAwake
-        {
-            private static void Postfix(BezierLineRenderer __instance)
-            {
-                VRPlayer.Instance.bezierLineRenderers.Add(__instance);
-            }
-        }
+        //[HarmonyPatch(typeof(BezierLineRenderer), nameof(BezierLineRenderer.Awake))]
+        //internal class InjectBezierLineRendererAwake
+        //{
+        //    private static void Postfix(BezierLineRenderer __instance)
+        //    {
+        //        VRPlayer.Instance.bezierLineRenderers.Add(__instance);
+        //    }
+        //}
 
-        [HarmonyPatch(typeof(BezierLineRenderer), nameof(BezierLineRenderer.Update))]
-        internal class InjectBezierLineRendererUpdate
-        {
-            private static bool Prefix()
-            {
-                return false;
-            }
-        }
+        //[HarmonyPatch(typeof(BezierLineRenderer), nameof(BezierLineRenderer.Update))]
+        //internal class InjectBezierLineRendererUpdate
+        //{
+        //    private static bool Prefix()
+        //    {
+        //        return false;
+        //    }
+        //}
 
         #endregion
 
@@ -592,7 +624,7 @@ namespace VRMod.Patches
                 // 必须在Unity接管前把stereoTargetEye改成None，才能解决
                 if (__result)
                 {
-                    if (systemTypeInstance == Il2CppType.Of<GameObject>())
+                    if (systemTypeInstance == UnhollowerRuntimeLib.Il2CppType.Of<GameObject>())
                     {
                         var cameras = __result.TryCast<GameObject>().GetComponentsInChildren<Camera>(true);
                         foreach (Camera c in cameras)

@@ -38,6 +38,8 @@ namespace VRMod.Player
             DontDestroyOnLoad(gameObject);
 
             HarmonyPatches.onSceneLoaded += OnSceneLoaded;
+            SteamVR_Settings.instance.poseUpdateMode = SteamVR_UpdateModes.OnLateUpdate;
+            SteamVR.Initialize(false);
 
             //if (DYSceneManager.GetCurSceneName().ToLower().Contains("start"))
             //    MelonCoroutines.Start(this, HarmonyPatches.ClickStartScreenContinue());

@@ -47,10 +47,7 @@ namespace VRPatcher
 
             string[] plugins = new string[]
             {
-                "AudioPluginOculusSpatializer.dll",
-                "openvr_api.dll",
-                "OVRGamepad.dll",
-                "OVRPlugin.dll"
+                "openvr_api.dll"
             };
 
             bool copyPluginsResult = CopyFiles(pluginsPath, plugins, "Plugins.");
@@ -120,8 +117,8 @@ namespace VRPatcher
                         AssetTypeValueField assetTypeValueField3 = assetTypeValueField2.Get("Array");
                         if (assetTypeValueField3 != null)
                         {
-                            AssetTypeValueField assetTypeValueField4 = ValueBuilder.DefaultValueFieldFromArrayTemplate(assetTypeValueField3);
-                            assetTypeValueField4.GetValue().Set("Oculus");
+                            //AssetTypeValueField assetTypeValueField4 = ValueBuilder.DefaultValueFieldFromArrayTemplate(assetTypeValueField3);
+                            //assetTypeValueField4.GetValue().Set("Oculus");
                             AssetTypeValueField assetTypeValueField5 = ValueBuilder.DefaultValueFieldFromArrayTemplate(assetTypeValueField3);
                             assetTypeValueField5.GetValue().Set("OpenVR");
                             AssetTypeValueField assetTypeValueField6 = ValueBuilder.DefaultValueFieldFromArrayTemplate(assetTypeValueField3);
@@ -129,7 +126,7 @@ namespace VRPatcher
                             assetTypeValueField3.SetChildrenList(new AssetTypeValueField[]
                             {
                                 assetTypeValueField6,
-                                assetTypeValueField4,
+                                //assetTypeValueField4,
                                 assetTypeValueField5
                             });
                             byte[] array;

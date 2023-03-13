@@ -18,20 +18,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="ExternalLibraries\**" />
-    <EmbeddedResource Remove="ExternalLibraries\**" />
-    <None Remove="ExternalLibraries\**" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\VRPatcher\VRPatcher.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Include="BepInEx.Analyzers" Version="1.0.*">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
   </ItemGroup>
 
   <ItemGroup>
@@ -45,16 +32,16 @@
       <HintPath>F:\Steam\steamapps\common\Gunfire Reborn\BepInEx\patchers\PureDark.VRPatcher\AssetsTools.NET.dll</HintPath>
     </Reference>
     <Reference Include="BepInEx.Core">
-      <HintPath>..\..\..\..\..\Steam\steamapps\common\Gunfire Reborn\BepInEx\core\BepInEx.Core.dll</HintPath>
+      <HintPath>F:\Steam\steamapps\common\Gunfire Reborn\BepInEx\\core\BepInEx.Core.dll</HintPath>
     </Reference>
     <Reference Include="BepInEx.Preloader.Core">
-      <HintPath>..\..\..\..\..\Steam\steamapps\common\Gunfire Reborn\BepInEx\core\BepInEx.Preloader.Core.dll</HintPath>
+      <HintPath>F:\Steam\steamapps\common\Gunfire Reborn\BepInEx\\core\BepInEx.Preloader.Core.dll</HintPath>
     </Reference>
     <Reference Include="BepInEx.Unity.IL2CPP">
       <HintPath>F:\Steam\steamapps\common\Gunfire Reborn\BepInEx\core\BepInEx.IL2CPP.dll</HintPath>
     </Reference>
     <Reference Include="Cpp2IL.Core">
-      <HintPath>..\..\..\..\..\Steam\steamapps\common\Gunfire Reborn\BepInEx\core\Cpp2IL.Core.dll</HintPath>
+      <HintPath>F:\Steam\steamapps\common\Gunfire Reborn\BepInEx\\core\Cpp2IL.Core.dll</HintPath>
     </Reference>
     <Reference Include="Il2Cppmscorlib">
       <HintPath>F:\Steam\steamapps\common\Gunfire Reborn\BepInEx\unhollowed\Il2Cppmscorlib.dll</HintPath>
@@ -66,13 +53,13 @@
       <HintPath>F:\Steam\steamapps\common\Gunfire Reborn\BepInEx\unhollowed\Il2CppSystem.dll</HintPath>
     </Reference>
     <Reference Include="SteamVR_Standalone_IL2CPP">
-      <HintPath>..\..\..\..\..\Steam\steamapps\common\Gunfire Reborn\BepInEx\plugins\PureDark.VRMod\SteamVR_Standalone_IL2CPP.dll</HintPath>
+      <HintPath>F:\Steam\steamapps\common\Gunfire Reborn\BepInEx\\plugins\PureDark.VRMod\SteamVR_Standalone_IL2CPP.dll</HintPath>
     </Reference>
     <Reference Include="UnhollowerBaseLib">
-      <HintPath>..\..\..\..\..\Steam\steamapps\common\Gunfire Reborn\BepInEx\core\UnhollowerBaseLib.dll</HintPath>
+      <HintPath>F:\Steam\steamapps\common\Gunfire Reborn\BepInEx\\core\UnhollowerBaseLib.dll</HintPath>
     </Reference>
     <Reference Include="UnhollowerRuntimeLib">
-      <HintPath>..\..\..\..\..\Steam\steamapps\common\Gunfire Reborn\BepInEx\core\UnhollowerRuntimeLib.dll</HintPath>
+      <HintPath>F:\Steam\steamapps\common\Gunfire Reborn\BepInEx\\core\UnhollowerRuntimeLib.dll</HintPath>
     </Reference>
     <Reference Include="Unity.RenderPipelines.Core.Runtime">
       <HintPath>F:\Steam\steamapps\common\Gunfire Reborn\BepInEx\unhollowed\Unity.RenderPipelines.Core.Runtime.dll</HintPath>
@@ -81,7 +68,7 @@
       <HintPath>F:\Steam\steamapps\common\Gunfire Reborn\BepInEx\unhollowed\Unity.RenderPipelines.Lightweight.Runtime.dll</HintPath>
     </Reference>
     <Reference Include="Unity.TextMeshPro">
-      <HintPath>..\..\..\..\..\Steam\steamapps\common\Gunfire Reborn\BepInEx\unhollowed\Unity.TextMeshPro.dll</HintPath>
+      <HintPath>F:\Steam\steamapps\common\Gunfire Reborn\BepInEx\\unhollowed\Unity.TextMeshPro.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine">
       <HintPath>F:\Steam\steamapps\common\Gunfire Reborn\BepInEx\unhollowed\UnityEngine.dll</HintPath>

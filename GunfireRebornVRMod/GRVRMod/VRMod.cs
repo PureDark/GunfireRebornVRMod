@@ -17,6 +17,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using System;
 using Valve.VR;
+using VRMod.Settings;
 
 namespace VRMod
 {
@@ -54,6 +55,7 @@ namespace VRMod
             vrEnabled = true;
             HarmonyPatches.PatchAll();
             VRAssets.Init();
+            ModConfig.Init();
             SetupIL2CPPClassInjections();
             SceneManager.sceneLoaded += new Action<Scene, LoadSceneMode>(OnSceneLoaded);
         }
@@ -79,6 +81,7 @@ namespace VRMod
             ClassInjector.RegisterTypeInIl2Cpp<VRBattleUI>();
             ClassInjector.RegisterTypeInIl2Cpp<HandController>();
             ClassInjector.RegisterTypeInIl2Cpp<VRScope>();
+            ClassInjector.RegisterTypeInIl2Cpp<CameraSmoother>();
         }
 
         private bool SteamVRRunningCheck()

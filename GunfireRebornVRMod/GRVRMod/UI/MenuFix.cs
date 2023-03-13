@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using UI;
 using static VRMod.VRMod;
+using VRMod.Settings;
 
 namespace VRMod.UI
 {
@@ -10,7 +11,10 @@ namespace VRMod.UI
         {
             var UICamera = GetUICamera();
             if (UICamera != null)
+            {
                 UICamera.stereoTargetEye = StereoTargetEyeMask.None;
+                UICamera.enabled = !ModConfig.UseFirstPersonCam.Value;
+            }
         }
 
         public static Camera GetUICamera()

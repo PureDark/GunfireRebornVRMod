@@ -14,6 +14,7 @@ using VRMod.Player.Behaviours;
 using VRMod.Player.GameData;
 using VRMod.Player.MotionControlls;
 using VRMod.Player.VRInput;
+using VRMod.Settings;
 using VRMod.UI;
 using VRMod.UI.Pointers;
 using static VRMod.Player.MotionControlls.HandController;
@@ -39,6 +40,8 @@ namespace VRMod.Player
         public bool isHome = false;
         public bool isHomeFixed = false;
         public bool isUIMode = false;
+        public bool CannonFix = false;
+        public Transform effectRoot;
 
         private void Awake()
         {
@@ -50,8 +53,8 @@ namespace VRMod.Player
             }
             Instance = this;
             isHome = true;
-            SteamVR_Settings.instance.poseUpdateMode = SteamVR_UpdateModes.OnLateUpdate;
-            SteamVR.Initialize(false);
+            //SteamVR_Settings.instance.poseUpdateMode = SteamVR_UpdateModes.OnLateUpdate;
+            //SteamVR.Initialize(false);
 
             HarmonyPatches.onSceneLoaded += OnSceneLoaded;
 
@@ -73,7 +76,11 @@ namespace VRMod.Player
                 ScreenCam = Head.Find("ScreenCam")?.GetComponent<Camera>();
                 ScreenCam.clearFlags = CameraClearFlags.SolidColor;
                 ScreenCam.backgroundColor = new Color(0, 0, 0, 0);
-                ScreenCam.cullingMask = 0;
+                ScreenCam.enabled = ModConfig.UseFirstPersonCam.Value;
+                ScreenCam.cullingMask = ScreenCam.enabled? -1 : 0;
+                ScreenCam.transform.SetParent(null);
+                var smoother = ScreenCam.gameObject.AddComponent<CameraSmoother>();
+                smoother.target = Head;
 
                 LeftHand = transform.Find("LeftHand").gameObject.AddComponent<HandController>();
                 RightHand = transform.Find("RightHand").gameObject.AddComponent<HandController>();
@@ -134,13 +141,13 @@ namespace VRMod.Player
         {
             if (!isHome && !isUIMode && !isInCG)
             {
-                // 每秒转50度，太快再后期调整吧
+                // 每秒执行50次
                 if (VRInputManager.Device.RightStick.State)
-                    Origin.Rotate(Vector3.up, VRInputManager.Device.RightStick.X);
-                else if(VRInputManager.Device.SnapTurnLeft.stateDown)
-                    Origin.Rotate(Vector3.up, -45);
-                else if (VRInputManager.Device.SnapTurnRight.stateDown)
-                    Origin.Rotate(Vector3.up, 45);
+                    Origin.Rotate(Vector3.up, VRInputManager.Device.RightStick.X * ModConfig.SmoothTurningSpeed.Value);
+                else if(VRInputManager.Device.SnapTurnLeft.stateUp)
+                    Origin.Rotate(Vector3.up, ModConfig.SnapTurningAngle.Value * -1);
+                else if (VRInputManager.Device.SnapTurnRight.stateUp)
+                    Origin.Rotate(Vector3.up, ModConfig.SnapTurningAngle.Value);
             }
             if (isHome && !isHomeFixed)
             {
@@ -189,8 +196,11 @@ namespace VRMod.Player
         private bool isInPrimarySkillState = false;
         private bool isExitingPrimarySkillState = false;
         private bool isTwoHanded = false;
+
+        //CG场景
         private bool isInCG = false;
         private Transform CGCamera;
+        private float tempAngle;
 
         private Vector3 velocity = Vector3.zero;
         private Quaternion deriv = Quaternion.identity;
@@ -209,6 +219,26 @@ namespace VRMod.Player
             VRInputManager.Instance.vrDevice.dualWieldDelay = 0.5f;
         }
 
+        public void FixCannonBall()
+        {
+            if (effectRoot == null)
+                effectRoot = GameObject.Find("UIEffectRoot").transform;
+            if (effectRoot != null)
+            {
+                var effectLayer = effectRoot.Find("EffectLayer");
+                if (effectLayer != null)
+                {
+                    foreach (var child in effectLayer)
+                    {
+                        var effect = child.Cast<Transform>().Find("bg_gren/Gren_effect/postion_01");
+                        if (effect != null)
+                        {
+                            effect.gameObject.active = false;
+                        }
+                    }
+                }
+            }
+        }
 
         // 在LateUpdate里才能覆盖英雄身体的位置和朝向
         void LateUpdate()
@@ -220,7 +250,8 @@ namespace VRMod.Player
             if (Input.GetKeyUp(KeyCode.P))
             {
                 ScreenCam.enabled = !ScreenCam.enabled;
-                //ScreenCam.cullingMask = (ScreenCam.cullingMask == 0) ? -1 : 0;
+                ScreenCam.cullingMask = (ScreenCam.enabled) ? -1 : 0;
+                MenuFix.GetUICamera().enabled = !ScreenCam.enabled;
             }
             if (Input.GetKeyUp(KeyCode.KeypadPlus))
             {
@@ -246,11 +277,17 @@ namespace VRMod.Player
             {
                 offsetOverride = new Vector3(offsetOverride.x + 0.01f, offsetOverride.y, offsetOverride.z);
             }
+            if (CannonFix)
+            {
+                FixCannonBall();
+            }
+
             if (isInCG)
             {
                 Origin.position = CGCamera.position - Vector3.up * GetPlayerHeight();
                 Origin.rotation = Quaternion.LookRotation(CGCamera.forward.GetFlatDirection(), Vector3.up);
-                if(LeftHandMesh)
+                Origin.rotation = Quaternion.Euler(0, tempAngle, 0) * Origin.rotation;
+                if (LeftHandMesh)
                     LeftHandMesh.gameObject.active = false;
             }
             else if (!isUIMode && !isHome && IsReadyForBattle && HeroCameraManager.HeroTran)
@@ -446,7 +483,7 @@ namespace VRMod.Player
         {
             bool twohanded = false;
             //如果是非单手武器,则进行双持判定
-            if (!isDualWield && handType == HandType.Right && !forceOneHanded && weaponData.HoldingStyle == WeaponDatas.HoldingStyle.TwoHanded)
+            if (!isDualWield && ModConfig.EnableDualWield.Value && handType == HandType.Right && !forceOneHanded && weaponData.HoldingStyle == WeaponDatas.HoldingStyle.TwoHanded)
             {
                 var LeftHandPos = LeftHand.model.position;
                 if((weaponData.weaponType == WeaponDatas.WeaponType.Minigun))
@@ -644,6 +681,7 @@ namespace VRMod.Player
                 //Head.localRotation = Quaternion.identity;
                 //ScreenCam.cullingMask = cgCamera.cullingMask;
                 StereoRender.SetCameraMask(cgCamera.cullingMask);
+                tempAngle = Vector3.Angle(Head.forward.GetFlatDirection(), Origin.forward.GetFlatDirection());
             }
             else
             {
@@ -674,6 +712,7 @@ namespace VRMod.Player
             isHomeFixed = false;
             IsReadyForBattle = false;
             lastWeaponID = 0;
+            effectRoot = null;
             SetOriginHome();
             if (vrBattleUI)
             {
@@ -686,13 +725,22 @@ namespace VRMod.Player
                 LeftHandMesh = null;
             }
             bezierLineRenderers.Clear();
+            Head.gameObject.active = false;
             MelonCoroutines.Start(DOFFix());
         }
 
         public IEnumerator DOFFix()
         {
+            yield return new WaitForSeconds(0.1f);
+            Head.gameObject.active = true;
+            int i = 0;
             while(!CUIManager.instance.UICamera.GetComponent<PostProcessVolume>().profile.HasSettings<DepthOfField>() && isHome)
-                yield return new WaitForSeconds(0.1f);
+            {
+                if (i++ < 10)
+                    yield return new WaitForSeconds(0.1f);
+                else
+                    yield break;
+            }
             // 在VR里景深效果只会让你变成近视眼
             CUIManager.instance.UICamera.GetComponent<PostProcessVolume>().profile.RemoveSettings<DepthOfField>();
             vignette = CUIManager.instance.UICamera.GetComponent<PostProcessVolume>().profile.GetSetting<Vignette>();
@@ -722,6 +770,12 @@ namespace VRMod.Player
             {
                 c.enabled = false;
             }
+            if (cams.Length > 0)
+            {
+                StereoRender.defaultCullingMask = cams[0].cullingMask;
+                StereoRender.defaultCullingMask |= 1 << Layer.Weapon;
+            }
+            StereoRender.SetCameraMask(StereoRender.defaultCullingMask);
 
             // 目标点使用UI相机来进行位置计算
             HeroWarSign.UISignManager.signCamera = CUIManager.instance.UICamera;

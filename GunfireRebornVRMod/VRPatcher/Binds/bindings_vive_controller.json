@@ -52,6 +52,9 @@
          "sources" : [
             {
                "inputs" : {
+                  "click" : {
+                     "output" : "/actions/gameplay/in/interactui"
+                  },
                   "pull" : {
                      "output" : "/actions/gameplay/in/rt_fire"
                   }
@@ -164,10 +167,10 @@
             {
                "inputs" : {
                   "center" : {
-                     "output" : "/actions/gameplay/in/dpadd_switchfiremode"
+                     "output" : "/actions/gameplay/in/x_interact_reload"
                   },
                   "north" : {
-                     "output" : "/actions/gameplay/in/dpadu_ping"
+                     "output" : "/actions/gameplay/in/dpadd_switchfiremode"
                   },
                   "south" : {
                      "output" : "/actions/gameplay/in/dpadr_teaminformation"
@@ -178,15 +181,6 @@
                   "sub_mode" : "click"
                },
                "path" : "/user/hand/left/input/trackpad"
-            },
-            {
-               "inputs" : {
-                  "click" : {
-                     "output" : "/actions/gameplay/in/x_interact_reload"
-                  }
-               },
-               "mode" : "button",
-               "path" : "/user/hand/right/input/system"
             }
          ]
       },
@@ -201,6 +195,7 @@
    "category" : "steamvr_input",
    "controller_type" : "vive_controller",
    "description" : "",
+   "interaction_profile" : "",
    "name" : "Gunfire Reborn Vive Controller",
    "options" : {},
    "simulated_actions" : []

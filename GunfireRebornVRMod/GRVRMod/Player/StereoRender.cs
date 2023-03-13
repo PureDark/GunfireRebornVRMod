@@ -9,6 +9,7 @@ using UnityEngine.Rendering.PostProcessing;
 using UnityEngine.XR;
 using Valve.VR;
 using VRMod.Assets;
+using VRMod.Settings;
 using static VRMod.VRMod;
 
 namespace VRMod.Player
@@ -19,6 +20,7 @@ namespace VRMod.Player
     {
         public StereoRender(IntPtr value) : base(value) { }
 
+        public Transform Head;
         public Camera HeadCam;
         public Camera LeftCam, RightCam;
         public Camera LeftUICam, RightUICam;
@@ -50,30 +52,33 @@ namespace VRMod.Player
             mPostProcessLayer.m_Resources = uiPPLayer.m_Resources;
             mPostProcessLayer.volumeLayer = uiPPLayer.volumeLayer;
 
-            var head = transform.Find("Head");
-            if (!head)
-                head = new GameObject("Head").transform;
-            head.parent = transform;
-            head.localPosition = Vector3.zero;
-            head.localRotation = Quaternion.identity;
+            Head = transform.Find("Head");
+            if (!Head)
+                Head = new GameObject("Head").transform;
+            Head.parent = transform;
+            Head.localPosition = Vector3.zero;
+            Head.localRotation = Quaternion.identity;
 
-            var leftEye = head.Find("LeftEye");
+            var leftEye = Head.Find("LeftEye");
             if (!leftEye)
                 leftEye = new GameObject("LeftEye").transform;
 
-            leftEye.parent = head;
+            leftEye.parent = Head;
             leftEye.localPosition = new Vector3(-separation, 0, 0);
             leftEye.localEulerAngles = new Vector3(0, 0, 0);
             leftEye.gameObject.GetOrAddComponent<OutLinePassMgr>();
 
-            mPostProcessLayer = leftEye.gameObject.AddComponent<PostProcessLayer>();
-            mPostProcessLayer.m_Resources = uiPPLayer.m_Resources;
-            mPostProcessLayer.volumeLayer = uiPPLayer.volumeLayer;
+            if (ModConfig.EnablePostProcessing.Value)
+            {
+                mPostProcessLayer = leftEye.gameObject.AddComponent<PostProcessLayer>();
+                mPostProcessLayer.m_Resources = uiPPLayer.m_Resources;
+                mPostProcessLayer.volumeLayer = uiPPLayer.volumeLayer;
+            }
 
             LeftCam = leftEye.gameObject.GetOrAddComponent<Camera>();
             LeftCam.cullingMask = defaultCullingMask;
             LeftCam.stereoTargetEye = StereoTargetEyeMask.None;
-            LeftCam.clearFlags = CameraClearFlags.SolidColor;
+            LeftCam.clearFlags = CameraClearFlags.Skybox;
             LeftCam.backgroundColor = new Color(0, 0, 0, 0);
             LeftCam.fieldOfView = (SteamVR.instance.fieldOfView > 0) ? SteamVR.instance.fieldOfView : 109.363f;
             LeftCam.nearClipPlane = farCamClipStart;
@@ -98,22 +103,26 @@ namespace VRMod.Player
             LeftUICam.farClipPlane = UICamClipEnd;
 
 
-            var rightEye = head.Find("RightEye");
+            var rightEye = Head.Find("RightEye");
             if (!rightEye)
                 rightEye = new GameObject("RightEye").transform;
-            rightEye.parent = head;
+            rightEye.parent = Head;
             rightEye.localPosition = new Vector3(separation, 0, 0);
             rightEye.localEulerAngles = new Vector3(0, 0, 0);
             rightEye.gameObject.GetOrAddComponent<OutLinePassMgr>();
 
-            mPostProcessLayer = rightEye.gameObject.AddComponent<PostProcessLayer>();
-            mPostProcessLayer.m_Resources = uiPPLayer.m_Resources;
-            mPostProcessLayer.volumeLayer = uiPPLayer.volumeLayer;
+
+            if (ModConfig.EnablePostProcessing.Value)
+            {
+                mPostProcessLayer = rightEye.gameObject.AddComponent<PostProcessLayer>();
+                mPostProcessLayer.m_Resources = uiPPLayer.m_Resources;
+                mPostProcessLayer.volumeLayer = uiPPLayer.volumeLayer;
+            }
 
             RightCam = rightEye.gameObject.GetOrAddComponent<Camera>();
             RightCam.cullingMask = defaultCullingMask;
             RightCam.stereoTargetEye = StereoTargetEyeMask.None;
-            RightCam.clearFlags = CameraClearFlags.SolidColor;
+            RightCam.clearFlags = CameraClearFlags.Skybox;
             RightCam.backgroundColor = new Color(0, 0, 0, 0);
             RightCam.fieldOfView = (SteamVR.instance.fieldOfView > 0) ? SteamVR.instance.fieldOfView : 109.363f;
             RightCam.nearClipPlane = farCamClipStart;
@@ -199,6 +208,7 @@ namespace VRMod.Player
                 UpdateResolution();
                 stereoPass.UpdateResolution();
             }
+            Head.gameObject.active = true;
         }
 
         public StereoRenderPass GetPassToEnqueue(RenderTextureDescriptor baseDescriptor, RenderTargetHandle colorAttachmentHandle, RenderTargetHandle depthAttachmentHandle)

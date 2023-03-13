@@ -5,6 +5,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using Valve.VR;
 using VRMod.Assets;
+using VRMod.Settings;
 
 namespace VRMod.Player.MotionControlls
 {
@@ -98,7 +99,7 @@ namespace VRMod.Player.MotionControlls
             if (uiMode)
                 return GetCanvasHitEnd();
 
-            return GetRayHitPosition(300);
+            return GetRayHitPosition(ModConfig.EnableAimRay.Value?300:0);
         }
 
         public Vector3 GetRayHitPosition(float maxDistance)
