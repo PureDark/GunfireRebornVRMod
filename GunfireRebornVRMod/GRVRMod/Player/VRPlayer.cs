@@ -703,7 +703,14 @@ namespace VRMod.Player
                 isHome = false;
 
             if (RegexManager.IsNumber(scene.name))
-                MelonCoroutines.Start(BattlePrep());
+            {
+                // Spirital Assault Fix
+                if (scene.name == "1410101" || scene.name == "1410103"){
+                    MelonCoroutines.Start(BattlePrep(1));
+                }
+                else
+                    MelonCoroutines.Start(BattlePrep(0));
+            }
         }
 
         private void SetupHome()
@@ -746,13 +753,21 @@ namespace VRMod.Player
             vignette = CUIManager.instance.UICamera.GetComponent<PostProcessVolume>().profile.GetSetting<Vignette>();
         }
 
-        public IEnumerator BattlePrep()
+        public IEnumerator BattlePrep(int gamemode)
         {
             while (HeroCameraManager.HeroObj == null || HeroCameraManager.HeroTran == null)
                 yield return new WaitForSeconds(0.1f);
             // UI
             ToggleEventCamera(true);
             SetUIMode(false);
+
+            // Spirital Assault Fix
+            if (gamemode == 1) {
+                var effectRoot = GameObject.Find("CUIManager/Canvas_PC(Clone)/MainRoot/PanelPopup/lay_survival_new/lay_schedule/FightingEffect/UI_progress_bar/Position/Fire");
+                if (effectRoot != null)
+                    effectRoot.gameObject.active = false;
+            }
+
             //vignette = CUIManager.instance.UICamera.GetComponent<PostProcessVolume>().profile.GetSetting<Vignette>();
             Camera[] cams = FindObjectsOfType<Camera>();
             foreach (Camera c in cams)
@@ -809,6 +824,13 @@ namespace VRMod.Player
             //ScreenCam.enabled = false;
             IsReadyForBattle = true;
         }
+
+        // public static void SetEventState(string state)
+        // {
+        //     Debug.Log("### LOGGING STATE ###");
+        //     Debug.Log(state.ToString());
+        //     Debug.Log("### STATE LOGGED ###");
+        // }
 
         private void OnDestroy()
         {

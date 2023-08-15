@@ -26,8 +26,8 @@ namespace VRMod
     {
         public const string GUID = "PureDark.GRVRMod";
         public const string NAME = "VRMod";
-        public const string AUTHOR = "PureDark/暗暗十分/突破天际的金闪闪";
-        public const string VERSION = "1.0.0";
+        public const string AUTHOR = "PureDark/暗暗十分/突破天际的金闪闪/xPrinny";
+        public const string VERSION = "1.0.1";
 
         public static VRMod Instance { get; private set; }
 
