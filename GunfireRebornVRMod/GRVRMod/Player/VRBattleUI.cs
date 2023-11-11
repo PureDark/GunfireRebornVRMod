@@ -34,8 +34,13 @@ namespace VRMod.Player
         public Transform Target_tips;
         public Transform Shockwave1, Shockwave2;
 
-        // Temp fix for icons taking the screen
-        public Transform img_target, img_buffnpc, img_chest;
+        public Transform img_target;
+        public Transform img_chest;
+        public Transform img_buffnpc;
+        public Transform img_shop;
+        public Transform img_weaponshop;
+        public Transform img_gscashshop;
+        public Transform img_firepile;
 
         public Transform SimLineStart;
 
@@ -349,11 +354,13 @@ namespace VRMod.Player
                     Target_tips = null;
                     Shockwave1 = null;
                     Shockwave2 = null;
-                    
-                    // Need to find out how to resize icon
                     img_target = null;
-                    img_buffnpc = null;
                     img_chest = null;
+                    img_buffnpc = null;
+                    img_shop = null;
+                    img_weaponshop = null;
+                    img_gscashshop = null;
+                    img_firepile = null;
                 }
                 else
                 {
@@ -366,19 +373,28 @@ namespace VRMod.Player
                     if (Shockwave2)
                         Shockwave2.gameObject.active = false;
 
-                    // Need to find out how to resize icon (Next area icon and Spiritual Blessing)
+                    // Resize target tips labels
                     if (!img_target)
                         img_target = Target_tips.Find("img_target");
-                    if (!img_buffnpc)
-                        img_buffnpc = Target_tips.Find("img_buffnpc");
+                        img_target.localScale = new Vector3(0.005f, 0.005f, 0.005f);
                     if (!img_chest)
                         img_chest = Target_tips.Find("img_chest");
-                    if (img_target)
-                        img_target.gameObject.active = false;
-                    if (img_buffnpc)
-                        img_buffnpc.gameObject.active = false;
-                    if (img_chest)
-                        img_chest.gameObject.active = false;
+                        img_chest.localScale = new Vector3(0.005f, 0.005f, 0.005f);
+                    if (!img_buffnpc)
+                        img_buffnpc = Target_tips.Find("img_buffnpc");
+                        img_buffnpc.localScale = new Vector3(0.005f, 0.005f, 0.005f);
+                    if (!img_shop)
+                        img_shop = Target_tips.Find("img_shop");
+                        img_shop.localScale = new Vector3(0.005f, 0.005f, 0.005f);
+                    if (!img_weaponshop)
+                        img_weaponshop = Target_tips.Find("img_weaponshop");
+                        img_weaponshop.localScale = new Vector3(0.005f, 0.005f, 0.005f);
+                    if (!img_gscashshop)
+                        img_gscashshop = Target_tips.Find("img_gscashshop");
+                        img_gscashshop.localScale = new Vector3(0.005f, 0.005f, 0.005f);
+                    if (!img_firepile)
+                        img_firepile = Target_tips.Find("img_firepile");
+                        img_firepile.localScale = new Vector3(0.005f, 0.005f, 0.005f);
                     Target_tips.localRotation = Quaternion.identity;
                 }
             }

@@ -821,7 +821,6 @@ namespace VRMod.Player
                 }
             }
             ScreenCam.gameObject.active = true;
-            //ScreenCam.enabled = false;
             IsReadyForBattle = true;
         }
 
