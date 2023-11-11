@@ -34,6 +34,9 @@ namespace VRMod.Player
         public Transform Target_tips;
         public Transform Shockwave1, Shockwave2;
 
+        // Temp fix for icons taking the screen
+        public Transform img_target, img_buffnpc, img_chest;
+
         public Transform SimLineStart;
 
         private Transform canvasRootTarget;
@@ -187,7 +190,7 @@ namespace VRMod.Player
                         }
                     }
 
-                    Target_tips = PC_Panel_war.Find("Target_tips");
+                    Target_tips = PC_Panel_war.Find("Target_tips(Clone)");
                     SimLineStart = CameraManager.MainCamera.DeepFindChild("SimLineStart");
                     if (hero_skill_1)
                     {
@@ -336,8 +339,9 @@ namespace VRMod.Player
             }
 
             // 目标点需要重置一下朝向
-            if (!Target_tips && PC_Panel_war)
-                Target_tips = PC_Panel_war.Find("Target_tips");
+            if (!Target_tips && PC_Panel_war) {
+                Target_tips = PC_Panel_war.Find("Target_tips(Clone)");
+            }
             if (Target_tips)
             {
                 if (Target_tips.parent != PC_Panel_war)
@@ -345,6 +349,11 @@ namespace VRMod.Player
                     Target_tips = null;
                     Shockwave1 = null;
                     Shockwave2 = null;
+                    
+                    // Need to find out how to resize icon
+                    img_target = null;
+                    img_buffnpc = null;
+                    img_chest = null;
                 }
                 else
                 {
@@ -356,6 +365,20 @@ namespace VRMod.Player
                         Shockwave1.gameObject.active = false;
                     if (Shockwave2)
                         Shockwave2.gameObject.active = false;
+
+                    // Need to find out how to resize icon (Next area icon and Spiritual Blessing)
+                    if (!img_target)
+                        img_target = Target_tips.Find("img_target");
+                    if (!img_buffnpc)
+                        img_buffnpc = Target_tips.Find("img_buffnpc");
+                    if (!img_chest)
+                        img_chest = Target_tips.Find("img_chest");
+                    if (img_target)
+                        img_target.gameObject.active = false;
+                    if (img_buffnpc)
+                        img_buffnpc.gameObject.active = false;
+                    if (img_chest)
+                        img_chest.gameObject.active = false;
                     Target_tips.localRotation = Quaternion.identity;
                 }
             }
