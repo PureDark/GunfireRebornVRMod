@@ -809,8 +809,15 @@ namespace VRMod.Player
             LeftHandMesh.localScale = new Vector3(0.67f, 0.67f, 0.67f);
             LeftHandMesh.localPosition = new Vector3(0.5631f, -0.0083f, -0.35f);
             LeftHandMesh.localEulerAngles = new Vector3(0f, 202.2307f, 180f);
-            LeftHandMesh.gameObject.GetOrAddComponent<MeshFilter>().mesh = LeftHandRenderers[0].sharedMesh;
-            LeftHandMesh.gameObject.GetOrAddComponent<MeshRenderer>().material = LeftHandRenderers[0].sharedMaterial;
+
+            // Zi Xiao left hand fix
+            if (HeroCameraManager.HeroObj.PlayerCom.SID == 216) {
+                LeftHandMesh.gameObject.GetOrAddComponent<MeshFilter>().mesh = LeftHandRenderers[1].sharedMesh;
+                LeftHandMesh.gameObject.GetOrAddComponent<MeshRenderer>().material = LeftHandRenderers[1].sharedMaterial;
+            } else {
+                LeftHandMesh.gameObject.GetOrAddComponent<MeshFilter>().mesh = LeftHandRenderers[0].sharedMesh;
+                LeftHandMesh.gameObject.GetOrAddComponent<MeshRenderer>().material = LeftHandRenderers[0].sharedMaterial;
+            }
 
             foreach (var child in CameraManager.MainCamera)
             {

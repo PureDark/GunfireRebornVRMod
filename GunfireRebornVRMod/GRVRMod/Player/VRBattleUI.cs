@@ -382,16 +382,16 @@ namespace VRMod.Player
                         img_chest.localScale = new Vector3(0.005f, 0.005f, 0.005f);
                     if (!img_buffnpc)
                         img_buffnpc = Target_tips.Find("img_buffnpc");
-                        img_buffnpc.localScale = new Vector3(0.005f, 0.005f, 0.005f);
+                        img_buffnpc.localScale = new Vector3(0.009f, 0.009f, 0.009f);
                     if (!img_shop)
                         img_shop = Target_tips.Find("img_shop");
-                        img_shop.localScale = new Vector3(0.005f, 0.005f, 0.005f);
+                        img_shop.localScale = new Vector3(0.009f, 0.009f, 0.009f);
                     if (!img_weaponshop)
                         img_weaponshop = Target_tips.Find("img_weaponshop");
-                        img_weaponshop.localScale = new Vector3(0.005f, 0.005f, 0.005f);
+                        img_weaponshop.localScale = new Vector3(0.009f, 0.009f, 0.009f);
                     if (!img_gscashshop)
                         img_gscashshop = Target_tips.Find("img_gscashshop");
-                        img_gscashshop.localScale = new Vector3(0.005f, 0.005f, 0.005f);
+                        img_gscashshop.localScale = new Vector3(0.009f, 0.009f, 0.009f);
                     if (!img_firepile)
                         img_firepile = Target_tips.Find("img_firepile");
                         img_firepile.localScale = new Vector3(0.005f, 0.005f, 0.005f);
