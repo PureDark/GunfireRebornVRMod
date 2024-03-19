@@ -17,6 +17,7 @@ namespace VRMod.Settings
         public static ConfigEntry<bool> EnableDualWield { get; private set; }
         public static ConfigEntry<bool> EnableAimRay { get; private set; }
         public static ConfigEntry<bool> EnablePostProcessing { get; private set; }
+        public static ConfigEntry<bool> EnableSniperADSSnap { get; private set; }
         public static ConfigEntry<float> UIDistance { get; private set; }
         public static ConfigEntry<float> UIScale { get; private set; }
         public static ConfigEntry<float> FPCamSmoothTime { get; private set; }
@@ -78,6 +79,12 @@ namespace VRMod.Settings
                 "SnapTurningAngle",
                 45f,
                 "Angles for each snap turning."
+            );
+            EnableSniperADSSnap = configFile.Bind<bool>(
+                "VR Settings",
+                "EnableSniperADSSnap",
+                true,
+                "Enable Sniper scope to snap infront of you when ADS-ing."
             );
         }
 

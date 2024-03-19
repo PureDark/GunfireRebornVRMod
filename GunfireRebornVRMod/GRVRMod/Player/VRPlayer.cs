@@ -514,8 +514,9 @@ namespace VRMod.Player
                         RightHand.muzzle.rotation = weapon.rotation;
                         weapon.position = LeftHand.model.position + weapon.right * offset.x + weapon.up * offset.y + weapon.forward * (offset.z - bowData.leftHandForwardDistance);
                     }
-                    else if (weaponData.weaponType == WeaponDatas.WeaponType.SniperRifle && vrScope & vrScope.IsShowing)
+                    else if (weaponData.weaponType == WeaponDatas.WeaponType.SniperRifle && vrScope & vrScope.IsShowing && ModConfig.EnableSniperADSSnap.Value)
                     {
+                        // Sniper ADS cursor 
                         var targetPosition = RightHand.model.position + weapon.right * offset.x + weapon.up * offset.y + weapon.forward * offset.z;
                         weapon.position = Vector3.SmoothDamp(weapon.position, targetPosition, ref velocity, 0.3f) + weapon.forward * 0.05f;
                         weapon.Rotate(-weaponData.rotationEuler, Space.Self);
@@ -594,8 +595,9 @@ namespace VRMod.Player
                                 Muzzle.localEulerAngles = gauntletData.muzzleRotation;
                         }
                     }
-                    else if (weaponData.weaponType == WeaponDatas.WeaponType.SniperRifle && vrScope & vrScope.IsShowing)
+                    else if (weaponData.weaponType == WeaponDatas.WeaponType.SniperRifle && vrScope & vrScope.IsShowing && ModConfig.EnableSniperADSSnap.Value)
                     {
+                        // Sniper ADS position
                         var targetPosition = RightHand.model.position + weapon.right * offset.x + weapon.up * offset.y + weapon.forward * offset.z;
                         weapon.position = Vector3.SmoothDamp(weapon.position, targetPosition, ref velocity, 0.3f) + weapon.forward* 0.05f;
                         weapon.Rotate(-weaponData.rotationEuler, Space.Self);
