@@ -3,6 +3,8 @@ using UnityEngine;
 using UnityEngine.Experimental.Rendering;
 using UnityEngine.Experimental.Rendering.LightweightPipeline;
 using VRMod.Player;
+using static UnityEngine.UI.Image;
+using static VRMod.VRMod;
 
 namespace VRMod.Patches
 {

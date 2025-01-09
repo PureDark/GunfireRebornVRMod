@@ -57,14 +57,14 @@ namespace VRMod.Player
         private Quaternion hpDeriv = Quaternion.identity;
         private bool setup = false;
 
-        void Awake()
+        public void Awake()
         {
             Head = VRPlayer.Instance.Head;
             LeftHand = VRPlayer.Instance.LeftHand;
             RightHand = VRPlayer.Instance.RightHand;
         }
 
-        void Start()
+        public void Start()
         {
         }
 
@@ -117,7 +117,7 @@ namespace VRMod.Player
             }
         }
 
-        void Update()
+        public void Update()
         {
             if (setup)
             {
@@ -220,7 +220,7 @@ namespace VRMod.Player
             }
         }
 
-        void OnDestroy()
+        public void OnDestroy()
         {
             if (canvasRootTarget)
                 Destroy(canvasRootTarget.gameObject);
@@ -231,7 +231,7 @@ namespace VRMod.Player
         //public static Vector3 overridePos = new Vector3(0.15f, -0.15f, -0.1f);
         //public static Vector3 overridePos2 = new Vector3(0.15f, -0.15f, -0.1f);
 
-        void LateUpdate()
+        public void LateUpdate()
         {
             if (VRPlayer.Instance.isHome)
             {

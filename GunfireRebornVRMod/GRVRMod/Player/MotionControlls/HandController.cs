@@ -76,7 +76,7 @@ namespace VRMod.Player.MotionControlls
             this.uiMode = uiMode;
         }
 
-        private void LateUpdate()
+        public void LateUpdate()
         {
             if (hideLaser)
             {

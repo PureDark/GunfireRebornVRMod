@@ -86,7 +86,7 @@ namespace VRMod.Patches
             UIFormName.ASK_RELICRESURGENCE_PANEL,
             UIFormName.PC_PANEL_GROWTHCHOOSE,
             UIFormName.PACKAGE_PANEL,
-            UIFormName.PC_panel_talentfusion,       // Ascension Fusion (他山之石)
+            UIFormName.PC_panel_AscensionFusion,       // Ascension Fusion (他山之石)
             UIFormName.PC_Panel_tasklist,           // Mission from Above (天降大任)
             UIFormName.PC_ChooseRelic_Panel,        // Interdependant Fortunes (福祸相依)
             UIFormName.PC_PANEL_WEAPONCOLLECTION,   // Transcendent Arsenal? (UI name is PC_Panel_secretweapon?)
@@ -174,31 +174,32 @@ namespace VRMod.Patches
         }
 
         [HarmonyPatch(typeof(CBehaviorAction), nameof(CBehaviorAction.CreateContiEffectOffset))]
-        internal class InjectCreateCreateContiEffectOffset
+        internal class InjectCreateContiEffectOffset
         {
-            private static void Postfix(BehaviorNode node, Object original, Define.POSITION_TYPE posType, Define.TARGET_TYPE targetType, Vector3 offset, string parent, bool createOnce, string effectname, bool isHeroVoiceSwitch, bool isNeedLimitScale, float scaleThres)
+
+            private static void Postfix(BehaviorNode node, Object original, Define.POSITION_TYPE posType, Define.TARGET_TYPE targetType, Vector3 offset, string parent, string effectname, bool isHeroVoiceSwitch, bool isNeedLimitScale, float scaleThres)
             {
-                Log.Info("InjectCreateCreateContiEffectOffset: original.name=" + original.name + "  posType=" + posType + "  targetType=" + targetType + "  parent=" + parent + "  effectname=" + effectname);
+                Log.Info("InjectCreateContiEffectOffset: original.name=" + original.name + "  posType=" + posType + "  targetType=" + targetType + "  parent=" + parent + "  effectname=" + effectname);
                 if (original.name == "60632")
                     original.Cast<Transform>().gameObject.active = false;
             }
         }
 
-        [HarmonyPatch(typeof(CBehaviorAction), nameof(CBehaviorAction.CreateEffectOffSet))]
-        internal class InjectCreateCreateEffectOffSet
-        {
-            private static void Postfix(BehaviorNode node, Object original, Define.POSITION_TYPE posType, Define.TARGET_TYPE targetType, float livetime, float deletedelay, string parent, Vector3 offSet)
-            {
-                Log.Info("InjectCreateCreateEffectOffSet: original.name=" + original.name + "  posType=" + posType + "  targetType=" + targetType + "  parent=" + parent + "  livetime=" + livetime);
-                if (original.name == "60632")
-                    original.Cast<Transform>().gameObject.active = false;
-            }
-        }
+        //[HarmonyPatch(typeof(CBehaviorAction), nameof(CBehaviorAction.CreateEffectOffset))]
+        //internal class InjectCreateEffectOffset
+        //{
+        //    private static void Postfix(BehaviorNode node, Object original, Define.POSITION_TYPE posType, Define.TARGET_TYPE targetType, float livetime, float deletedelay, string parent, Vector3 offSet)
+        //    {
+        //        Log.Info("InjectCreateEffectOffset: original.name=" + original.name + "  posType=" + posType + "  targetType=" + targetType + "  parent=" + parent + "  livetime=" + livetime);
+        //        if (original.name == "60632")
+        //            original.Cast<Transform>().gameObject.active = false;
+        //    }
+        //}
 
         [HarmonyPatch(typeof(CBehaviorAction), nameof(CBehaviorAction.CreateOnceEffect))]
         internal class InjectCreateCreateOnceEffect
         {
-            private static void Postfix(BehaviorNode node, Object original, Define.POSITION_TYPE posType, Define.TARGET_TYPE targetType, float livetime, float deletedelay, string parent)
+            private static void Postfix(BehaviorNode node, Object original, Define.POSITION_TYPE posType, Define.TARGET_TYPE targetType, float livetime, string parent, Vector3 offSet)
             {
                 Log.Info("InjectCreateCreateOnceEffect: original.name=" + original.name + "  posType=" + posType + "  targetType=" + targetType + "  parent=" + parent + "  livetime=" + livetime);
                 if (original.name == "60632")
@@ -210,9 +211,9 @@ namespace VRMod.Patches
         [HarmonyPatch(typeof(CBehaviorAction), nameof(CBehaviorAction.CreateOnceUIEffect))]
         internal class InjectCreateOnceUIEffect
         {
-            private static void Postfix(BehaviorNode node, Object original, float livetime, float deletedelay)
+            private static void Postfix(BehaviorNode node, Object original, float livetime)
             {
-                Log.Info("InjectCreateOnceUIEffect: original.name=" + original.name + "  livetime=" + livetime + "  deletedelay=" + deletedelay);
+                Log.Info("InjectCreateOnceUIEffect: original.name=" + original.name + "  livetime=" + livetime);
                 if (original.name == "hub_die(Clone)")
                     original.Cast<Transform>().localEulerAngles = Vector3.zero;
                 if (original.name == "60632")
@@ -224,7 +225,7 @@ namespace VRMod.Patches
         [HarmonyPatch(typeof(CBehaviorAction), nameof(CBehaviorAction.CreateUIEffect))]
         internal class InjectCreateUIEffect
         {
-            private static void Postfix(BehaviorNode node, Object original, string effectname = "")
+            private static void Postfix(BehaviorNode node, Object original, string effectname, bool needRebind)
             {
                 Log.Info("InjectCreateUIEffect: original.name=" + original.name + "  effectname=" + effectname);
                 original.Cast<Transform>().localEulerAngles = Vector3.zero;
@@ -236,8 +237,8 @@ namespace VRMod.Patches
         }
 
         // 让血条显示到怪物上方而不是canvas上
-        [HarmonyPatch(typeof(OCBloodBar), nameof(OCBloodBar.UpdatePos))]
-        internal class InjectOCBloodBarUpdatePos
+        [HarmonyPatch(typeof(OCBloodBar), nameof(OCBloodBar.UpdateUIPos))]
+        internal class InjectOCBloodBarUpdateUIPos
         {
             private static bool Prefix(OCBloodBar __instance)
             {
@@ -253,13 +254,13 @@ namespace VRMod.Patches
             {
                 if (__instance.isShowBloodBar)
                 {
-                    __instance.hpbartrans.position = __instance.m_UpdatePos;
+                    __instance.bossHpbartrans.position = __instance.m_UpdatePos;
                     if (__instance.BloodBar.ARTrans)
                         __instance.BloodBar.ARTrans.localRotation = Quaternion.identity;
                     if (__instance.BloodBar.SHTrans)
                         __instance.BloodBar.SHTrans.localRotation = Quaternion.identity;
-                    if (__instance.BloodScale)
-                        __instance.BloodScale.m_RealMaxScale = 3;
+                    if (__instance.BloodBar.m_ScaleCtr)
+                        __instance.BloodBar.m_ScaleCtr.m_RealMaxScale = 3;
                 }
             }
         }
@@ -292,9 +293,9 @@ namespace VRMod.Patches
         [HarmonyPatch(typeof(CBehaviorAction), nameof(CBehaviorAction.CreateOnceEffectOnUINode))]
         internal class InjectCreateOnceEffectOnUINode
         {
-            private static void Postfix(BehaviorNode node, string uiname, string nodename, Object original, float livetime, float deletedelay)
+            private static void Postfix(BehaviorNode node, string uiname, string nodename, Object original, float livetime)
             {
-                Log.Info("InjectCreateOnceEffectOnUINode: original.name=" + original.name + "  uiname=" + uiname + "  nodename=" + nodename + "  livetime=" + livetime + "  deletedelay=" + deletedelay);
+                Log.Info("InjectCreateOnceEffectOnUINode: original.name=" + original.name + "  uiname=" + uiname + "  nodename=" + nodename + "  livetime=" + livetime);
                 if (original.name == "60632")
                     original.Cast<Transform>().gameObject.active = false;
                 if (original.name == "shieldrecover_206_UIHub(Clone)" && uiname == "PanelWar" && nodename == "hp")
@@ -332,7 +333,7 @@ namespace VRMod.Patches
         [HarmonyPatch(typeof(CBehaviorAction), nameof(CBehaviorAction.CreateEffect))]
         internal class InjectCreateEffect
         {
-            private static void Postfix(BehaviorNode node, Object original, Define.POSITION_TYPE posType, Define.TARGET_TYPE targetType, string parent = "", bool createOnce = false, string effectname = "", bool isHeroVoiceSwitch = false)
+            private static void Postfix(BehaviorNode node, Object original, Define.POSITION_TYPE posType, Define.TARGET_TYPE targetType, string parent = "", string effectname = "", bool isHeroVoiceSwitch = false, float livetime = 0f, bool needScale = true, bool isCloseGround = false)
             {
                 Log.Info("InjectCreateEffect: original.name=" + original.name + "  effectname=" + effectname + "  parent=" + parent);
                 if (original.name == "60632")
@@ -428,21 +429,21 @@ namespace VRMod.Patches
             }
         }
 
-        [HarmonyPatch(typeof(SkillFunction), nameof(SkillFunction.GetCameraCenterRay))]
-        internal class InjectGetCameraCenterRay
-        {
-            private static bool Prefix(ref Ray __result)
-            {
-                //Log.Info("InjectGetCameraCenterRay");
-                if (isCrtArgCameraCenterPos)
-                {
-                    __result = isRightRay ? VRPlayer.Instance.RightHand.aimRay : VRPlayer.Instance.LeftHand.aimRay;
-                    //Log.Info("InjectGetCameraCenterRay: isCrtArgCameraCenterPos=" + isCrtArgCameraCenterPos + "  isRightRay=" + isRightRay);
-                    return false;
-                }
-                return true;
-            }
-        }
+        //[HarmonyPatch(typeof(SkillFunction), nameof(SkillFunction.GetCameraCenterRay))]
+        //internal class InjectGetCameraCenterRay
+        //{
+        //    private static bool Prefix(ref Ray __result)
+        //    {
+        //        //Log.Info("InjectGetCameraCenterRay");
+        //        if (isCrtArgCameraCenterPos)
+        //        {
+        //            __result = isRightRay ? VRPlayer.Instance.RightHand.aimRay : VRPlayer.Instance.LeftHand.aimRay;
+        //            //Log.Info("InjectGetCameraCenterRay: isCrtArgCameraCenterPos=" + isCrtArgCameraCenterPos + "  isRightRay=" + isRightRay);
+        //            return false;
+        //        }
+        //        return true;
+        //    }
+        //}
 
         //[HarmonyPatch(typeof(HeroWarSign.SightLineSign), nameof(HeroWarSign.SightLineSign.CrtArgSightAccPos))]
         //internal class InjectSightLineSign

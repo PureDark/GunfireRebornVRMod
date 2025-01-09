@@ -34,7 +34,7 @@ namespace VRMod.Player.Behaviours
             SetIsScoping(true);
         }
 
-        void LateUpdate()
+        public void LateUpdate()
         {
             if (!circleScope || weaponData == null)
                 return;
@@ -60,12 +60,12 @@ namespace VRMod.Player.Behaviours
             circleScope.transform.localScale = Vector3.Lerp(Vector3.zero, weaponData.scopeScale, scaleLerp);
         }
 
-        void OnEnable()
+        public void OnEnable()
         {
             SetIsScoping(true);
         }
 
-        void OnDisable()
+        public void OnDisable()
         {
             SetIsScoping(false);
         }

@@ -26,7 +26,7 @@ namespace VRMod.Player
         public static VRSystems Instance { get; private set; }
         public Canvas GuideCanvas;
 
-        private void Awake()
+        public void Awake()
         {
             if (Instance)
             {
@@ -45,7 +45,7 @@ namespace VRMod.Player
             //    MelonCoroutines.Start(this, HarmonyPatches.ClickStartScreenContinue());
         }
 
-        private void Update()
+        public void Update()
         {
             //MenuFix.SetDebugUICamera();
             if (Input.GetKey(KeyCode.LeftControl)&&Input.GetKeyUp(KeyCode.H))

@@ -17,12 +17,12 @@ namespace VRMod.Player.Behaviours
         public float smoothTime = 0.05f;
         private Quaternion deriv = Quaternion.identity;
 
-        void Awake()
+        public void Awake()
         {
             smoothTime = ModConfig.FPCamSmoothTime.Value;
         }
 
-        void LateUpdate()
+        public void LateUpdate()
         {
             if(target != null)
             {

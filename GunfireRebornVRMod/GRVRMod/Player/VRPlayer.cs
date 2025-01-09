@@ -43,7 +43,7 @@ namespace VRMod.Player
         public bool CannonFix = false;
         public Transform effectRoot;
 
-        private void Awake()
+        public void Awake()
         {
             if (Instance)
             {
@@ -137,7 +137,7 @@ namespace VRMod.Player
             }
         }
 
-        void FixedUpdate()
+        public void FixedUpdate()
         {
             if (!isHome && !isUIMode && !isInCG)
             {
@@ -241,7 +241,7 @@ namespace VRMod.Player
         }
 
         // 在LateUpdate里才能覆盖英雄身体的位置和朝向
-        void LateUpdate()
+        public void LateUpdate()
         {
             if (Input.GetKeyUp(KeyCode.J))
             {
