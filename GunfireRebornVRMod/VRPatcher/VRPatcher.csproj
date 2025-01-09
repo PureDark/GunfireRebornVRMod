@@ -45,16 +45,16 @@
 
   <ItemGroup>
     <Reference Include="AssetsTools.NET">
-      <HintPath>F:\Steam\steamapps\common\Gunfire Reborn\BepInEx\patchers\PureDark.VRPatcher\AssetsTools.NET.dll</HintPath>
+      <HintPath>C:\Program Files (x86)\Steam\steamapps\common\Gunfire Reborn\BepInEx\patchers\PureDark.VRPatcher\AssetsTools.NET.dll</HintPath>
     </Reference>
     <Reference Include="BepInEx.Core">
-      <HintPath>F:\Steam\steamapps\common\Gunfire Reborn\BepInEx\core\BepInEx.Core.dll</HintPath>
+      <HintPath>C:\Program Files (x86)\Steam\steamapps\common\Gunfire Reborn\BepInEx\core\BepInEx.Core.dll</HintPath>
     </Reference>
     <Reference Include="BepInEx.Preloader.Core">
-      <HintPath>F:\Steam\steamapps\common\Gunfire Reborn\BepInEx\core\BepInEx.Preloader.Core.dll</HintPath>
+      <HintPath>C:\Program Files (x86)\Steam\steamapps\common\Gunfire Reborn\BepInEx\core\BepInEx.Preloader.Core.dll</HintPath>
     </Reference>
     <Reference Include="Mono.Cecil">
-      <HintPath>F:\Steam\steamapps\common\Gunfire Reborn\BepInEx\core\Mono.Cecil.dll</HintPath>
+      <HintPath>C:\Program Files (x86)\Steam\steamapps\common\Gunfire Reborn\BepInEx\core\Mono.Cecil.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.VRModule">
       <HintPath>..\Libs\UnityEngine.VRModule.dll</HintPath>

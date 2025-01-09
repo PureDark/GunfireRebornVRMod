@@ -34,6 +34,14 @@ namespace VRMod.Player
         public Transform Target_tips;
         public Transform Shockwave1, Shockwave2;
 
+        public Transform img_target;
+        public Transform img_chest;
+        public Transform img_buffnpc;
+        public Transform img_shop;
+        public Transform img_weaponshop;
+        public Transform img_gscashshop;
+        public Transform img_firepile;
+
         public Transform SimLineStart;
 
         private Transform canvasRootTarget;
@@ -187,7 +195,7 @@ namespace VRMod.Player
                         }
                     }
 
-                    Target_tips = PC_Panel_war.Find("Target_tips");
+                    Target_tips = PC_Panel_war.Find("Target_tips(Clone)");
                     SimLineStart = CameraManager.MainCamera.DeepFindChild("SimLineStart");
                     if (hero_skill_1)
                     {
@@ -336,8 +344,9 @@ namespace VRMod.Player
             }
 
             // 目标点需要重置一下朝向
-            if (!Target_tips && PC_Panel_war)
-                Target_tips = PC_Panel_war.Find("Target_tips");
+            if (!Target_tips && PC_Panel_war) {
+                Target_tips = PC_Panel_war.Find("Target_tips(Clone)");
+            }
             if (Target_tips)
             {
                 if (Target_tips.parent != PC_Panel_war)
@@ -345,6 +354,13 @@ namespace VRMod.Player
                     Target_tips = null;
                     Shockwave1 = null;
                     Shockwave2 = null;
+                    img_target = null;
+                    img_chest = null;
+                    img_buffnpc = null;
+                    img_shop = null;
+                    img_weaponshop = null;
+                    img_gscashshop = null;
+                    img_firepile = null;
                 }
                 else
                 {
@@ -356,6 +372,29 @@ namespace VRMod.Player
                         Shockwave1.gameObject.active = false;
                     if (Shockwave2)
                         Shockwave2.gameObject.active = false;
+
+                    // Resize target tips labels
+                    if (!img_target)
+                        img_target = Target_tips.Find("img_target");
+                        img_target.localScale = new Vector3(0.005f, 0.005f, 0.005f);
+                    if (!img_chest)
+                        img_chest = Target_tips.Find("img_chest");
+                        img_chest.localScale = new Vector3(0.005f, 0.005f, 0.005f);
+                    if (!img_buffnpc)
+                        img_buffnpc = Target_tips.Find("img_buffnpc");
+                        img_buffnpc.localScale = new Vector3(0.009f, 0.009f, 0.009f);
+                    if (!img_shop)
+                        img_shop = Target_tips.Find("img_shop");
+                        img_shop.localScale = new Vector3(0.009f, 0.009f, 0.009f);
+                    if (!img_weaponshop)
+                        img_weaponshop = Target_tips.Find("img_weaponshop");
+                        img_weaponshop.localScale = new Vector3(0.009f, 0.009f, 0.009f);
+                    if (!img_gscashshop)
+                        img_gscashshop = Target_tips.Find("img_gscashshop");
+                        img_gscashshop.localScale = new Vector3(0.009f, 0.009f, 0.009f);
+                    if (!img_firepile)
+                        img_firepile = Target_tips.Find("img_firepile");
+                        img_firepile.localScale = new Vector3(0.005f, 0.005f, 0.005f);
                     Target_tips.localRotation = Quaternion.identity;
                 }
             }

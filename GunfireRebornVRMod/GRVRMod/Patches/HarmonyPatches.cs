@@ -69,6 +69,8 @@ namespace VRMod.Patches
             UIFormName.PCESCSETTING_PANEL,
             UIFormName.TALENT_CHOOSE,
             UIFormName.TALENT_CHOOSE_LEVEL4,
+            UIFormName.TALENT_CHOOSE_RARE,
+            UIFormName.TALENT_CHOOSE_TWICE,
             UIFormName.WAR_SHOP_PANEL,
             UIFormName.CASH_SHOP_PANEL,
             UIFormName.INSCIPRTION_SHOP,
@@ -83,7 +85,13 @@ namespace VRMod.Patches
             UIFormName.ASK_RESURGENCE_PANEL,
             UIFormName.ASK_RELICRESURGENCE_PANEL,
             UIFormName.PC_PANEL_GROWTHCHOOSE,
-            UIFormName.PACKAGE_PANEL
+            UIFormName.PACKAGE_PANEL,
+            UIFormName.PC_panel_talentfusion,       // Ascension Fusion (他山之石)
+            UIFormName.PC_Panel_tasklist,           // Mission from Above (天降大任)
+            UIFormName.PC_ChooseRelic_Panel,        // Interdependant Fortunes (福祸相依)
+            UIFormName.PC_PANEL_WEAPONCOLLECTION,   // Transcendent Arsenal? (UI name is PC_Panel_secretweapon?)
+            UIFormName.PC_PANEL_ENDLESS_TALENT,
+            UIFormName.PC_PANEL_ENDLESS_RELIC
         };
 
         public static List<string> BattleModePathes = new List<string>

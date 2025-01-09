@@ -514,8 +514,9 @@ namespace VRMod.Player
                         RightHand.muzzle.rotation = weapon.rotation;
                         weapon.position = LeftHand.model.position + weapon.right * offset.x + weapon.up * offset.y + weapon.forward * (offset.z - bowData.leftHandForwardDistance);
                     }
-                    else if (weaponData.weaponType == WeaponDatas.WeaponType.SniperRifle && vrScope & vrScope.IsShowing)
+                    else if (weaponData.weaponType == WeaponDatas.WeaponType.SniperRifle && vrScope & vrScope.IsShowing && ModConfig.EnableSniperADSSnap.Value)
                     {
+                        // Sniper ADS cursor 
                         var targetPosition = RightHand.model.position + weapon.right * offset.x + weapon.up * offset.y + weapon.forward * offset.z;
                         weapon.position = Vector3.SmoothDamp(weapon.position, targetPosition, ref velocity, 0.3f) + weapon.forward * 0.05f;
                         weapon.Rotate(-weaponData.rotationEuler, Space.Self);
@@ -594,8 +595,9 @@ namespace VRMod.Player
                                 Muzzle.localEulerAngles = gauntletData.muzzleRotation;
                         }
                     }
-                    else if (weaponData.weaponType == WeaponDatas.WeaponType.SniperRifle && vrScope & vrScope.IsShowing)
+                    else if (weaponData.weaponType == WeaponDatas.WeaponType.SniperRifle && vrScope & vrScope.IsShowing && ModConfig.EnableSniperADSSnap.Value)
                     {
+                        // Sniper ADS position
                         var targetPosition = RightHand.model.position + weapon.right * offset.x + weapon.up * offset.y + weapon.forward * offset.z;
                         weapon.position = Vector3.SmoothDamp(weapon.position, targetPosition, ref velocity, 0.3f) + weapon.forward* 0.05f;
                         weapon.Rotate(-weaponData.rotationEuler, Space.Self);
@@ -703,7 +705,14 @@ namespace VRMod.Player
                 isHome = false;
 
             if (RegexManager.IsNumber(scene.name))
-                MelonCoroutines.Start(BattlePrep());
+            {
+                // Spirital Assault Fix
+                if (scene.name == "1410101" || scene.name == "1410103"){
+                    MelonCoroutines.Start(BattlePrep(1));
+                }
+                else
+                    MelonCoroutines.Start(BattlePrep(0));
+            }
         }
 
         private void SetupHome()
@@ -746,13 +755,21 @@ namespace VRMod.Player
             vignette = CUIManager.instance.UICamera.GetComponent<PostProcessVolume>().profile.GetSetting<Vignette>();
         }
 
-        public IEnumerator BattlePrep()
+        public IEnumerator BattlePrep(int gamemode)
         {
             while (HeroCameraManager.HeroObj == null || HeroCameraManager.HeroTran == null)
                 yield return new WaitForSeconds(0.1f);
             // UI
             ToggleEventCamera(true);
             SetUIMode(false);
+
+            // Spirital Assault Fix
+            if (gamemode == 1) {
+                var effectRoot = GameObject.Find("CUIManager/Canvas_PC(Clone)/MainRoot/PanelPopup/lay_survival_new/lay_schedule/FightingEffect/UI_progress_bar/Position/Fire");
+                if (effectRoot != null)
+                    effectRoot.gameObject.active = false;
+            }
+
             //vignette = CUIManager.instance.UICamera.GetComponent<PostProcessVolume>().profile.GetSetting<Vignette>();
             Camera[] cams = FindObjectsOfType<Camera>();
             foreach (Camera c in cams)
@@ -794,8 +811,15 @@ namespace VRMod.Player
             LeftHandMesh.localScale = new Vector3(0.67f, 0.67f, 0.67f);
             LeftHandMesh.localPosition = new Vector3(0.5631f, -0.0083f, -0.35f);
             LeftHandMesh.localEulerAngles = new Vector3(0f, 202.2307f, 180f);
-            LeftHandMesh.gameObject.GetOrAddComponent<MeshFilter>().mesh = LeftHandRenderers[0].sharedMesh;
-            LeftHandMesh.gameObject.GetOrAddComponent<MeshRenderer>().material = LeftHandRenderers[0].sharedMaterial;
+
+            // Zi Xiao left hand fix
+            if (HeroCameraManager.HeroObj.PlayerCom.SID == 216) {
+                LeftHandMesh.gameObject.GetOrAddComponent<MeshFilter>().mesh = LeftHandRenderers[1].sharedMesh;
+                LeftHandMesh.gameObject.GetOrAddComponent<MeshRenderer>().material = LeftHandRenderers[1].sharedMaterial;
+            } else {
+                LeftHandMesh.gameObject.GetOrAddComponent<MeshFilter>().mesh = LeftHandRenderers[0].sharedMesh;
+                LeftHandMesh.gameObject.GetOrAddComponent<MeshRenderer>().material = LeftHandRenderers[0].sharedMaterial;
+            }
 
             foreach (var child in CameraManager.MainCamera)
             {
@@ -806,9 +830,15 @@ namespace VRMod.Player
                 }
             }
             ScreenCam.gameObject.active = true;
-            //ScreenCam.enabled = false;
             IsReadyForBattle = true;
         }
+
+        // public static void SetEventState(string state)
+        // {
+        //     Debug.Log("### LOGGING STATE ###");
+        //     Debug.Log(state.ToString());
+        //     Debug.Log("### STATE LOGGED ###");
+        // }
 
         private void OnDestroy()
         {
