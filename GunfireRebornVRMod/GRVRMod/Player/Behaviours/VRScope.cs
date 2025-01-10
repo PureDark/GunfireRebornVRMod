@@ -2,11 +2,9 @@
 using UI;
 using UnityEngine;
 using UnityEngine.Rendering.PostProcessing;
-using Valve.VR;
 using VRMod.Assets;
 using VRMod.Player.VRInput;
 using static VRMod.Player.GameData.WeaponDatas;
-using Mathf = Valve.VR.Mathf;
 
 namespace VRMod.Player.Behaviours
 {

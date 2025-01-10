@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.30128.74
+# Visual Studio Version 17
+VisualStudioVersion = 17.12.35527.113 d17.12
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GRVRMod", "GRVRMod\GRVRMod.csproj", "{788BC472-59F7-46F6-B760-65C18BA74389}"
 EndProject
@@ -13,12 +13,12 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{788BC472-59F7-46F6-B760-65C18BA74389}.Debug|Any CPU.ActiveCfg = Release|Any CPU
-		{788BC472-59F7-46F6-B760-65C18BA74389}.Debug|Any CPU.Build.0 = Release|Any CPU
+		{788BC472-59F7-46F6-B760-65C18BA74389}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{788BC472-59F7-46F6-B760-65C18BA74389}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{788BC472-59F7-46F6-B760-65C18BA74389}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{788BC472-59F7-46F6-B760-65C18BA74389}.Release|Any CPU.Build.0 = Release|Any CPU
-		{F41EC84C-6465-4449-B2F6-79535171265B}.Debug|Any CPU.ActiveCfg = Release|Any CPU
-		{F41EC84C-6465-4449-B2F6-79535171265B}.Debug|Any CPU.Build.0 = Release|Any CPU
+		{F41EC84C-6465-4449-B2F6-79535171265B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F41EC84C-6465-4449-B2F6-79535171265B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F41EC84C-6465-4449-B2F6-79535171265B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F41EC84C-6465-4449-B2F6-79535171265B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection

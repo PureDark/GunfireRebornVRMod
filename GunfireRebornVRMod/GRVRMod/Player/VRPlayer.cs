@@ -57,9 +57,11 @@ namespace VRMod.Player
             //SteamVR.Initialize(false);
 
             HarmonyPatches.onSceneLoaded += OnSceneLoaded;
-
-            // 新增一个新手柄，输入源是自己设定的SteamVR action
-            FindObjectOfType<InControlManager>()?.gameObject.GetOrAddComponent<VRInputManager>();
+            if (VRMod.IsVR)
+            {
+                // 新增一个新手柄，输入源是自己设定的SteamVR action
+                FindObjectOfType<InControlManager>()?.gameObject.GetOrAddComponent<VRInputManager>();
+            }
 
             // 初始化游玩空间
             //gameObject.AddComponent<SteamVR_PlayArea>().drawInGame = false;
@@ -101,6 +103,8 @@ namespace VRMod.Player
 
         public void ToggleEventCamera(bool force = false)
         {
+            if (!VRMod.IsVR)
+                return;
             var eventSystemGO = GameObject.Find("UniverseLibCanvas");
             if(!eventSystemGO)
                 eventSystemGO = GameObject.Find("DontDestroyRoot/EventSystem");
@@ -139,7 +143,7 @@ namespace VRMod.Player
 
         public void FixedUpdate()
         {
-            if (!isHome && !isUIMode && !isInCG)
+            if (VRMod.IsVR && !isHome && !isUIMode && !isInCG)
             {
                 // 每秒执行50次
                 if (VRInputManager.Device.RightStick.State)
@@ -178,6 +182,8 @@ namespace VRMod.Player
 
         private int lastWeaponID;
         private float aimSwitchDelay = 1f;
+        
+        private ETCTouchPad etcTouchPad;
 
         private FPSCamMotionCtrl fpsCamMotionCtrl;
         private Transform HeroSkillHand;
@@ -302,7 +308,10 @@ namespace VRMod.Player
                 Origin.position = HeroCameraManager.HeroTran.position;
 
                 // 强制英雄的朝向与玩家头部朝向同步
-                HeroCameraManager.HeroTran.rotation = Quaternion.LookRotation(GetFlatForwardDirection());
+                var headRotation = Quaternion.LookRotation(GetFlatForwardDirection());
+                HeroCameraManager.HeroTran.rotation = headRotation;
+                etcTouchPad.axisX.directTransform.rotation = headRotation;
+                etcTouchPad.axisY.directTransform.rotation = headRotation;
 
                 var heroData = HeroDatas.GetHeroData(HeroCameraManager.HeroObj.PlayerCom.SID);
 
@@ -699,6 +708,7 @@ namespace VRMod.Player
 
         public void OnSceneLoaded(Scene scene, LoadSceneMode mode)
         {
+            Log.Debug("VRPlayer.OnSceneLoaded: " + scene.name);
             if (scene.name?.ToLower() == "home")
                 SetupHome();
             else
@@ -714,9 +724,11 @@ namespace VRMod.Player
                     MelonCoroutines.Start(BattlePrep(0));
             }
         }
+        static int count = 0;
 
         private void SetupHome()
         {
+            Log.Debug("SetupHome: " + (++count));
             isHome = true;
             isHomeFixed = false;
             IsReadyForBattle = false;
@@ -757,6 +769,7 @@ namespace VRMod.Player
 
         public IEnumerator BattlePrep(int gamemode)
         {
+            Log.Debug("BattlePrep gamemode=" + gamemode);
             while (HeroCameraManager.HeroObj == null || HeroCameraManager.HeroTran == null)
                 yield return new WaitForSeconds(0.1f);
             // UI
@@ -779,6 +792,9 @@ namespace VRMod.Player
             Camera.stereoTargetEye = StereoTargetEyeMask.Both;
             vrBattleUI = Head.gameObject.GetOrAddComponent<VRBattleUI>();
             vrBattleUI.Setup();
+
+            etcTouchPad = FindObjectOfType<ETCTouchPad>();
+
             Origin.position = HeroCameraManager.HeroTran.position;
             fpsCamMotionCtrl = CameraManager.MainCamera.GetComponent<FPSCamMotionCtrl>();
             fpsCamMotionCtrl.enabled = false;
@@ -840,13 +856,14 @@ namespace VRMod.Player
         //     Debug.Log("### STATE LOGGED ###");
         // }
 
-        private void OnDestroy()
+        public void OnDestroy()
         {
             HarmonyPatches.onSceneLoaded -= OnSceneLoaded;
         }
 
         private void SetOriginHome()
         {
+            Log.Debug("SetOriginHome");
             SetOriginPosRotScl(new Vector3(28f, 1.6f, 16f), new Vector3(0, 90, 0), new Vector3(1, 1, 1));
         }
 

@@ -4,10 +4,9 @@ using HarmonyLib;
 using SkillBolt;
 using System.Collections;
 using System.Collections.Generic;
-using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 using UI;
 using UIScript;
-using UnhollowerRuntimeLib;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.XR;
@@ -31,9 +30,9 @@ namespace VRMod.Patches
             if(Instance == null)
                 Instance = new Harmony("com.PureDark.GRVRMod");
             Instance.PatchAll();
-            Instance.Patch(
-                typeof(UnhollowerBaseLib.LogSupport).GetMethod("Warning", AccessTools.all),
-                new HarmonyMethod(typeof(HarmonyPatches).GetMethod(nameof(HarmonyPatches.UnhollowerWarningPrefix))));
+            //Instance.Patch(
+            //    typeof(UnhollowerBaseLib.LogSupport).GetMethod("Warning", AccessTools.all),
+            //    new HarmonyMethod(typeof(HarmonyPatches).GetMethod(nameof(HarmonyPatches.UnhollowerWarningPrefix))));
         }
 
         public static bool DontRunMe() => false;
@@ -177,33 +176,33 @@ namespace VRMod.Patches
         internal class InjectCreateContiEffectOffset
         {
 
-            private static void Postfix(BehaviorNode node, Object original, Define.POSITION_TYPE posType, Define.TARGET_TYPE targetType, Vector3 offset, string parent, string effectname, bool isHeroVoiceSwitch, bool isNeedLimitScale, float scaleThres)
+            private static void Postfix(BehaviorNode node, Il2CppSystem.Func<Object> original, Define.POSITION_TYPE posType, Define.TARGET_TYPE targetType, Vector3 offset, string parent, string effectname, bool isHeroVoiceSwitch, bool isNeedLimitScale, float scaleThres)
             {
-                Log.Info("InjectCreateContiEffectOffset: original.name=" + original.name + "  posType=" + posType + "  targetType=" + targetType + "  parent=" + parent + "  effectname=" + effectname);
-                if (original.name == "60632")
-                    original.Cast<Transform>().gameObject.active = false;
+                Log.Info("InjectCreateContiEffectOffset: original.name=" + original.Invoke().name + "  posType=" + posType + "  targetType=" + targetType + "  parent=" + parent + "  effectname=" + effectname);
+                if (original.Invoke().name == "60632")
+                    original.Invoke().Cast<Transform>().gameObject.active = false;
             }
         }
 
         //[HarmonyPatch(typeof(CBehaviorAction), nameof(CBehaviorAction.CreateEffectOffset))]
         //internal class InjectCreateEffectOffset
         //{
-        //    private static void Postfix(BehaviorNode node, Object original, Define.POSITION_TYPE posType, Define.TARGET_TYPE targetType, float livetime, float deletedelay, string parent, Vector3 offSet)
+        //    private static void Postfix(BehaviorNode node, Il2CppSystem.Func<Object> original, Define.POSITION_TYPE posType, Define.TARGET_TYPE targetType, float livetime, float deletedelay, string parent, Vector3 offSet)
         //    {
-        //        Log.Info("InjectCreateEffectOffset: original.name=" + original.name + "  posType=" + posType + "  targetType=" + targetType + "  parent=" + parent + "  livetime=" + livetime);
-        //        if (original.name == "60632")
-        //            original.Cast<Transform>().gameObject.active = false;
+        //        Log.Info("InjectCreateEffectOffset: original.name=" + original.Invoke().name + "  posType=" + posType + "  targetType=" + targetType + "  parent=" + parent + "  livetime=" + livetime);
+        //        if (original.Invoke().name == "60632")
+        //            original.Invoke().Cast<Transform>().gameObject.active = false;
         //    }
         //}
 
         [HarmonyPatch(typeof(CBehaviorAction), nameof(CBehaviorAction.CreateOnceEffect))]
         internal class InjectCreateCreateOnceEffect
         {
-            private static void Postfix(BehaviorNode node, Object original, Define.POSITION_TYPE posType, Define.TARGET_TYPE targetType, float livetime, string parent, Vector3 offSet)
+            private static void Postfix(BehaviorNode node, Il2CppSystem.Func<Object> original, Define.POSITION_TYPE posType, Define.TARGET_TYPE targetType, float livetime, string parent, Vector3 offSet)
             {
-                Log.Info("InjectCreateCreateOnceEffect: original.name=" + original.name + "  posType=" + posType + "  targetType=" + targetType + "  parent=" + parent + "  livetime=" + livetime);
-                if (original.name == "60632")
-                    original.Cast<Transform>().gameObject.active = false;
+                Log.Info("InjectCreateCreateOnceEffect: original.name=" + original.Invoke().name + "  posType=" + posType + "  targetType=" + targetType + "  parent=" + parent + "  livetime=" + livetime);
+                if (original.Invoke().name == "60632")
+                    original.Invoke().Cast<Transform>().gameObject.active = false;
             }
         }
 
@@ -211,13 +210,13 @@ namespace VRMod.Patches
         [HarmonyPatch(typeof(CBehaviorAction), nameof(CBehaviorAction.CreateOnceUIEffect))]
         internal class InjectCreateOnceUIEffect
         {
-            private static void Postfix(BehaviorNode node, Object original, float livetime)
+            private static void Postfix(BehaviorNode node, Il2CppSystem.Func<Object> original, float livetime)
             {
-                Log.Info("InjectCreateOnceUIEffect: original.name=" + original.name + "  livetime=" + livetime);
-                if (original.name == "hub_die(Clone)")
-                    original.Cast<Transform>().localEulerAngles = Vector3.zero;
-                if (original.name == "60632")
-                    original.Cast<Transform>().gameObject.active = false;
+                Log.Info("InjectCreateOnceUIEffect: original.name=" + original.Invoke().name + "  livetime=" + livetime);
+                if (original.Invoke().name == "hub_die(Clone)")
+                    original.Invoke().Cast<Transform>().localEulerAngles = Vector3.zero;
+                if (original.Invoke().name == "60632")
+                    original.Invoke().Cast<Transform>().gameObject.active = false;
             }
         }
 
@@ -225,13 +224,13 @@ namespace VRMod.Patches
         [HarmonyPatch(typeof(CBehaviorAction), nameof(CBehaviorAction.CreateUIEffect))]
         internal class InjectCreateUIEffect
         {
-            private static void Postfix(BehaviorNode node, Object original, string effectname, bool needRebind)
+            private static void Postfix(BehaviorNode node, Il2CppSystem.Func<Object> original, string effectname, bool needRebind)
             {
-                Log.Info("InjectCreateUIEffect: original.name=" + original.name + "  effectname=" + effectname);
+                Log.Info("InjectCreateUIEffect: original.name=" + original.Invoke().name + "  effectname=" + effectname);
                 original.Cast<Transform>().localEulerAngles = Vector3.zero;
                 //if (original.name == "0" && effectname == "shieldbreak")
                 //    original.Cast<Transform>().Find("postion").gameObject.active = false;
-                if (original.name == "60632")
+                if (original.Invoke().name == "60632")
                     original.Cast<Transform>().gameObject.active = false;
             }
         }
@@ -279,13 +278,13 @@ namespace VRMod.Patches
         [HarmonyPatch(typeof(CBehaviorAction), nameof(CBehaviorAction.CreateEffectOnUINode))]
         internal class InjectCreateEffectOnUINode
         {
-            private static void Postfix(BehaviorNode node, string uiname, string nodename, Object original, float livetime = 0f)
+            private static void Postfix(BehaviorNode node, string uiname, string nodename, Il2CppSystem.Func<Object> original, float livetime = 0f)
             {
-                Log.Info("CreateEffectOnUINode: original.name=" + original.name + "  uiname=" + uiname + "  nodename=" + nodename + "  livetime=" + livetime);
-                if (original.name == "60632")
-                    original.Cast<Transform>().gameObject.active = false;
-                if (original.name == "0" && uiname == "PanelWar" && nodename == "hp")
-                    original.Cast<Transform>().Find("postion").gameObject.active = false;
+                Log.Info("CreateEffectOnUINode: original.name=" + original.Invoke().name + "  uiname=" + uiname + "  nodename=" + nodename + "  livetime=" + livetime);
+                if (original.Invoke().name == "60632")
+                    original.Invoke().Cast<Transform>().gameObject.active = false;
+                if (original.Invoke().name == "0" && uiname == "PanelWar" && nodename == "hp")
+                    original.Invoke().Cast<Transform>().Find("postion").gameObject.active = false;
             }
         }
 
@@ -293,13 +292,13 @@ namespace VRMod.Patches
         [HarmonyPatch(typeof(CBehaviorAction), nameof(CBehaviorAction.CreateOnceEffectOnUINode))]
         internal class InjectCreateOnceEffectOnUINode
         {
-            private static void Postfix(BehaviorNode node, string uiname, string nodename, Object original, float livetime)
+            private static void Postfix(BehaviorNode node, string uiname, string nodename, Il2CppSystem.Func<Object> original, float livetime)
             {
-                Log.Info("InjectCreateOnceEffectOnUINode: original.name=" + original.name + "  uiname=" + uiname + "  nodename=" + nodename + "  livetime=" + livetime);
-                if (original.name == "60632")
-                    original.Cast<Transform>().gameObject.active = false;
-                if (original.name == "shieldrecover_206_UIHub(Clone)" && uiname == "PanelWar" && nodename == "hp")
-                    original.Cast<Transform>().Find("postion").gameObject.active = false;
+                Log.Info("InjectCreateOnceEffectOnUINode: original.name=" + original.Invoke().name + "  uiname=" + uiname + "  nodename=" + nodename + "  livetime=" + livetime);
+                if (original.Invoke().name == "60632")
+                    original.Invoke().Cast<Transform>().gameObject.active = false;
+                if (original.Invoke().name == "shieldrecover_206_UIHub(Clone)" && uiname == "PanelWar" && nodename == "hp")
+                    original.Invoke().Cast<Transform>().Find("postion").gameObject.active = false;
             }
         }
 
@@ -333,14 +332,14 @@ namespace VRMod.Patches
         [HarmonyPatch(typeof(CBehaviorAction), nameof(CBehaviorAction.CreateEffect))]
         internal class InjectCreateEffect
         {
-            private static void Postfix(BehaviorNode node, Object original, Define.POSITION_TYPE posType, Define.TARGET_TYPE targetType, string parent = "", string effectname = "", bool isHeroVoiceSwitch = false, float livetime = 0f, bool needScale = true, bool isCloseGround = false)
+            private static void Postfix(BehaviorNode node, Il2CppSystem.Func<Object> original, Define.POSITION_TYPE posType, Define.TARGET_TYPE targetType, string parent = "", string effectname = "", bool isHeroVoiceSwitch = false, float livetime = 0f, bool needScale = true, bool isCloseGround = false)
             {
-                Log.Info("InjectCreateEffect: original.name=" + original.name + "  effectname=" + effectname + "  parent=" + parent);
-                if (original.name == "60632")
-                    original.Cast<Transform>().gameObject.active = false;
-                if (original.name == "HeroSkill_1301_Caster(Clone)" && VRPlayer.Instance)
+                Log.Info("InjectCreateEffect: original.name=" + original.Invoke().name + "  effectname=" + effectname + "  parent=" + parent);
+                if (original.Invoke().name == "60632")
+                    original.Invoke().Cast<Transform>().gameObject.active = false;
+                if (original.Invoke().name == "HeroSkill_1301_Caster(Clone)" && VRPlayer.Instance)
                 {
-                    VRPlayer.Instance.SetDualWield(original.Cast<Transform>());
+                    VRPlayer.Instance.SetDualWield(original.Invoke().Cast<Transform>());
                 }
             }
         }
@@ -550,9 +549,9 @@ namespace VRMod.Patches
         [HarmonyPatch(typeof(CBehaviorAction), nameof(CBehaviorAction.CreateCGCamera))]
         internal class InjectCreateCGCamera
         {
-            private static void Prefix(BehaviorNode node, Object original, string cgname, Vector3 stratpos)
+            private static void Prefix(BehaviorNode node, Il2CppSystem.Func<Object> original, string cgname, Vector3 stratpos)
             {
-                Camera cam = original.Cast<Transform>().GetComponentInChildren<Camera>();
+                Camera cam = original.Invoke().Cast<Transform>().GetComponentInChildren<Camera>();
                 if (cam != null)
                 {
                     cam.stereoTargetEye = StereoTargetEyeMask.None;
@@ -561,8 +560,8 @@ namespace VRMod.Patches
                 }
                 Log.Info("CreateCGCamera: cgname=" + cgname);
 
-                if (original != null)
-                    Log.Info("CreateCGCamera: original.name=" + original.name);
+                if (original.Invoke() != null)
+                    Log.Info("CreateCGCamera: original.name=" + original.Invoke().name);
             }
         }
 
@@ -633,7 +632,7 @@ namespace VRMod.Patches
                 // 必须在Unity接管前把stereoTargetEye改成None，才能解决
                 if (__result)
                 {
-                    if (systemTypeInstance == UnhollowerRuntimeLib.Il2CppType.Of<GameObject>())
+                    if (systemTypeInstance == Il2CppInterop.Runtime.Il2CppType.Of<GameObject>())
                     {
                         var cameras = __result.TryCast<GameObject>().GetComponentsInChildren<Camera>(true);
                         foreach (Camera c in cameras)

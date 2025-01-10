@@ -51,10 +51,13 @@ namespace VRMod.Player.MotionControlls
             this.muzzle = ray.transform;
             this.eventCamera = muzzle.GetComponent<Camera>();
 
-            pose = transform.gameObject.GetOrAddComponent<SteamVR_Behaviour_Pose>();
-            pose.poseAction = SteamVR_Actions.Gameplay.Pose;
-            pose.inputSource = (handType == HandType.Left)? SteamVR_Input_Sources.LeftHand : SteamVR_Input_Sources.RightHand;
-            pose.origin = transform.parent;
+            if (VRMod.IsVR)
+            {
+                pose = transform.gameObject.GetOrAddComponent<SteamVR_Behaviour_Pose>();
+                pose.poseAction = SteamVR_Actions.Gameplay.Pose;
+                pose.inputSource = (handType == HandType.Left) ? SteamVR_Input_Sources.LeftHand : SteamVR_Input_Sources.RightHand;
+                pose.origin = transform.parent;
+            }
 
             var shader = Resources.FindObjectsOfTypeAll<Shader>().First(x => x.name.Contains("M1/Character"));
             var renderers = model.GetComponentsInChildren<Renderer>();

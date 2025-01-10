@@ -1,7 +1,5 @@
 ﻿using InControl;
 using System;
-using UnhollowerBaseLib.Attributes;
-using UnhollowerBaseLib;
 using UnityEngine;
 using Valve.VR;
 

@@ -1,6 +1,6 @@
-﻿using System;
+﻿using Il2CppInterop.Runtime.Attributes;
+using System;
 using UI;
-using UnhollowerBaseLib.Attributes;
 using UnityEngine;
 using UnityEngine.Experimental.Rendering;
 using UnityEngine.Experimental.Rendering.LightweightPipeline;
@@ -37,7 +37,11 @@ namespace VRMod.Player
 
         public void Awake()
         {
-            defaultCullingMask = -966787561;
+            if (!VRMod.IsVR) {
+                enabled = false;
+                return;
+            }
+                defaultCullingMask = -966787561;
             defaultCullingMask |= 1 << Layer.Weapon;
 
             var uiPPLayer = CUIManager.instance.UICamera.GetComponent<PostProcessLayer>();
@@ -215,7 +219,8 @@ namespace VRMod.Player
         {
             if (stereoPass == null)
                 stereoPass = new StereoRenderPass(this);
-            stereoPass.Setup(baseDescriptor, colorAttachmentHandle);
+            if(VRMod.IsVR)
+                stereoPass.Setup(baseDescriptor, colorAttachmentHandle);
             return stereoPass;
         }
 

@@ -5,7 +5,6 @@ using UnityEngine.SceneManagement;
 using VRMod.Assets;
 using Valve.VR;
 using GameCoder.Engine;
-using BepInEx.IL2CPP.Utils;
 using VRMod.UI;
 using static VRMod.VRMod;
 using DuoyiQaLib;
@@ -38,8 +37,11 @@ namespace VRMod.Player
             DontDestroyOnLoad(gameObject);
 
             HarmonyPatches.onSceneLoaded += OnSceneLoaded;
-            SteamVR_Settings.instance.poseUpdateMode = SteamVR_UpdateModes.OnLateUpdate;
-            SteamVR.Initialize(false);
+            if (VRMod.IsVR)
+            {
+                SteamVR_Settings.instance.poseUpdateMode = SteamVR_UpdateModes.OnLateUpdate;
+                SteamVR.Initialize(false);
+            }
 
             //if (DYSceneManager.GetCurSceneName().ToLower().Contains("start"))
             //    MelonCoroutines.Start(this, HarmonyPatches.ClickStartScreenContinue());
@@ -94,7 +96,8 @@ namespace VRMod.Player
 
         private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
         {
-            if(scene.name == "home")
+            Log.Debug("VRSyatem.OnSceneLoaded: " + scene.name);
+            if (scene.name == "home")
             {
                 GuideCanvas = null;
                 CreateCameraRig();

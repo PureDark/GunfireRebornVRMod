@@ -1,12 +1,11 @@
 ﻿using BepInEx;
-using BepInEx.IL2CPP;
+using BepInEx.Unity.IL2CPP;
 using HarmonyLib;
 using System.Collections.Generic;
 using System.Diagnostics;
 using VRMod.Patches;
 using VRMod.Player;
 using VRMod.Assets;
-using UnhollowerRuntimeLib;
 using VRMod.UI.Pointers;
 using VRMod.Player.VRInput;
 using VRMod.Player.MotionControlls;
@@ -18,6 +17,7 @@ using UnityEngine.SceneManagement;
 using System;
 using Valve.VR;
 using VRMod.Settings;
+using Il2CppInterop.Runtime.Injection;
 
 namespace VRMod
 {
@@ -30,6 +30,8 @@ namespace VRMod
         public const string VERSION = "1.0.8.0";
 
         public static VRMod Instance { get; private set; }
+
+        public static bool IsVR = true;
 
         internal static Harmony Harmony { get; } = new Harmony(GUID);
 
