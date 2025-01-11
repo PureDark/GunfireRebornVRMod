@@ -14,35 +14,25 @@ namespace VRMod.Settings
         private static readonly ConfigFile configFile = new ConfigFile(System.IO.Path.Combine(Paths.ConfigPath, CONFIG_FILE_NAME), true);
 
         public static ConfigEntry<bool> UseFirstPersonCam { get; private set; }
-        public static ConfigEntry<bool> EnableDualWield { get; private set; }
+        public static ConfigEntry<bool> EnableTwoTwoHanded { get; private set; }
         public static ConfigEntry<bool> EnableAimRay { get; private set; }
         public static ConfigEntry<bool> EnablePostProcessing { get; private set; }
         public static ConfigEntry<bool> EnableSniperADSSnap { get; private set; }
         public static ConfigEntry<float> UIDistance { get; private set; }
         public static ConfigEntry<float> UIScale { get; private set; }
         public static ConfigEntry<float> FPCamSmoothTime { get; private set; }
+        public static ConfigEntry<float> TPCamSmoothTime { get; private set; }
         public static ConfigEntry<float> SmoothTurningSpeed { get; private set; }
         public static ConfigEntry<float> SnapTurningAngle { get; private set; }
+        public static ConfigEntry<float> PlayerWorldScale { get; private set; }
 
         public static void Init()
         {
-            UseFirstPersonCam = configFile.Bind<bool>(
+            EnableTwoTwoHanded = configFile.Bind<bool>(
                 "VR Settings",
-                "UseFirstPersonCamera",
-                false,
-                "Enable an additional camera for showing smoothed first person view."
-            );
-            FPCamSmoothTime = configFile.Bind<float>(
-                "VR Settings",
-                "FirstPersonCameraSmoothFactor",
-                0.05f,
-                "Adjust the smooth strength applied to the first person camera."
-            );
-            EnableDualWield = configFile.Bind<bool>(
-                "VR Settings",
-                "EnableDualWield",
+                "EnableTwoTwoHanded",
                 true,
-                "Whether to enable auto dual-wielding."
+                "Whether to enable auto-snap to hold a weapon with two hands."
             );
             EnableAimRay = configFile.Bind<bool>(
                 "VR Settings",
@@ -55,6 +45,12 @@ namespace VRMod.Settings
                 "EnablePostProcessing",
                 true,
                 "Enable post-processing in HMD, disable this to gain some extra FPS."
+            );
+            PlayerWorldScale = configFile.Bind<float>(
+                "VR Settings",
+                "PlayerWorldScale",
+                1.5f,
+                "The larger this value is, the smaller the world looks to you."
             );
             UIDistance = configFile.Bind<float>(
                 "VR Settings",
@@ -85,6 +81,24 @@ namespace VRMod.Settings
                 "EnableSniperADSSnap",
                 true,
                 "Enable Sniper scope to snap infront of you when ADS-ing."
+            );
+            UseFirstPersonCam = configFile.Bind<bool>(
+                "VR Settings",
+                "UseFirstPersonCamera",
+                false,
+                "Enable an additional camera for showing smoothed first person view."
+            );
+            FPCamSmoothTime = configFile.Bind<float>(
+                "VR Settings",
+                "FirstPersonCameraSmoothFactor",
+                0.05f,
+                "Adjust the smooth strength applied to the first person camera."
+            );
+            TPCamSmoothTime = configFile.Bind<float>(
+                "VR Settings",
+                "ThirdPersonCameraSmoothFactor",
+                0.15f,
+                "Adjust the smooth strength applied to the third person view when using the squirrel's primary skill."
             );
         }
 

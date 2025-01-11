@@ -180,7 +180,7 @@ namespace VRMod.Patches
             {
                 Log.Info("InjectCreateContiEffectOffset: original.name=" + original.Invoke().name + "  posType=" + posType + "  targetType=" + targetType + "  parent=" + parent + "  effectname=" + effectname);
                 if (original.Invoke().name == "60632")
-                    original.Invoke().Cast<Transform>().gameObject.active = false;
+                    original.Invoke().Cast<GameObject>().active = false;
             }
         }
 
@@ -196,13 +196,13 @@ namespace VRMod.Patches
         //}
 
         [HarmonyPatch(typeof(CBehaviorAction), nameof(CBehaviorAction.CreateOnceEffect))]
-        internal class InjectCreateCreateOnceEffect
+        internal class InjectCreateOnceEffect
         {
             private static void Postfix(BehaviorNode node, Il2CppSystem.Func<Object> original, Define.POSITION_TYPE posType, Define.TARGET_TYPE targetType, float livetime, string parent, Vector3 offSet)
             {
-                Log.Info("InjectCreateCreateOnceEffect: original.name=" + original.Invoke().name + "  posType=" + posType + "  targetType=" + targetType + "  parent=" + parent + "  livetime=" + livetime);
+                Log.Info("InjectCreateOnceEffect: original.name=" + original.Invoke().name + "  posType=" + posType + "  targetType=" + targetType + "  parent=" + parent + "  livetime=" + livetime);
                 if (original.Invoke().name == "60632")
-                    original.Invoke().Cast<Transform>().gameObject.active = false;
+                    original.Invoke().Cast<GameObject>().active = false;
             }
         }
 
@@ -214,9 +214,14 @@ namespace VRMod.Patches
             {
                 Log.Info("InjectCreateOnceUIEffect: original.name=" + original.Invoke().name + "  livetime=" + livetime);
                 if (original.Invoke().name == "hub_die(Clone)")
-                    original.Invoke().Cast<Transform>().localEulerAngles = Vector3.zero;
+                    original.Invoke().Cast<GameObject>().transform.localEulerAngles = Vector3.zero;
                 if (original.Invoke().name == "60632")
-                    original.Invoke().Cast<Transform>().gameObject.active = false;
+                    original.Invoke().Cast<GameObject>().active = false;
+                //if (original.Invoke().name == "hub_die(Clone)")
+                //{
+                //    Log.Info("InjectCreateOnceUIEffect: Testing Fixing Die Screen");
+                //    VRPlayer.Instance.FixDieScreen();
+                //}
             }
         }
 
@@ -227,11 +232,11 @@ namespace VRMod.Patches
             private static void Postfix(BehaviorNode node, Il2CppSystem.Func<Object> original, string effectname, bool needRebind)
             {
                 Log.Info("InjectCreateUIEffect: original.name=" + original.Invoke().name + "  effectname=" + effectname);
-                original.Cast<Transform>().localEulerAngles = Vector3.zero;
+                original.Cast<GameObject>().transform.localEulerAngles = Vector3.zero;
                 //if (original.name == "0" && effectname == "shieldbreak")
                 //    original.Cast<Transform>().Find("postion").gameObject.active = false;
                 if (original.Invoke().name == "60632")
-                    original.Cast<Transform>().gameObject.active = false;
+                    original.Invoke().Cast<GameObject>().active = false;
             }
         }
 
@@ -251,9 +256,10 @@ namespace VRMod.Patches
         {
             private static void Postfix(OCBloodBar __instance)
             {
-                if (__instance.isShowBloodBar)
+                if (__instance != null &&__instance.isShowBloodBar)
                 {
-                    __instance.bossHpbartrans.position = __instance.m_UpdatePos;
+                    if(__instance.bossHpbartrans != null)
+                        __instance.bossHpbartrans.position = __instance.m_UpdatePos;
                     if (__instance.BloodBar.ARTrans)
                         __instance.BloodBar.ARTrans.localRotation = Quaternion.identity;
                     if (__instance.BloodBar.SHTrans)
@@ -282,9 +288,9 @@ namespace VRMod.Patches
             {
                 Log.Info("CreateEffectOnUINode: original.name=" + original.Invoke().name + "  uiname=" + uiname + "  nodename=" + nodename + "  livetime=" + livetime);
                 if (original.Invoke().name == "60632")
-                    original.Invoke().Cast<Transform>().gameObject.active = false;
+                    original.Invoke().Cast<GameObject>().active = false;
                 if (original.Invoke().name == "0" && uiname == "PanelWar" && nodename == "hp")
-                    original.Invoke().Cast<Transform>().Find("postion").gameObject.active = false;
+                    original.Invoke().Cast<GameObject>().transform.Find("postion").gameObject.active = false;
             }
         }
 
@@ -296,9 +302,9 @@ namespace VRMod.Patches
             {
                 Log.Info("InjectCreateOnceEffectOnUINode: original.name=" + original.Invoke().name + "  uiname=" + uiname + "  nodename=" + nodename + "  livetime=" + livetime);
                 if (original.Invoke().name == "60632")
-                    original.Invoke().Cast<Transform>().gameObject.active = false;
+                    original.Invoke().Cast<GameObject>().active = false;
                 if (original.Invoke().name == "shieldrecover_206_UIHub(Clone)" && uiname == "PanelWar" && nodename == "hp")
-                    original.Invoke().Cast<Transform>().Find("postion").gameObject.active = false;
+                    original.Invoke().Cast<GameObject>().transform.Find("postion").gameObject.active = false;
             }
         }
 
@@ -336,10 +342,10 @@ namespace VRMod.Patches
             {
                 Log.Info("InjectCreateEffect: original.name=" + original.Invoke().name + "  effectname=" + effectname + "  parent=" + parent);
                 if (original.Invoke().name == "60632")
-                    original.Invoke().Cast<Transform>().gameObject.active = false;
+                    original.Invoke().Cast<GameObject>().active = false;
                 if (original.Invoke().name == "HeroSkill_1301_Caster(Clone)" && VRPlayer.Instance)
                 {
-                    VRPlayer.Instance.SetDualWield(original.Invoke().Cast<Transform>());
+                    VRPlayer.Instance.SetDualWield(original.Invoke().Cast<GameObject>().transform);
                 }
             }
         }
@@ -551,7 +557,7 @@ namespace VRMod.Patches
         {
             private static void Prefix(BehaviorNode node, Il2CppSystem.Func<Object> original, string cgname, Vector3 stratpos)
             {
-                Camera cam = original.Invoke().Cast<Transform>().GetComponentInChildren<Camera>();
+                Camera cam = original.Invoke().Cast<GameObject>().transform.GetComponentInChildren<Camera>();
                 if (cam != null)
                 {
                     cam.stereoTargetEye = StereoTargetEyeMask.None;

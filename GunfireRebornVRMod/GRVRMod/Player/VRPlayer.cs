@@ -17,6 +17,7 @@ using VRMod.Player.VRInput;
 using VRMod.Settings;
 using VRMod.UI;
 using VRMod.UI.Pointers;
+using static UnityEngine.UI.Image;
 using static VRMod.Player.MotionControlls.HandController;
 using static VRMod.VRMod;
 using Mathf = Valve.VR.Mathf;
@@ -80,8 +81,11 @@ namespace VRMod.Player
                 ScreenCam.backgroundColor = new Color(0, 0, 0, 0);
                 ScreenCam.enabled = ModConfig.UseFirstPersonCam.Value;
                 ScreenCam.cullingMask = ScreenCam.enabled? -1 : 0;
+                ScreenCam.depth = 1;
                 ScreenCam.transform.SetParent(null);
                 var smoother = ScreenCam.gameObject.AddComponent<CameraSmoother>();
+                smoother.smoothTime = ModConfig.FPCamSmoothTime.Value;
+                smoother.enableRotationSmoothing = true;
                 smoother.target = Head;
 
                 LeftHand = transform.Find("LeftHand").gameObject.AddComponent<HandController>();
@@ -141,38 +145,13 @@ namespace VRMod.Player
             }
         }
 
-        public void FixedUpdate()
-        {
-            if (VRMod.IsVR && !isHome && !isUIMode && !isInCG)
-            {
-                // 每秒执行50次
-                if (VRInputManager.Device.RightStick.State)
-                    Origin.Rotate(Vector3.up, VRInputManager.Device.RightStick.X * ModConfig.SmoothTurningSpeed.Value);
-                else if(VRInputManager.Device.SnapTurnLeft.stateUp)
-                    Origin.Rotate(Vector3.up, ModConfig.SnapTurningAngle.Value * -1);
-                else if (VRInputManager.Device.SnapTurnRight.stateUp)
-                    Origin.Rotate(Vector3.up, ModConfig.SnapTurningAngle.Value);
-            }
-            if (isHome && !isHomeFixed)
-            {
-                if (!GameObject.Find("CamPoint_Camera"))
-                    return;
-                ScreenCam.gameObject.active = true;
-                //ScreenCam.enabled = true;
-                MenuFix.HomeFix();
-                ToggleEventCamera(true);
-                SetUIMode(true);
-                isHomeFixed = true;
-            }
-        }
-
 
 
 
         #region Motion Controls
 
-        public Vector3 offsetOverride = new Vector3(0, -0.08f, -0.15f);
-        private NewPlayerObject heroObj;
+        public Vector3 offsetOverride = Vector3.zero;
+        public Vector3 rotationEulerOverride = Vector3.zero;
         public List<BezierLineRenderer> bezierLineRenderers = new List<BezierLineRenderer>();
         public List<RayLineLaser> rayLineLasers = new List<RayLineLaser>();
         public bool allowUpdateRayLineLaser = false;
@@ -203,10 +182,19 @@ namespace VRMod.Player
         private bool isExitingPrimarySkillState = false;
         private bool isTwoHanded = false;
 
+        //松鼠的主动技能进入第三人称
+
+        private Transform OriginTarget;
+        private Transform TPSCamBoom;
+        private Transform TPSCam;
+        private bool isInThirdPersonLastFrame = false;
+        private bool isInThirdPerson = false;
+        private float tempAngleTPS;
+
         //CG场景
         private bool isInCG = false;
         private Transform CGCamera;
-        private float tempAngle;
+        private float tempAngleCG;
 
         private Vector3 velocity = Vector3.zero;
         private Quaternion deriv = Quaternion.identity;
@@ -243,6 +231,35 @@ namespace VRMod.Player
                         }
                     }
                 }
+            }
+        }
+
+        public void FixedUpdate()
+        {
+            if (VRMod.IsVR && !isHome && !isUIMode && !isInCG)
+            {
+                if(!isInThirdPerson)
+                {
+                    // 每秒执行50次
+                    if (VRInputManager.Device.RightStick.State)
+                        Origin.Rotate(Vector3.up, VRInputManager.Device.RightStick.X * ModConfig.SmoothTurningSpeed.Value);
+                    else if (VRInputManager.Device.SnapTurnLeft.stateUp)
+                        Origin.Rotate(Vector3.up, ModConfig.SnapTurningAngle.Value * -1);
+                    else if (VRInputManager.Device.SnapTurnRight.stateUp)
+                        Origin.Rotate(Vector3.up, ModConfig.SnapTurningAngle.Value);
+
+                }
+            }
+            if (isHome && !isHomeFixed)
+            {
+                if (!GameObject.Find("CamPoint_Camera"))
+                    return;
+                ScreenCam.gameObject.active = true;
+                //ScreenCam.enabled = true;
+                MenuFix.HomeFix();
+                ToggleEventCamera(true);
+                SetUIMode(true);
+                isHomeFixed = true;
             }
         }
 
@@ -283,6 +300,38 @@ namespace VRMod.Player
             {
                 offsetOverride = new Vector3(offsetOverride.x + 0.01f, offsetOverride.y, offsetOverride.z);
             }
+            if (Input.GetKeyUp(KeyCode.Keypad7))
+            {
+                rotationEulerOverride = new Vector3(rotationEulerOverride.x + 0.01f, rotationEulerOverride.y, rotationEulerOverride.z);
+            }
+            if (Input.GetKeyUp(KeyCode.Keypad8))
+            {
+                rotationEulerOverride = new Vector3(rotationEulerOverride.x, rotationEulerOverride.y + 0.01f, rotationEulerOverride.z);
+            }
+            if (Input.GetKeyUp(KeyCode.Keypad9))
+            {
+                rotationEulerOverride = new Vector3(rotationEulerOverride.x, rotationEulerOverride.y, rotationEulerOverride.z + 0.01f);
+            }
+            if (Input.GetKeyUp(KeyCode.Keypad1))
+            {
+                rotationEulerOverride = new Vector3(rotationEulerOverride.x - 0.01f, rotationEulerOverride.y, rotationEulerOverride.z);
+            }
+            if (Input.GetKeyUp(KeyCode.Keypad2))
+            {
+                rotationEulerOverride = new Vector3(rotationEulerOverride.x, rotationEulerOverride.y - 0.01f, rotationEulerOverride.z);
+            }
+            if (Input.GetKeyUp(KeyCode.Keypad3))
+            {
+                rotationEulerOverride = new Vector3(rotationEulerOverride.x, rotationEulerOverride.y, rotationEulerOverride.z - 0.01f);
+            }
+            if (Input.GetKeyUp(KeyCode.PageUp))
+            {
+                ModConfig.PlayerWorldScale.Value += 0.01f;
+            }
+            if (Input.GetKeyUp(KeyCode.PageDown))
+            {
+                ModConfig.PlayerWorldScale.Value -= 0.01f;
+            }
             if (CannonFix)
             {
                 FixCannonBall();
@@ -292,7 +341,7 @@ namespace VRMod.Player
             {
                 Origin.position = CGCamera.position - Vector3.up * GetPlayerHeight();
                 Origin.rotation = Quaternion.LookRotation(CGCamera.forward.GetFlatDirection(), Vector3.up);
-                Origin.rotation = Quaternion.Euler(0, tempAngle, 0) * Origin.rotation;
+                Origin.rotation = Quaternion.Euler(0, tempAngleCG, 0) * Origin.rotation;
                 if (LeftHandMesh)
                     LeftHandMesh.gameObject.active = false;
             }
@@ -303,15 +352,51 @@ namespace VRMod.Player
 
                 // 默认大小在第一人称下看着太大了，需要缩小一点
                 CameraManager.MainCamera.localScale = new Vector3(0.67f, 0.67f, 0.67f);
+                Origin.localScale = Vector3.one * ModConfig.PlayerWorldScale.Value;
 
-                // 将游玩空间的位置跟英雄的位置同步
-                Origin.position = HeroCameraManager.HeroTran.position;
+                isInThirdPerson = TPSCamBoom ? TPSCamBoom.gameObject.active : false;
 
-                // 强制英雄的朝向与玩家头部朝向同步
-                var headRotation = Quaternion.LookRotation(GetFlatForwardDirection());
-                HeroCameraManager.HeroTran.rotation = headRotation;
-                etcTouchPad.axisX.directTransform.rotation = headRotation;
-                etcTouchPad.axisY.directTransform.rotation = headRotation;
+                // 检测是否使用了松鼠的主动技能，进入第三人称
+                if(isInThirdPersonLastFrame != isInThirdPerson)
+                {
+                    isInThirdPersonLastFrame = isInThirdPerson;
+                    if (isInThirdPerson)
+                    {
+                        tempAngleTPS = Vector3.Angle(Head.forward.GetFlatDirection(), Origin.forward.GetFlatDirection());
+                        var smoother = Origin.gameObject.GetOrAddComponent<CameraSmoother>();
+                        smoother.target = OriginTarget;
+                        smoother.enableRotationSmoothing = true;
+                        smoother.enablePositionSmoothing = true;
+                        smoother.smoothTime = 0.15f;
+                        smoother.enabled = true;
+                    }
+                    else
+                    {
+                        var smoother = Origin.gameObject.GetOrAddComponent<CameraSmoother>();
+                        smoother.target = null;
+                        smoother.enabled = false;
+                    }
+                }
+
+                if (isInThirdPerson)
+                {
+                    // 将游玩空间的位置跟第三人称相机的位置同步
+                    var targetPosition = TPSCam.position + TPSCam.forward.normalized * Vector3.Distance(TPSCam.position, HeroCameraManager.HeroTran.position) * 0.5f;
+                    OriginTarget.position = targetPosition - Vector3.up * GetPlayerHeight();
+                    OriginTarget.rotation = Quaternion.LookRotation(TPSCam.forward.GetFlatDirection(), Vector3.up);
+                    OriginTarget.rotation = Quaternion.Euler(0, tempAngleTPS, 0) * OriginTarget.rotation;
+                }
+                else
+                {
+                    // 将游玩空间的位置跟英雄的位置同步
+                    Origin.position = HeroCameraManager.HeroTran.position;
+
+                    // 强制英雄的朝向与玩家头部朝向同步
+                    var headRotation = Quaternion.LookRotation(GetFlatForwardDirection());
+                    HeroCameraManager.HeroTran.rotation = headRotation;
+                    etcTouchPad.axisX.directTransform.rotation = headRotation;
+                    etcTouchPad.axisY.directTransform.rotation = headRotation;
+                }
 
                 var heroData = HeroDatas.GetHeroData(HeroCameraManager.HeroObj.PlayerCom.SID);
 
@@ -401,10 +486,19 @@ namespace VRMod.Player
                                 currWeapon.MainWeapon.localScale = Vector3.one;
                         }
                         break;
+                    case 219:
+                        // 松鼠
+                        // 放主要技能时进入第三人称模式，隐藏双手
+                        if (TPSCamBoom != null && isInThirdPerson)
+                        {
+                            weaponIsShow = false;
+                            hideWeaponLeftHand = true;
+                            currWeapon.MainWeapon.localScale = Vector3.zero;
+                        }
+                        break;
                 }
 
                 // 强制游戏自带的手和武器模型与玩家手同步
-                heroObj = HeroCameraManager.HeroObj;
                 if (currWeapon != null)
                 {
 
@@ -414,7 +508,11 @@ namespace VRMod.Player
                     hideWeaponLeftHand |= weaponData.weaponType == WeaponDatas.WeaponType.Talisman;
 
                     if (LeftHandMesh)
+                    {
                         LeftHandMesh.localScale = hideWeaponLeftHand || isDualWield ? Vector3.zero : new Vector3(0.67f, 0.67f, 0.67f);
+                        LeftHand.model.localScale = Vector3.one / ModConfig.PlayerWorldScale.Value;
+                    }
+
 
                     // 切枪时初始化枪械相关引用
                     if (HeroCameraManager.HeroObj.PlayerCom.CurWeaponID != lastWeaponID)
@@ -443,6 +541,10 @@ namespace VRMod.Player
                                 vrScope.Setup(rifleWeaponData);
                             }
                         }
+                        //if (weaponData.id == 1703)
+                        //{
+                        //    HeroCameraManager.HeroTran.parent.Find("9703_range").gameObject.active = false;
+                        //}
                         vrBattleUI.UpdateCrossHair();
                     }
                     if (weaponIsShow)
@@ -491,8 +593,16 @@ namespace VRMod.Player
         void AttachWeaponToHand(Transform weapon, WeaponDatas.WeaponData weaponData, HandType handType, bool forceOneHanded = false)
         {
             bool twohanded = false;
+
+            var offset = weaponData.offset;
+            if (offsetOverride != Vector3.zero)
+                offset = offsetOverride;
+            var rotationEuler = weaponData.rotationEuler;
+            if (rotationEulerOverride != Vector3.zero)
+                rotationEuler = rotationEulerOverride;
+
             //如果是非单手武器,则进行双持判定
-            if (!isDualWield && ModConfig.EnableDualWield.Value && handType == HandType.Right && !forceOneHanded && weaponData.HoldingStyle == WeaponDatas.HoldingStyle.TwoHanded)
+            if (!isDualWield && ModConfig.EnableTwoTwoHanded.Value && handType == HandType.Right && !forceOneHanded && weaponData.HoldingStyle == WeaponDatas.HoldingStyle.TwoHanded)
             {
                 var LeftHandPos = LeftHand.model.position;
                 if((weaponData.weaponType == WeaponDatas.WeaponType.Minigun))
@@ -511,9 +621,6 @@ namespace VRMod.Player
                 // 根据角度判定双持，小角度贴上后要较大角度才会分开
                 if (angleBetweenHands <= angle)
                 {
-                    var offset = weaponData.offset;
-                    if (offset == Vector3.zero)
-                        offset = offsetOverride;
                     // 弓箭主手是左手
                     if (weaponData.weaponType == WeaponDatas.WeaponType.Bow)
                     {
@@ -528,9 +635,9 @@ namespace VRMod.Player
                         // Sniper ADS cursor 
                         var targetPosition = RightHand.model.position + weapon.right * offset.x + weapon.up * offset.y + weapon.forward * offset.z;
                         weapon.position = Vector3.SmoothDamp(weapon.position, targetPosition, ref velocity, 0.3f) + weapon.forward * 0.05f;
-                        weapon.Rotate(-weaponData.rotationEuler, Space.Self);
+                        weapon.Rotate(-rotationEuler, Space.Self);
                         weapon.rotation = weapon.rotation.SmoothDamp(Quaternion.LookRotation(guidingVector, RightHand.model.up), ref deriv, 0.3f);
-                        weapon.Rotate(weaponData.rotationEuler, Space.Self);
+                        weapon.Rotate(rotationEuler, Space.Self);
                     }
                     else
                     {
@@ -538,7 +645,7 @@ namespace VRMod.Player
                             weapon.rotation = Quaternion.LookRotation(guidingVector, Vector3.up);
                         else
                             weapon.rotation = Quaternion.LookRotation(guidingVector, RightHand.model.up);
-                        weapon.Rotate(weaponData.rotationEuler, Space.Self);
+                        weapon.Rotate(rotationEuler, Space.Self);
                         RightHand.muzzle.rotation = weapon.rotation;
                         weapon.position = RightHand.model.position + weapon.right * offset.x + weapon.up * offset.y + weapon.forward * offset.z;
                     }
@@ -556,9 +663,6 @@ namespace VRMod.Player
             {
                 LeftHand.hideLaser = false;
                 isTwoHanded = false;
-                var offset = weaponData.offset;
-                if (offset == Vector3.zero)
-                    offset = offsetOverride;
                 if(handType == HandType.Right)
                 {
                     // 还原双持时可能造成的瞄准线偏转
@@ -592,7 +696,7 @@ namespace VRMod.Player
                         // 手套需要修正激光的位置和朝向
                         var gauntletData = (WeaponDatas.GauntletWeaponData)weaponData;
                         weapon.rotation = RightHand.model.rotation;
-                        weapon.Rotate(weaponData.rotationEuler, Space.Self);
+                        weapon.Rotate(rotationEuler, Space.Self);
                         weapon.position = RightHand.model.position + weapon.right * offset.x + weapon.up * offset.y + weapon.forward * offset.z;
                         if (!Muzzle)
                             Muzzle = weapon.DeepFindChild(gauntletData.muzzle);
@@ -609,14 +713,23 @@ namespace VRMod.Player
                         // Sniper ADS position
                         var targetPosition = RightHand.model.position + weapon.right * offset.x + weapon.up * offset.y + weapon.forward * offset.z;
                         weapon.position = Vector3.SmoothDamp(weapon.position, targetPosition, ref velocity, 0.3f) + weapon.forward* 0.05f;
-                        weapon.Rotate(-weaponData.rotationEuler, Space.Self);
+                        weapon.Rotate(-rotationEuler, Space.Self);
                         weapon.rotation = weapon.rotation.SmoothDamp(RightHand.model.rotation, ref deriv, 0.3f);
-                        weapon.Rotate(weaponData.rotationEuler, Space.Self);
+                        weapon.Rotate(rotationEuler, Space.Self);
+                    }
+                    else if (weaponData.weaponType == WeaponDatas.WeaponType.Split && vrScope & vrScope.IsShowing && ModConfig.EnableSniperADSSnap.Value)
+                    {
+                        // Sniper ADS position
+                        var targetPosition = RightHand.model.position + weapon.right * offset.x + weapon.up * offset.y + weapon.forward * offset.z;
+                        weapon.position = Vector3.SmoothDamp(weapon.position, targetPosition, ref velocity, 0.3f) + weapon.forward * 0.05f;
+                        weapon.Rotate(-rotationEuler, Space.Self);
+                        weapon.rotation = weapon.rotation.SmoothDamp(RightHand.model.rotation, ref deriv, 0.3f);
+                        weapon.Rotate(rotationEuler, Space.Self);
                     }
                     else
                     {
                         weapon.rotation = RightHand.model.rotation;
-                        weapon.Rotate(weaponData.rotationEuler, Space.Self);
+                        weapon.Rotate(rotationEuler, Space.Self);
                         weapon.position = RightHand.model.position + weapon.right * offset.x + weapon.up * offset.y + weapon.forward * offset.z;
                     }
                     if (WeaponLeftHand != null && weaponData.weaponType != WeaponDatas.WeaponType.Talisman)
@@ -631,7 +744,7 @@ namespace VRMod.Player
                         // 手套需要修正激光的位置和朝向
                         var gauntletData = (WeaponDatas.GauntletWeaponData)weaponData;
                         weapon.rotation = LeftHand.model.rotation;
-                        weapon.Rotate(weaponData.rotationEuler.x, -weaponData.rotationEuler.y, weaponData.rotationEuler.z, Space.Self);
+                        weapon.Rotate(rotationEuler.x, -rotationEuler.y, rotationEuler.z, Space.Self);
                         weapon.position = LeftHand.model.position + weapon.right * -offset.x + weapon.up * offset.y + weapon.forward * offset.z;
                         if (!Muzzle)
                             Muzzle = weapon.DeepFindChild(gauntletData.muzzle);
@@ -646,7 +759,7 @@ namespace VRMod.Player
                     else
                     {
                         weapon.rotation = LeftHand.model.rotation;
-                        weapon.Rotate(weaponData.rotationEuler.x, -weaponData.rotationEuler.y, weaponData.rotationEuler.z, Space.Self);
+                        weapon.Rotate(rotationEuler.x, -rotationEuler.y, rotationEuler.z, Space.Self);
                         weapon.position = LeftHand.model.position + weapon.right * -offset.x + weapon.up * offset.y + weapon.forward * offset.z;
                     }
                     var weaponRightHand = weapon.Find("Home/hero_fpp_101_A_R");
@@ -680,6 +793,12 @@ namespace VRMod.Player
             VRBattleUI.SetUIMode(uiMode);
         }
 
+        public void FixDieScreen()
+        {
+            var hub_die = GameObject.Find("hub_die(Clone)");
+            hub_die.active = false;
+        }
+
         public void SetCGCamera(bool isInCG, Camera cgCamera = null)
         {
             this.isInCG = isInCG;
@@ -692,7 +811,7 @@ namespace VRMod.Player
                 //Head.localRotation = Quaternion.identity;
                 //ScreenCam.cullingMask = cgCamera.cullingMask;
                 StereoRender.SetCameraMask(cgCamera.cullingMask);
-                tempAngle = Vector3.Angle(Head.forward.GetFlatDirection(), Origin.forward.GetFlatDirection());
+                tempAngleCG = Vector3.Angle(Head.forward.GetFlatDirection(), Origin.forward.GetFlatDirection());
             }
             else
             {
@@ -744,6 +863,11 @@ namespace VRMod.Player
             {
                 Destroy(LeftHandMesh.gameObject);
                 LeftHandMesh = null;
+            }
+            if (OriginTarget)
+            {
+                Destroy(OriginTarget.gameObject);
+                OriginTarget = null;
             }
             bezierLineRenderers.Clear();
             Head.gameObject.active = false;
@@ -818,11 +942,13 @@ namespace VRMod.Player
             HeroSkillHandAnimator = HeroSkillHand.GetComponent<Animator>();
 
             var LeftHandRenderers = HeroSkillHand.GetComponentsInChildren<SkinnedMeshRenderer>();
+
             LeftHandMesh = LeftHand.model.Find("LeftHandMesh");
             if (!LeftHandMesh)
             {
                 LeftHandMesh = new GameObject("LeftHandMesh").transform;
                 LeftHandMesh.parent = LeftHand.model;
+                LeftHand.model.localScale = Vector3.one / ModConfig.PlayerWorldScale.Value;
             }
             LeftHandMesh.localScale = new Vector3(0.67f, 0.67f, 0.67f);
             LeftHandMesh.localPosition = new Vector3(0.5631f, -0.0083f, -0.35f);
@@ -835,6 +961,13 @@ namespace VRMod.Player
             } else {
                 LeftHandMesh.gameObject.GetOrAddComponent<MeshFilter>().mesh = LeftHandRenderers[0].sharedMesh;
                 LeftHandMesh.gameObject.GetOrAddComponent<MeshRenderer>().material = LeftHandRenderers[0].sharedMaterial;
+            }
+            if (HeroCameraManager.HeroObj.PlayerCom.SID == 219)
+            {
+                TPSCamBoom = HeroCameraManager.HeroTran.Find("TPSCamBoom");
+                TPSCam = TPSCamBoom?.Find("TPSCam");
+                if(OriginTarget == null)
+                    OriginTarget = new GameObject("OriginTarget").transform;
             }
 
             foreach (var child in CameraManager.MainCamera)

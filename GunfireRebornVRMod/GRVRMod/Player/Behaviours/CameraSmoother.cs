@@ -13,21 +13,29 @@ namespace VRMod.Player.Behaviours
     {
         public CameraSmoother(IntPtr value) : base(value) { }
         public Transform target;
+        public bool enablePositionSmoothing = false;
+        public bool enableRotationSmoothing = false;
 
         public float smoothTime = 0.05f;
         private Quaternion deriv = Quaternion.identity;
+        private Vector3 currentVelocity = Vector3.zero;
 
         public void Awake()
         {
-            smoothTime = ModConfig.FPCamSmoothTime.Value;
         }
 
         public void LateUpdate()
         {
             if(target != null)
             {
-                transform.position = target.position;
-                transform.rotation = transform.rotation.SmoothDamp(target.rotation, ref deriv, smoothTime);
+                if (enablePositionSmoothing)
+                {
+                    transform.position = Vector3.SmoothDamp(transform.position, target.position, ref currentVelocity, smoothTime);
+                }
+                if (enableRotationSmoothing)
+                {
+                    transform.rotation = transform.rotation.SmoothDamp(target.rotation, ref deriv, smoothTime);
+                }
             }
         }
     }

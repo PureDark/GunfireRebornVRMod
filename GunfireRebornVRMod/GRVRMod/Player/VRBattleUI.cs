@@ -99,6 +99,15 @@ namespace VRMod.Player
                 CUIManager.instance.MenuCanvas.sortingOrder = CUIManager.instance.MainDialogCanvas.sortingOrder + 1;
         }
 
+        public void FixCrossHair(Transform trans)
+        {
+            var crossHair = trans.Find("ScaleCurDis");
+            if (crossHair != null)
+            {
+                crossHair.localRotation = Quaternion.identity;
+            }
+        }
+
         public void UpdateCrossHair()
         {
             leftCrossHair = null;
@@ -114,6 +123,11 @@ namespace VRMod.Player
                     rightCrossHair = childTrans;
                 else if(deputyWeapon != null && childTrans.name.StartsWith("Panel_Sight_" + HeroCameraManager.HeroObj.PlayerCom.DeputyWeaponSID + "_" + deputyWeapon.ClientPos))
                     leftCrossHair = childTrans;
+
+                if(HeroCameraManager.HeroObj.PlayerCom.CurWeaponSID == 1010)
+                    FixCrossHair(rightCrossHair);
+                if (HeroCameraManager.HeroObj.PlayerCom.DeputyWeaponSID == 1010)
+                    FixCrossHair(leftCrossHair);
             }
         }
 
@@ -123,7 +137,7 @@ namespace VRMod.Player
             {
                 distance = ModConfig.UIDistance.Value;
                 canvasRoot = CUIManager.instance.m_UIRoot;
-                canvasRoot.transform.localScale = new Vector3(0.002f, 0.002f, 0.002f) * ModConfig.UIScale.Value;
+                canvasRoot.transform.localScale = new Vector3(0.002f, 0.002f, 0.002f) * ModConfig.UIScale.Value / ModConfig.PlayerWorldScale.Value;
                 PC_Panel_war = CUIManager.instance.MenuCanvas.transform.Find("PC_Panel_war");
                 if (PC_Panel_war)
                 {
@@ -190,6 +204,19 @@ namespace VRMod.Player
                             foreach (var child in temp)
                             {
                                 if (child.Cast<Transform>().name != "icon_205")
+                                    Destroy(child.Cast<Transform>().gameObject);
+                            }
+                        }
+                    }
+                    else if (HeroCameraManager.HeroObj.SID == 219)
+                    {
+                        var skillIcon = hero_skill_1.Find("Lay_Ani/skill_loop_219");
+                        if (skillIcon)
+                        {
+                            var temp = skillIcon.Find("postion");
+                            foreach (var child in temp)
+                            {
+                                if (child.Cast<Transform>().name != "Img_skill_219")
                                     Destroy(child.Cast<Transform>().gameObject);
                             }
                         }

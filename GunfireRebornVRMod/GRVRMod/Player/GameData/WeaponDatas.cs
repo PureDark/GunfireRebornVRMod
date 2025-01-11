@@ -24,7 +24,8 @@ namespace VRMod.Player.GameData
             Gauntlet = 4,
             Melee = 5,
             Talisman = 6,
-            StarRing = 7
+            StarRing = 7,
+            Split = 8
         }
 
         public enum HoldingStyle
@@ -128,6 +129,19 @@ namespace VRMod.Player.GameData
             }
         }
 
+        public class SplitWeaponData : WeaponData
+        {
+            public string splitPartName;
+            public Vector3 muzzlePosition;
+            public Vector3 muzzleRotation;
+
+            public SplitWeaponData(int id, string name, Vector3 offset, string splitPartName = "")
+            : base(id, name, offset, HoldingStyle.OneHanded, WeaponType.Split)
+            {
+                this.splitPartName = splitPartName;
+            }
+        }
+
         public static Dictionary<int, WeaponData> weaponDatas = new Dictionary<int, WeaponData>()
         {
             { 1002, new WeaponData(1002, "铁骑", new Vector3(0, -0.09f, -0.20f))},
@@ -137,14 +151,15 @@ namespace VRMod.Player.GameData
             { 1007, new WeaponData(1007, "六方", new Vector3(-0.06f, -0.11f, -0.32f), HoldingStyle.TwoHanded, WeaponType.Default, new Vector3(0, 3, 0))},
             { 1008, new WeaponData(1008, "电鸣丸", new Vector3(0, -0.09f, -0.2f))},
             { 1010, new MinigunWeaponData(1010, "大河马", new Vector3(0, -0.08f, -0.20f), new Vector3(0.2f, 0.10f, 0f))},
-            { 1016, new WeaponData(1016, "Revealer", new Vector3(-0.02f, 0.20f, -0.10f)) },
+            { 1016, new WeaponData(1016, "示缺", new Vector3(-0.02f, 0.20f, -0.10f)) },
+            { 1017, new WeaponData(1017, "追猎", new Vector3(0.03f, -0.007f, -0.23f), HoldingStyle.TwoHanded, WeaponType.Default, new Vector3(2.5f, 3, 0)) },
             { 1101, new WeaponData(1101, "噬星者", new Vector3(0, -0.08f, -0.2f), HoldingStyle.OneHanded)},
             { 1102, new WeaponData(1102, "紫翎之光", new Vector3(-0.03f, 0f, -0.23f)) },
             { 1103, new WeaponData(1103, "青晞", new Vector3(0.02f, -0.14f, -0.45f), HoldingStyle.OneHanded, WeaponType.Default, new Vector3(0, 20, 0)) },
             { 1104, new WeaponData(1104, "炎魔传说", new Vector3(-0.01f, -0.07f, -0.18f)) },
-            { 1108, new WeaponData(1104, "Wolf Gaze", new Vector3(0.08f, 0.04f, -0.24f)) },
             { 1105, new WeaponData(1105, "手术刀", new Vector3(0f, -0.10f, -0.2f), HoldingStyle.OneHanded) },
             { 1107, new WeaponData(1107, "隐弹魔王", new Vector3(0f, -0.12f, -0.17f)) },
+            { 1108, new WeaponData(1108, "狼顾", new Vector3(0.08f, 0.04f, -0.24f)) },
             { 1201, new WeaponData(1201, "双菱裂", new Vector3(0, -0.05f, -0.20f), HoldingStyle.OneHanded)},
             { 1202, new WeaponData(1202, "熔炉", new Vector3(0, -0.08f, -0.20f))},
             { 1205, new WeaponData(1205, "烈焰弹丸", new Vector3(0, -0.09f, -0.20f), HoldingStyle.OneHanded)},
@@ -153,28 +168,29 @@ namespace VRMod.Player.GameData
             { 1212, new WeaponData(1212, "如律令", new Vector3(0.29f, -0.09f, -0.3f), HoldingStyle.OneHanded, WeaponType.Talisman)},
             { 1213, new WeaponData(1213, "寒霜", new Vector3(-0.19f, -0.13f, -0.53f), HoldingStyle.OneHanded) },
             { 1214, new WeaponData(1214, "织云", new Vector3(-0.28f, 0.09f, -0.55f), HoldingStyle.OneHanded) },
-            { 1215, new WeaponData(1215, "Brick", new Vector3(-0.17f, 0.15f, -0.58f), HoldingStyle.OneHanded) },
+            { 1215, new WeaponData(1215, "藏拙", new Vector3(-0.36f, 0.13f, -0.76f), HoldingStyle.OneHanded) },
             { 1302, new WeaponData(1302, "地狱", new Vector3(0f, -0.03f, -0.09f)) },
             { 1303, new WeaponData(1303, "幻道", new Vector3(0f, -0.07f, -0.2f)) },
             { 1304, new WeaponData(1304, "青鸾", new Vector3(0f, -0.04f, -0.18f)) },
             { 1305, new WeaponData(1305, "瞳", new Vector3(0f, -0.05f, -0.15f)) },
             { 1306, new WeaponData(1306, "狂猎", new Vector3(0f, -0.05f, -0.20f)) },
             { 1309, new WeaponData(1309, "刺猬", new Vector3(0f, -0.05f, -0.16f)) },
-            { 1310, new WeaponData(1310, "Wheel Saw", new Vector3(-0.06f, -0.10f, -0.20f), HoldingStyle.OneHanded) },
-            { 1312, new WeaponData(1312, "Jet Octopus", new Vector3(-0.03f, 0f, -0.20f), HoldingStyle.OneHanded) },
+            { 1310, new WeaponData(1310, "锯轮", new Vector3(-0.06f, -0.10f, -0.20f), HoldingStyle.OneHanded) },
+            { 1312, new WeaponData(1312, "望潮", new Vector3(-0.03f, 0f, -0.20f), HoldingStyle.OneHanded) },
             { 1401, new WeaponData(1401, "青铜虎炮", new Vector3(0f, -0.08f, -0.32f)) },
             { 1402, new GauntletWeaponData(1402, "镭射手套", new Vector3(0.1f, -0.1f, -0.4f), "LaserBullet", Vector3.zero, new Vector3(0f, -3f, 0f)) },
             { 1404, new WeaponData(1404, "狂鲨", new Vector3(0f, -0.09f, -0.20f)) },
             { 1406, new WeaponData(1406, "锐鸣炮", new Vector3(-0.01f, -0.08f, -0.20f)) },
             { 1407, new MinigunWeaponData(1407, "狱裂骨龙", new Vector3(-0.03f, -0.14f, -0.11f), new Vector3(0.2f, 0.10f, 0f))},
             { 1408, new WeaponData(1408, "蜥燚", new Vector3(0.12f, -0.28f, -0.38f), HoldingStyle.OneHanded, WeaponType.Default, new Vector3(0, 20, 0)) },
-            { 1409, new WeaponData(1409, "镇山镈", new Vector3(-0.26f, 0.11f, -0.46f)) },
+            { 1409, new WeaponData(1409, "震山镈", new Vector3(-0.26f, 0.11f, -0.46f)) },
             { 1410, new GauntletWeaponData(1410, "雷霆手套", new Vector3(0.1f, -0.1f, -0.4f), "LaserBullet", Vector3.zero, new Vector3(0f, -3f, 0f)) },
             { 1411, new WeaponData(1411, "彩虹", new Vector3(-0.01f, -0.09f, -0.19f), HoldingStyle.OneHanded) },
             { 1412, new WeaponData(1412, "火焰狂龙", new Vector3(0.07f, -0.13f, -0.37f), HoldingStyle.OneHanded, WeaponType.Default, new Vector3(0, 10, 0)) },
-            { 1414, new GauntletWeaponData(1414, "Radioactive Gauntlet", new Vector3(0.1f, -0.1f, -0.4f), "LaserBullet", Vector3.zero, new Vector3(0f, -3f, 0f)) },
-            { 1415, new WeaponData(1415, "Star Ring", new Vector3(0f, 0.05f, -0.15f), HoldingStyle.OneHanded, WeaponType.StarRing) },
-            { 1416, new WeaponData(1416, "Dragon Breath", new Vector3(-0.05f, 0.05f, 0.08f)) }, // Need to update vector
+            { 1414, new GauntletWeaponData(1414, "辐射手套", new Vector3(0.1f, -0.1f, -0.4f), "LaserBullet", Vector3.zero, new Vector3(0f, -3f, 0f)) },
+            { 1415, new WeaponData(1415, "星环", new Vector3(0f, 0.05f, -0.15f), HoldingStyle.OneHanded, WeaponType.StarRing) },
+            { 1416, new WeaponData(1416, "龙息", Vector3.zero, HoldingStyle.OneHanded, WeaponType.Default, new Vector3(5, 9, 0)) }, // Need to update vector
+            { 1417, new WeaponData(1417, "骤雨", Vector3.zero) }, // Need to update vector
             { 1501, new RifleWeaponData(1501, "贯日者", new Vector3(0f, -0.06f, -0.15f), new Vector3(0, 0, 0), "1501_Bone012", new Vector3(-0.1f, 0.18f, 0f), new Vector3(90f, 0f, 0f))},
             { 1502, new RifleWeaponData(1502, "爆裂双星", new Vector3(0, -0.08f, -0.15f), new Vector3(0, 1, 0), "1502_bone01", new Vector3(-0.36f, 0.15f, 0f), new Vector3(0f, 270f, 0f))},
             { 1503, new RifleWeaponData(1503, "苍鹰", new Vector3(0.02f, -0.05f, -0.32f), new Vector3(0, 0, 0), "1503_Bone001", new Vector3(0.05f, 0.25f, 0f), new Vector3(0f, 270f, 0f))},
@@ -190,7 +206,9 @@ namespace VRMod.Player.GameData
             { 1601, new MeleeWeaponData(1601, "催妖", new Vector3(0.51f, -0.17f, 0.06f), new Vector3(0.05f, -0.22f, 0.05f), new Vector3(-47.666f, 28.921f, 77.662f), -504015052) },
             { 1602, new MeleeWeaponData(1602, "流光", new Vector3(0.51f, -0.17f, 0.06f), new Vector3(0.05f, -0.22f, 0.05f), new Vector3(-47.666f, 28.921f, 77.662f), -504015052) },
             { 1603, new MeleeWeaponData(1603, "鸠鬼", new Vector3(0.15f, -0.24f, -0.11f), new Vector3(0.05f, -0.22f, 0.05f), new Vector3(-52f, -41.5f, -142.5f), -504015052) },
-            { 1606, new MeleeWeaponData(1606, "Storm Chaser", new Vector3(0.15f, -0.24f, -0.11f), new Vector3(0.05f, -0.22f, 0.05f), new Vector3(-52f, -41.5f, -142.5f), -504015052) }, // Need to update vector
+            { 1606, new WeaponData(1606, "逐风", Vector3.zero) }, // Need to update vector
+            { 1701, new WeaponData(1701, "凤鸣", Vector3.zero) }, // Need to update vector
+            { 1703, new SplitWeaponData(1703, "璇玑", new Vector3(0.11f, -0.19f, -0.54f)) },
         };
 
         public static WeaponData GetWeaponData(int weaponID)
