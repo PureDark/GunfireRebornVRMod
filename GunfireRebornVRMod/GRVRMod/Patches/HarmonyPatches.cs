@@ -187,9 +187,27 @@ namespace VRMod.Patches
                 Object obj = original.Invoke();
                 if (obj != null)
                 {
-                    Log.Info("InjectCreateContiEffectOffset: original.name=" + obj.name + "  posType=" + posType + "  targetType=" + targetType + "  parent=" + parent + "  effectname=" + effectname);
-                    if (obj.name == "60632")
-                        obj.Cast<Transform>().gameObject.active = false;
+                    var name = obj.name;
+                    var tag = obj.Cast<Transform>().gameObject.tag;
+                    Log.Info("InjectCreateContiEffectOffset: original.name=" + name + "  tag=" + tag + "  posType=" + posType + "  targetType=" + targetType + "  parent=" + parent + "  effectname=" + effectname);
+                    Object.Destroy(obj.Cast<Transform>().gameObject);
+                    GameObject gameObject = null;
+                    if (tag != null && tag != "")
+                    {
+                        var gameObjects = GameObject.FindGameObjectsWithTag(tag);
+                        foreach (var item in gameObjects)
+                        {
+                            if (item.name == name)
+                                gameObject = item;
+                        }
+                    }
+                    if (gameObject == null)
+                        gameObject = GameObject.Find(name);
+                    if (gameObject != null)
+                    {
+                        if (name == "60632")
+                            gameObject.active = false;
+                    }
                 }
                 else
                 {
@@ -217,9 +235,27 @@ namespace VRMod.Patches
                 Object obj = original.Invoke();
                 if (obj != null)
                 {
-                    Log.Info("InjectCreateOnceEffect: original.name=" + obj.name + "  posType=" + posType + "  targetType=" + targetType + "  parent=" + parent + "  livetime=" + livetime);
-                    if (obj.name == "60632")
-                        obj.Cast<Transform>().gameObject.active = false;
+                    var name = obj.name;
+                    var tag = obj.Cast<Transform>().gameObject.tag;
+                    Log.Info("InjectCreateOnceEffect: original.name=" + name + "  tag=" + tag + "  posType=" + posType + "  targetType=" + targetType + "  parent=" + parent + "  livetime=" + livetime);
+                    Object.Destroy(obj.Cast<Transform>().gameObject);
+                    GameObject gameObject = null;
+                    if (tag != null && tag != "")
+                    {
+                        var gameObjects = GameObject.FindGameObjectsWithTag(tag);
+                        foreach (var item in gameObjects)
+                        {
+                            if (item.name == name)
+                                gameObject = item;
+                        }
+                    }
+                    if (gameObject == null)
+                        gameObject = GameObject.Find(name);
+                    if (gameObject != null)
+                    {
+                        if (name == "60632")
+                            gameObject.active = false;
+                    }
                 }
                 else
                 {
@@ -237,15 +273,34 @@ namespace VRMod.Patches
                 Object obj = original.Invoke();
                 if (obj != null)
                 {
-                    Log.Info("InjectCreateOnceUIEffect: original.name=" + obj.name + "  livetime=" + livetime);
-                    if (obj.name == "hub_die(Clone)")
-                        obj.Cast<Transform>().localEulerAngles = Vector3.zero;
-                    if (obj.name == "60632")
-                        obj.Cast<Transform>().gameObject.active = false;
-                    if (obj.name == "hub_die(Clone)")
+                    var name = obj.name;
+                    var tag = obj.Cast<Transform>().gameObject.tag;
+                    Log.Info("InjectCreateOnceUIEffect: original.name=" + name + "  tag=" + tag + "  livetime=" + livetime);
+                    Object.Destroy(obj.Cast<Transform>().gameObject);
+                    GameObject gameObject = null;
+                    if (tag != null && tag != "")
                     {
-                        Log.Info("InjectCreateOnceUIEffect: Testing Fixing Die Screen");
-                        VRPlayer.Instance.FixDieScreen();
+                        var gameObjects = GameObject.FindGameObjectsWithTag(tag);
+                        foreach (var item in gameObjects)
+                        {
+                            if (item.name == name)
+                                gameObject = item;
+                        }
+                    }
+                    if (gameObject == null)
+                        gameObject = GameObject.Find(name);
+                    if (gameObject != null)
+                    {
+
+                        if (name == "hub_die(Clone)")
+                            gameObject.transform.localEulerAngles = Vector3.zero;
+                        if (name == "60632")
+                            gameObject.active = false;
+                        //if (name == "hub_die(Clone)")
+                        //{
+                        //    Log.Info("InjectCreateOnceUIEffect: Testing Fixing Die Screen");
+                        //    VRPlayer.Instance.FixDieScreen();
+                        //}
                     }
                 }
                 else
@@ -264,12 +319,28 @@ namespace VRMod.Patches
                 Object obj = original.Invoke();
                 if (obj != null)
                 {
-                    Log.Info("InjectCreateUIEffect: original.name=" + obj.name + "  effectname=" + effectname);
-                    obj.Cast<Transform>().localEulerAngles = Vector3.zero;
-                    //if (obj.name == "0" && effectname == "shieldbreak")
-                    //    obj.Cast<Transform>().Find("postion").gameObject.active = false;
-                    if (obj.name == "60632")
-                        obj.Cast<Transform>().gameObject.active = false;
+                    var name = obj.name;
+                    var tag = obj.Cast<Transform>().gameObject.tag;
+                    Log.Info("InjectCreateUIEffect: original.name=" + name +"  tag=" + tag + "  effectname=" + effectname);
+                    Object.Destroy(obj.Cast<Transform>().gameObject);
+                    GameObject gameObject = null;
+                    if (tag != null && tag != "")
+                    {
+                        var gameObjects = GameObject.FindGameObjectsWithTag(tag);
+                        foreach (var item in gameObjects)
+                        {
+                            if (item.name == name)
+                                gameObject = item;
+                        }
+                    }
+                    if (gameObject == null)
+                        gameObject = GameObject.Find(name);
+                    if (gameObject != null)
+                    {
+                        gameObject.transform.localEulerAngles = Vector3.zero;
+                        if (name == "60632")
+                            gameObject.active = false;
+                    }
                 }
                 else
                 {
@@ -327,11 +398,29 @@ namespace VRMod.Patches
                 Object obj = original.Invoke();
                 if (obj != null)
                 {
-                    Log.Info("CreateEffectOnUINode: original.name=" + obj.name + "  uiname=" + uiname + "  nodename=" + nodename + "  livetime=" + livetime);
-                    if (obj.name == "60632")
-                        obj.Cast<Transform>().gameObject.active = false;
-                    if (obj.name == "0" && uiname == "PanelWar" && nodename == "hp")
-                        obj.Cast<Transform>().Find("postion").gameObject.active = false;
+                    var name = obj.name;
+                    var tag = obj.Cast<Transform>().gameObject.tag;
+                    Log.Info("CreateEffectOnUINode: original.name=" + name + "  tag=" + tag+ "  uiname=" + uiname + "  nodename=" + nodename + "  livetime=" + livetime);
+                    Object.Destroy(obj.Cast<Transform>().gameObject);
+                    GameObject gameObject = null;
+                    if(tag != null && tag != "")
+                    {
+                        var gameObjects = GameObject.FindGameObjectsWithTag(tag);
+                        foreach (var item in gameObjects)
+                        {
+                            if (item.name == name)
+                                gameObject = item;
+                        }
+                    }
+                    if (gameObject == null)
+                        gameObject = GameObject.Find(name);
+                    if (gameObject != null)
+                    {
+                        if (name == "60632")
+                            gameObject.active = false;
+                        if (name == "0" && uiname == "PanelWar" && nodename == "hp")
+                            gameObject.transform.Find("postion").gameObject.active = false;
+                    }
                 }
                 else
                 {
@@ -349,11 +438,29 @@ namespace VRMod.Patches
                 Object obj = original.Invoke();
                 if (obj != null)
                 {
-                    Log.Info("InjectCreateOnceEffectOnUINode: original.name=" + obj.name + "  uiname=" + uiname + "  nodename=" + nodename + "  livetime=" + livetime);
-                    if (obj.name == "60632")
-                        obj.Cast<Transform>().gameObject.active = false;
-                    if (obj.name == "shieldrecover_206_UIHub(Clone)" && uiname == "PanelWar" && nodename == "hp")
-                        obj.Cast<Transform>().Find("postion").gameObject.active = false;
+                    var name = obj.name;
+                    var tag = obj.Cast<Transform>().gameObject.tag;
+                    Log.Info("InjectCreateOnceEffectOnUINode: original.name=" + name + "  uiname=" + uiname + "  nodename=" + nodename + "  livetime=" + livetime);
+                    Object.Destroy(obj.Cast<Transform>().gameObject);
+                    GameObject gameObject = null;
+                    if (tag != null && tag != "")
+                    {
+                        var gameObjects = GameObject.FindGameObjectsWithTag(tag);
+                        foreach (var item in gameObjects)
+                        {
+                            if (item.name == name)
+                                gameObject = item;
+                        }
+                    }
+                    if (gameObject == null)
+                        gameObject = GameObject.Find(name);
+                    if (gameObject != null)
+                    {
+                        if (name == "60632")
+                            gameObject.active = false;
+                        if (name == "shieldrecover_206_UIHub(Clone)" && uiname == "PanelWar" && nodename == "hp")
+                            gameObject.transform.Find("postion").gameObject.active = false;
+                    }
                 }
                 else
                 {
@@ -392,17 +499,34 @@ namespace VRMod.Patches
         [HarmonyPatch(typeof(CBehaviorAction), nameof(CBehaviorAction.CreateEffect))]
         internal class InjectCreateEffect
         {
-            private static void Postfix(BehaviorNode node, Il2CppSystem.Func<Object> original, Define.POSITION_TYPE posType, Define.TARGET_TYPE targetType, string parent = "", string effectname = "", bool isHeroVoiceSwitch = false, float livetime = 0f, bool needScale = true, bool isCloseGround = false)
+            private static void Postfix(BehaviorNode node, Il2CppSystem.Func<Object> original, Define.POSITION_TYPE posType, Define.TARGET_TYPE targetType, string parent, string effectname, bool isHeroVoiceSwitch, float livetime, bool needScale, bool isCloseGround)
             {
                 Object obj = original.Invoke();
                 if (obj != null)
                 {
-                    Log.Info("InjectCreateEffect: original.name=" + obj.name + "  effectname=" + effectname + "  parent=" + parent);
-                    if (obj.name == "60632")
-                        obj.Cast<Transform>().gameObject.active = false;
-                    if (obj.name == "HeroSkill_1301_Caster(Clone)" && VRPlayer.Instance)
+
+                    var name = obj.name;
+                    var tag = obj.Cast<Transform>().gameObject.tag;
+                    Log.Info("InjectCreateEffect: original.name=" + name + "  tag=" + tag + "  effectname=" + effectname + "  parent=" + parent);
+                    Object.Destroy(obj.Cast<Transform>().gameObject);
+                    GameObject gameObject = null;
+                    if (tag != null && tag != "")
                     {
-                        VRPlayer.Instance.SetDualWield(obj.Cast<Transform>());
+                        var gameObjects = GameObject.FindGameObjectsWithTag(tag);
+                        foreach (var item in gameObjects)
+                        {
+                            if (item.name == name)
+                                gameObject = item;
+                        }
+                    }
+                    if (gameObject == null)
+                        gameObject = GameObject.Find(name);
+                    if (gameObject != null)
+                    {
+                        if (name == "60632")
+                            gameObject.active = false;
+                        if (name == "HeroSkill_1301_Caster(Clone)" && VRPlayer.Instance)
+                            VRPlayer.Instance.SetDualWield(gameObject.transform);
                     }
                 }
                 else
@@ -623,14 +747,32 @@ namespace VRMod.Patches
                 Object obj = original.Invoke();
                 if (obj != null)
                 {
-                    Camera cam = obj.Cast<Transform>().GetComponentInChildren<Camera>();
-                    if (cam != null)
+                    var name = obj.name;
+                    var tag = obj.Cast<Transform>().gameObject.tag;
+                    Log.Info("CreateCGCamera: original.name=" + name);
+                    Object.Destroy(obj.Cast<Transform>().gameObject);
+                    GameObject gameObject = null;
+                    if (tag != null && tag != "")
                     {
-                        cam.stereoTargetEye = StereoTargetEyeMask.None;
-                        cam.enabled = false;
-                        VRPlayer.Instance.SetCGCamera(true, cam);
+                        var gameObjects = GameObject.FindGameObjectsWithTag(tag);
+                        foreach (var item in gameObjects)
+                        {
+                            if (item.name == name)
+                                gameObject = item;
+                        }
                     }
-                    Log.Info("CreateCGCamera: original.name=" + obj.name);
+                    if (gameObject == null)
+                        gameObject = GameObject.Find(name);
+                    if (gameObject != null)
+                    {
+                        Camera cam = gameObject.transform.GetComponentInChildren<Camera>();
+                        if (cam != null)
+                        {
+                            cam.stereoTargetEye = StereoTargetEyeMask.None;
+                            cam.enabled = false;
+                            VRPlayer.Instance.SetCGCamera(true, cam);
+                        }
+                    }
                 }
             }
         }

@@ -657,12 +657,6 @@ namespace VRMod.Player
                         // UI模式隐藏武器
                         currWeapon.MainWeapon.localScale = isUIMode ? Vector3.zero : Vector3.one;
                         // 扔炸弹时隐藏如律令的左手
-                        //if (weaponData.weaponType == WeaponDatas.WeaponType.Talisman)
-                        //{
-                        //    WeaponLeftHand.localScale = isSecondarySkill ? Vector3.zero : Vector3.one;
-                        //    TalismanLeft.localScale = isSecondarySkill ? Vector3.zero : Vector3.one;
-                        //    TalismanAmuletLeft.localScale = isSecondarySkill ? Vector3.zero : Vector3.one;
-                        //}
                         bool forceOneHanded = hideIdleLeftHand;
                         bool forceModelTrans = !weaponData.useParentTrans || isSecondarySkill || isPrimarySkill;
                         forceModelTrans = false;
@@ -858,6 +852,10 @@ namespace VRMod.Player
                 }
                 else
                 {
+                    parentOffset = weaponData.parentOffset;
+                    modelOffset = weaponData.modelOffset;
+                    parentRotationEuler = weaponData.parentRotationEuler;
+                    modelRotationEuler = weaponData.modelRotationEuler;
                     parentTrans = weapon.DeputyWeapon.parent;
                     modelTrans = !isParentOverride || forceModelTrans ? weapon.DeputyWeapon : null;
                     if (weaponData.useParentTrans)
@@ -891,7 +889,7 @@ namespace VRMod.Player
                             modelTrans.position = LeftHand.model.position + modelTrans.right * -modelOffset.x + modelTrans.up * modelOffset.y + modelTrans.forward * modelOffset.z;
                         }
                     }
-                    var weaponRightHand = parentTrans.Find("Home/hero_fpp_101_A_R");
+                    var weaponRightHand = weapon.DeputyWeapon.Find("Home/hero_fpp_101_A_R");
                     if (weaponRightHand != null && weaponData.weaponType != WeaponDatas.WeaponType.Talisman)
                         weaponRightHand.gameObject.active = false;
                 }
