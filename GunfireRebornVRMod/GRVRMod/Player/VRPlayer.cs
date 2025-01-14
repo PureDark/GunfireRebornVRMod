@@ -250,21 +250,6 @@ namespace VRMod.Player
 
         public void FixedUpdate()
         {
-            if (VRMod.IsVR && !isHome && !isUIMode && !isInCG)
-            {
-                if(!isInThirdPerson)
-                {
-                    // 每秒执行50次
-                    if (VRInputManager.Device.RightStick.State)
-                        Origin.Rotate(Vector3.up, VRInputManager.Device.RightStick.X * ModConfig.SmoothTurningSpeed.Value);
-                    else 
-                    if (VRInputManager.Device.SnapTurnLeft.stateUp)
-                        Origin.Rotate(Vector3.up, ModConfig.SnapTurningAngle.Value * -1);
-                    else if (VRInputManager.Device.SnapTurnRight.stateUp)
-                        Origin.Rotate(Vector3.up, ModConfig.SnapTurningAngle.Value);
-
-                }
-            }
             if (isHome && !isHomeFixed)
             {
                 if (!GameObject.Find("CamPoint_Camera"))
@@ -281,6 +266,21 @@ namespace VRMod.Player
         // 在LateUpdate里才能覆盖英雄身体的位置和朝向
         public void LateUpdate()
         {
+            if (VRMod.IsVR && !isHome && !isUIMode && !isInCG)
+            {
+                if (!isInThirdPerson)
+                {
+                    if (VRInputManager.Device.RightStick.State)
+                        Origin.Rotate(Vector3.up, VRInputManager.Device.RightStick.X * Time.deltaTime * 50 * ModConfig.SmoothTurningSpeed.Value);
+                    else
+                    if (VRInputManager.Device.SnapTurnLeft.stateUp)
+                        Origin.Rotate(Vector3.up, ModConfig.SnapTurningAngle.Value * -1);
+                    else if (VRInputManager.Device.SnapTurnRight.stateUp)
+                        Origin.Rotate(Vector3.up, ModConfig.SnapTurningAngle.Value);
+
+                }
+            }
+
             if (Input.GetKeyUp(KeyCode.LeftAlt))
             {
                 if(Time.timeScale > 0.5f)
@@ -380,6 +380,8 @@ namespace VRMod.Player
                 // 默认大小在第一人称下看着太大了，需要缩小一点
                 CameraManager.MainCamera.localScale = new Vector3(0.67f, 0.67f, 0.67f);
                 Origin.localScale = Vector3.one * ModConfig.PlayerWorldScale.Value;
+                LeftHand.model.localScale = Vector3.one / ModConfig.PlayerWorldScale.Value;
+                RightHand.model.localScale = Vector3.one / ModConfig.PlayerWorldScale.Value;
 
                 isInThirdPerson = TPSCamBoom ? TPSCamBoom.gameObject.active : false;
 
@@ -593,7 +595,6 @@ namespace VRMod.Player
                     if (LeftHandMesh)
                     {
                         LeftHandMesh.localScale = hideIdleLeftHand || isDualWield ? Vector3.zero : new Vector3(0.67f, 0.67f, 0.67f);
-                        LeftHand.model.localScale = Vector3.one / ModConfig.PlayerWorldScale.Value;
                     }
 
 
@@ -680,6 +681,11 @@ namespace VRMod.Player
             {
                 CameraManager.MainCamera.localScale = Vector3.zero;
                 RightHand.muzzle.localEulerAngles = new Vector3(36, 0, 0);
+            }
+            if (isHome)
+            {
+                LeftHand.model.localScale = Vector3.one;
+                RightHand.model.localScale = Vector3.one;
             }
         }
 
@@ -1059,8 +1065,8 @@ namespace VRMod.Player
             //    Destroy(etcTransformCtrl_Hero);
             if (etcTransformCtrl_FPSCam)
                 Destroy(etcTransformCtrl_FPSCam);
-
             Origin.position = HeroCameraManager.HeroTran.position;
+            Origin.rotation = HeroCameraManager.HeroTran.rotation;
             fpsCamMotionCtrl = CameraManager.MainCamera.GetComponent<FPSCamMotionCtrl>();
             fpsCamMotionCtrl.enabled = false;
             cams = CameraManager.MainCamera.GetComponentsInChildren<Camera>();

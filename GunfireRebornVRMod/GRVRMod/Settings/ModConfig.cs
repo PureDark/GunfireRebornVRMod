@@ -67,7 +67,7 @@ namespace VRMod.Settings
             SmoothTurningSpeed = configFile.Bind<float>(
                 "VR Settings",
                 "SmoothTurningSpeed",
-                1.5f,
+                1f,
                 "Scaling factor for smoothing turning speed."
             );
             SnapTurningAngle = configFile.Bind<float>(
