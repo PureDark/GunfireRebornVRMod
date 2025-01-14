@@ -22,7 +22,8 @@ namespace VRMod.Patches
     {
         private static bool Prefix(ScriptableRenderer renderer, ref ScriptableRenderContext context, ref RenderingData renderingData)
         {
-            VRPlayer.Instance.StereoRender.Execute(renderer, context, ref renderingData);
+            if(VRMod.IsVR)
+                VRPlayer.Instance.StereoRender.Execute(renderer, context, ref renderingData);
             return false;
         }
     }

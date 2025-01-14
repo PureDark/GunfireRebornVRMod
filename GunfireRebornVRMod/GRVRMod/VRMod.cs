@@ -31,6 +31,7 @@ namespace VRMod
 
         public static VRMod Instance { get; private set; }
 
+        // For debugging
         public static bool IsVR = true;
 
         internal static Harmony Harmony { get; } = new Harmony(GUID);
@@ -128,6 +129,11 @@ namespace VRMod
             public static void Debug(string msg)
             {
                 log.LogDebug(msg);
+            }
+
+            public static void Message(string msg)
+            {
+                log.LogMessage(msg);
             }
         }
     }

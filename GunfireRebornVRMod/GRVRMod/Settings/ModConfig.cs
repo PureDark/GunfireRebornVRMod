@@ -17,7 +17,6 @@ namespace VRMod.Settings
         public static ConfigEntry<bool> EnableTwoTwoHanded { get; private set; }
         public static ConfigEntry<bool> EnableAimRay { get; private set; }
         public static ConfigEntry<bool> EnablePostProcessing { get; private set; }
-        public static ConfigEntry<bool> EnableSniperADSSnap { get; private set; }
         public static ConfigEntry<float> UIDistance { get; private set; }
         public static ConfigEntry<float> UIScale { get; private set; }
         public static ConfigEntry<float> FPCamSmoothTime { get; private set; }
@@ -25,6 +24,7 @@ namespace VRMod.Settings
         public static ConfigEntry<float> SmoothTurningSpeed { get; private set; }
         public static ConfigEntry<float> SnapTurningAngle { get; private set; }
         public static ConfigEntry<float> PlayerWorldScale { get; private set; }
+        public static ConfigEntry<bool> EnableDebugMode { get; private set; }
 
         public static void Init()
         {
@@ -67,7 +67,7 @@ namespace VRMod.Settings
             SmoothTurningSpeed = configFile.Bind<float>(
                 "VR Settings",
                 "SmoothTurningSpeed",
-                1f,
+                1.5f,
                 "Scaling factor for smoothing turning speed."
             );
             SnapTurningAngle = configFile.Bind<float>(
@@ -75,12 +75,6 @@ namespace VRMod.Settings
                 "SnapTurningAngle",
                 45f,
                 "Angles for each snap turning."
-            );
-            EnableSniperADSSnap = configFile.Bind<bool>(
-                "VR Settings",
-                "EnableSniperADSSnap",
-                true,
-                "Enable Sniper scope to snap infront of you when ADS-ing."
             );
             UseFirstPersonCam = configFile.Bind<bool>(
                 "VR Settings",
@@ -99,6 +93,12 @@ namespace VRMod.Settings
                 "ThirdPersonCameraSmoothFactor",
                 0.15f,
                 "Adjust the smooth strength applied to the third person view when using the squirrel's primary skill."
+            );
+            EnableDebugMode = configFile.Bind<bool>(
+                "VR Settings",
+                "EnableDebugMode",
+                false,
+                "Enable debug mode for adjusting weapon offsets."
             );
         }
 

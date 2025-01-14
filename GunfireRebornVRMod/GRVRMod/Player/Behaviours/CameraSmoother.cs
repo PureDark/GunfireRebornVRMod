@@ -29,13 +29,14 @@ namespace VRMod.Player.Behaviours
             if(target != null)
             {
                 if (enablePositionSmoothing)
-                {
                     transform.position = Vector3.SmoothDamp(transform.position, target.position, ref currentVelocity, smoothTime);
-                }
+                else
+                    transform.position = target.position;
+
                 if (enableRotationSmoothing)
-                {
                     transform.rotation = transform.rotation.SmoothDamp(target.rotation, ref deriv, smoothTime);
-                }
+                else
+                    transform.rotation = target.rotation;
             }
         }
     }

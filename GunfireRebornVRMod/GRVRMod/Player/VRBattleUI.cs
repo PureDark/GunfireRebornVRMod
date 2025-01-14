@@ -27,6 +27,7 @@ namespace VRMod.Player
         public Transform? leftCrossHair;
         public Transform? rightCrossHair;
         public Transform? foxChargingAim;
+        public Transform? doomFistInterface;
 
         public Transform coinmessage;
         public Transform cashmessage;
@@ -108,6 +109,15 @@ namespace VRMod.Player
             }
         }
 
+        public void FixSplitWeaponCrossHair(Transform trans)
+        {
+            var crossHair = trans.Find("Mainsight/position/open/static/point_loop");
+            if (crossHair != null)
+            {
+                crossHair.localScale = new Vector3(0.002f, 0.002f, 0.002f);
+            }
+        }
+
         public void UpdateCrossHair()
         {
             leftCrossHair = null;
@@ -124,10 +134,23 @@ namespace VRMod.Player
                 else if(deputyWeapon != null && childTrans.name.StartsWith("Panel_Sight_" + HeroCameraManager.HeroObj.PlayerCom.DeputyWeaponSID + "_" + deputyWeapon.ClientPos))
                     leftCrossHair = childTrans;
 
-                if(HeroCameraManager.HeroObj.PlayerCom.CurWeaponSID == 1010)
+                if(rightCrossHair != null)
                     FixCrossHair(rightCrossHair);
-                if (HeroCameraManager.HeroObj.PlayerCom.DeputyWeaponSID == 1010)
+                if (leftCrossHair != null)
                     FixCrossHair(leftCrossHair);
+
+                //修复璇玑的准心过大的问题
+                if (HeroCameraManager.HeroObj.PlayerCom.CurWeaponSID == 1703 && rightCrossHair != null)
+                    FixSplitWeaponCrossHair(rightCrossHair);
+                if (HeroCameraManager.HeroObj.PlayerCom.DeputyWeaponSID == 1703 && leftCrossHair != null)
+                    FixSplitWeaponCrossHair(leftCrossHair);
+
+                if (HeroCameraManager.HeroObj.PlayerCom.CurWeaponSID == 1417)
+                {
+                    var obj = GameObject.Find("Panel_Sight_1417_9600(Clone)");
+                    if (obj != null)
+                        doomFistInterface = obj.transform;
+                }
             }
         }
 
@@ -222,7 +245,7 @@ namespace VRMod.Player
                         }
                     }
 
-                    Target_tips = PC_Panel_war.Find("Target_tips(Clone)");
+                    Target_tips = PC_Panel_war.Find("Target_Tips_Tar");
                     SimLineStart = CameraManager.MainCamera.DeepFindChild("SimLineStart");
                     if (hero_skill_1)
                     {
@@ -434,6 +457,22 @@ namespace VRMod.Player
             //    hero_skill_1.localEulerAngles = new Vector3(0f, 0f, 0f);
             //    hero_skill_1.parent = parent;
             //}
+
+            if (HeroCameraManager.HeroObj.PlayerCom.CurWeaponSID == 1417)
+            {
+                var obj = GameObject.Find("Panel_Sight_1417_9600(Clone)");
+                if (obj != null)
+                    doomFistInterface = obj.transform;
+            }
+
+            if (doomFistInterface)
+            {
+                doomFistInterface.localRotation = Quaternion.identity;
+            }
+            else 
+
+            if (!rightCrossHair)
+                UpdateCrossHair();
         }
 
     }

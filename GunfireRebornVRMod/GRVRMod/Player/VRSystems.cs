@@ -40,6 +40,7 @@ namespace VRMod.Player
             if (VRMod.IsVR)
             {
                 SteamVR_Settings.instance.poseUpdateMode = SteamVR_UpdateModes.OnLateUpdate;
+                SteamVR_Settings.instance.lockPhysicsUpdateRateToRenderFrequency = false;
                 SteamVR.Initialize(false);
             }
 

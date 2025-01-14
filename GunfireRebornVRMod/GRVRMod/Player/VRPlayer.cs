@@ -1,4 +1,6 @@
-﻿using HeroCameraName;
+﻿using DYPublic.GamePlatform;
+using DYPublic.UI;
+using HeroCameraName;
 using InControl;
 using System;
 using System.Collections;
@@ -161,8 +163,10 @@ namespace VRMod.Player
 
         private int lastWeaponID;
         private float aimSwitchDelay = 1f;
-        
+
         private ETCTouchPad etcTouchPad;
+        private ETCTransformCtrl etcTransformCtrl_Hero;
+        private ETCTransformCtrl etcTransformCtrl_FPSCam;
 
         private FPSCamMotionCtrl fpsCamMotionCtrl;
         private Transform HeroSkillHand;
@@ -170,8 +174,16 @@ namespace VRMod.Player
         private Transform HeroWeaponHand;
         private Animator HeroWeaponHandAnimator;
         private Transform WeaponLeftHand;
+        private Transform WeaponRightHand;
         private Animator WeaponAnimator;
         private Transform Muzzle;
+
+        // 猫头鹰用主动技能时，技能手有个游离的右手需要隐藏
+        private Transform HeroSkillHandHide;
+
+        // 扔手雷时需要隐藏的如律令模型
+        private Transform TalismanLeft;
+        private Transform TalismanAmuletLeft;
 
         // 左手的模型，直接从技能手复制一份
         private Transform LeftHandMesh;
@@ -204,7 +216,9 @@ namespace VRMod.Player
 
         private AkGameObj dualWieldAKGameObj;
 
-        public Dictionary<int, float> states = new Dictionary<int, float>();
+        public bool isParentOverride = true;
+
+        //public Dictionary<int, float> states = new Dictionary<int, float>();
 
         public void SetDualWield(Transform dualWieldTrans)
         {
@@ -243,7 +257,8 @@ namespace VRMod.Player
                     // 每秒执行50次
                     if (VRInputManager.Device.RightStick.State)
                         Origin.Rotate(Vector3.up, VRInputManager.Device.RightStick.X * ModConfig.SmoothTurningSpeed.Value);
-                    else if (VRInputManager.Device.SnapTurnLeft.stateUp)
+                    else 
+                    if (VRInputManager.Device.SnapTurnLeft.stateUp)
                         Origin.Rotate(Vector3.up, ModConfig.SnapTurningAngle.Value * -1);
                     else if (VRInputManager.Device.SnapTurnRight.stateUp)
                         Origin.Rotate(Vector3.up, ModConfig.SnapTurningAngle.Value);
@@ -266,9 +281,14 @@ namespace VRMod.Player
         // 在LateUpdate里才能覆盖英雄身体的位置和朝向
         public void LateUpdate()
         {
-            if (Input.GetKeyUp(KeyCode.J))
+            if (Input.GetKeyUp(KeyCode.LeftAlt))
             {
-                ToggleEventCamera();
+                if(Time.timeScale > 0.5f)
+                    Time.timeScale = 0.1f;
+                else if(Time.timeScale > 0.05f)
+                    Time.timeScale = 0.01f;
+                else
+                    Time.timeScale = 1.0f;
             }
             if (Input.GetKeyUp(KeyCode.P))
             {
@@ -276,61 +296,68 @@ namespace VRMod.Player
                 ScreenCam.cullingMask = (ScreenCam.enabled) ? -1 : 0;
                 MenuFix.GetUICamera().enabled = !ScreenCam.enabled;
             }
-            if (Input.GetKeyUp(KeyCode.KeypadPlus))
+            if (ModConfig.EnableDebugMode.Value)
             {
-                offsetOverride = new Vector3(offsetOverride.x, offsetOverride.y+0.01f, offsetOverride.z);
-            }
-            if (Input.GetKeyUp(KeyCode.KeypadMinus))
-            {
-                offsetOverride = new Vector3(offsetOverride.x, offsetOverride.y-0.01f, offsetOverride.z);
-            }
-            if (Input.GetKeyUp(KeyCode.KeypadMultiply))
-            {
-                offsetOverride = new Vector3(offsetOverride.x, offsetOverride.y, offsetOverride.z + 0.01f);
-            }
-            if (Input.GetKeyUp(KeyCode.KeypadDivide))
-            {
-                offsetOverride = new Vector3(offsetOverride.x, offsetOverride.y, offsetOverride.z - 0.01f);
-            }
-            if (Input.GetKeyUp(KeyCode.Keypad4))
-            {
-                offsetOverride = new Vector3(offsetOverride.x - 0.01f, offsetOverride.y, offsetOverride.z);
-            }
-            if (Input.GetKeyUp(KeyCode.Keypad6))
-            {
-                offsetOverride = new Vector3(offsetOverride.x + 0.01f, offsetOverride.y, offsetOverride.z);
-            }
-            if (Input.GetKeyUp(KeyCode.Keypad7))
-            {
-                rotationEulerOverride = new Vector3(rotationEulerOverride.x + 0.01f, rotationEulerOverride.y, rotationEulerOverride.z);
-            }
-            if (Input.GetKeyUp(KeyCode.Keypad8))
-            {
-                rotationEulerOverride = new Vector3(rotationEulerOverride.x, rotationEulerOverride.y + 0.01f, rotationEulerOverride.z);
-            }
-            if (Input.GetKeyUp(KeyCode.Keypad9))
-            {
-                rotationEulerOverride = new Vector3(rotationEulerOverride.x, rotationEulerOverride.y, rotationEulerOverride.z + 0.01f);
-            }
-            if (Input.GetKeyUp(KeyCode.Keypad1))
-            {
-                rotationEulerOverride = new Vector3(rotationEulerOverride.x - 0.01f, rotationEulerOverride.y, rotationEulerOverride.z);
-            }
-            if (Input.GetKeyUp(KeyCode.Keypad2))
-            {
-                rotationEulerOverride = new Vector3(rotationEulerOverride.x, rotationEulerOverride.y - 0.01f, rotationEulerOverride.z);
-            }
-            if (Input.GetKeyUp(KeyCode.Keypad3))
-            {
-                rotationEulerOverride = new Vector3(rotationEulerOverride.x, rotationEulerOverride.y, rotationEulerOverride.z - 0.01f);
-            }
-            if (Input.GetKeyUp(KeyCode.PageUp))
-            {
-                ModConfig.PlayerWorldScale.Value += 0.01f;
-            }
-            if (Input.GetKeyUp(KeyCode.PageDown))
-            {
-                ModConfig.PlayerWorldScale.Value -= 0.01f;
+                if (Input.GetKeyUp(KeyCode.J))
+                {
+                    ToggleEventCamera();
+                }
+                if (Input.GetKeyUp(KeyCode.KeypadPlus))
+                {
+                    offsetOverride = new Vector3(offsetOverride.x, offsetOverride.y + 0.01f, offsetOverride.z);
+                }
+                if (Input.GetKeyUp(KeyCode.KeypadMinus))
+                {
+                    offsetOverride = new Vector3(offsetOverride.x, offsetOverride.y - 0.01f, offsetOverride.z);
+                }
+                if (Input.GetKeyUp(KeyCode.KeypadMultiply))
+                {
+                    offsetOverride = new Vector3(offsetOverride.x, offsetOverride.y, offsetOverride.z + 0.01f);
+                }
+                if (Input.GetKeyUp(KeyCode.KeypadDivide))
+                {
+                    offsetOverride = new Vector3(offsetOverride.x, offsetOverride.y, offsetOverride.z - 0.01f);
+                }
+                if (Input.GetKeyUp(KeyCode.Keypad4))
+                {
+                    offsetOverride = new Vector3(offsetOverride.x - 0.01f, offsetOverride.y, offsetOverride.z);
+                }
+                if (Input.GetKeyUp(KeyCode.Keypad6))
+                {
+                    offsetOverride = new Vector3(offsetOverride.x + 0.01f, offsetOverride.y, offsetOverride.z);
+                }
+                if (Input.GetKeyUp(KeyCode.Keypad7))
+                {
+                    rotationEulerOverride = new Vector3(rotationEulerOverride.x + 0.5f, rotationEulerOverride.y, rotationEulerOverride.z);
+                }
+                if (Input.GetKeyUp(KeyCode.Keypad8))
+                {
+                    rotationEulerOverride = new Vector3(rotationEulerOverride.x, rotationEulerOverride.y + 0.5f, rotationEulerOverride.z);
+                }
+                if (Input.GetKeyUp(KeyCode.Keypad9))
+                {
+                    rotationEulerOverride = new Vector3(rotationEulerOverride.x, rotationEulerOverride.y, rotationEulerOverride.z + 0.5f);
+                }
+                if (Input.GetKeyUp(KeyCode.Keypad1))
+                {
+                    rotationEulerOverride = new Vector3(rotationEulerOverride.x - 0.5f, rotationEulerOverride.y, rotationEulerOverride.z);
+                }
+                if (Input.GetKeyUp(KeyCode.Keypad2))
+                {
+                    rotationEulerOverride = new Vector3(rotationEulerOverride.x, rotationEulerOverride.y - 0.5f, rotationEulerOverride.z);
+                }
+                if (Input.GetKeyUp(KeyCode.Keypad3))
+                {
+                    rotationEulerOverride = new Vector3(rotationEulerOverride.x, rotationEulerOverride.y, rotationEulerOverride.z - 0.5f);
+                }
+                if (Input.GetKeyUp(KeyCode.PageUp))
+                {
+                    ModConfig.PlayerWorldScale.Value += 0.01f;
+                }
+                if (Input.GetKeyUp(KeyCode.PageDown))
+                {
+                    ModConfig.PlayerWorldScale.Value -= 0.01f;
+                }
             }
             if (CannonFix)
             {
@@ -403,7 +430,7 @@ namespace VRMod.Player
                 var hand = RightHand;
 
                 // 左手用技能时转为左手瞄准，松开后延迟0.5秒变回右手
-                bool isLeftHandPressed = VRInputManager.Device.RB_SecondarySkill.state || VRInputManager.Device.LB_PrimarySkill.state;
+                bool isSkillButtonPressed = VRInputManager.Device.RB_SecondarySkill.state || VRInputManager.Device.LB_PrimarySkill.state;
 
                 bool isSecondarySkill = HeroSkillHandAnimator.IsPlaying(heroData.secondarySkillHash);
 
@@ -424,7 +451,7 @@ namespace VRMod.Player
                 if (isEnteringPrimarySkillState || isInPrimarySkillState || isExitingPrimarySkillState)
                     isPrimarySkill = true;
 
-                if (isLeftHandPressed)
+                if (isSkillButtonPressed)
                     aimSwitchDelay = 0.5f;
                 if (aimSwitchDelay > 0 || isSecondarySkill || isPrimarySkill)
                 {
@@ -437,33 +464,33 @@ namespace VRMod.Player
                 Vector3 dir = hand.GetRayHitPosition() - CameraManager.MainCamera.position;
                 CameraManager.MainCamera.rotation = Quaternion.LookRotation(dir);
 
-                bool hideWeaponLeftHand = false;
-
+                bool hideIdleLeftHand = false;
                 // 不放技能时默认隐藏技能手
                 if (HeroSkillHand)
                 {
                     bool isPlaying = aimSwitchDelay > 0 || isSecondarySkill || isPrimarySkill;
                     HeroSkillHand.localScale = isPlaying ? Vector3.one : Vector3.zero;
-                    hideWeaponLeftHand = isPlaying;
+                    hideIdleLeftHand = isPlaying;
                 }
                 if (HeroWeaponHand)
                 {
                     bool isPlaying = HeroWeaponHandAnimator.IsPlaying() || isSecondarySkill || isPrimarySkill;
                     HeroWeaponHand.localScale = HeroWeaponHandAnimator.IsPlaying() ? Vector3.one : Vector3.zero;
-                    hideWeaponLeftHand |= isPlaying;
+                    hideIdleLeftHand |= isPlaying;
                 }
 
-                if (WeaponAnimator)
-                {
-                    var state = WeaponAnimator.GetCurrentAnimatorStateInfo(0);
-                    if (states.ContainsKey(state.fullPathHash))
-                        states[state.fullPathHash] = WeaponAnimator.GetCurrentAnimatorStateInfo(0).m_NormalizedTime;
-                    else
-                        states.Add(state.fullPathHash, WeaponAnimator.GetCurrentAnimatorStateInfo(0).m_NormalizedTime);
-                }
+                // Only for debugging
+                //if (WeaponAnimator)
+                //{
+                //    var state = WeaponAnimator.GetCurrentAnimatorStateInfo(0);
+                //    if (states.ContainsKey(state.fullPathHash))
+                //        states[state.fullPathHash] = WeaponAnimator.GetCurrentAnimatorStateInfo(0).m_NormalizedTime;
+                //    else
+                //        states.Add(state.fullPathHash, WeaponAnimator.GetCurrentAnimatorStateInfo(0).m_NormalizedTime);
+                //}
 
                 var currWeapon = HeroCameraManager.HeroObj.PlayerCom.GetCurWeapon(HeroCameraManager.HeroObj.PlayerCom.CurWeaponID);
-
+                
                 var weaponIsShow = true;
                 switch (heroData.sid)
                 {
@@ -486,13 +513,25 @@ namespace VRMod.Player
                                 currWeapon.MainWeapon.localScale = Vector3.one;
                         }
                         break;
+                    case 216:
+                        if (!HeroSkillHandHide)
+                            HeroSkillHandHide = HeroSkillHand.Find("113_A_L");
+                        if (HeroSkillHandHide)
+                            HeroSkillHandHide.gameObject.active = false;
+                        break;
+                    case 217:
+                        if (!HeroSkillHandHide)
+                            HeroSkillHandHide = HeroSkillHand.Find("hero_fpp_114_A_R");
+                        if (HeroSkillHandHide)
+                            HeroSkillHandHide.gameObject.active = false;
+                        break;
                     case 219:
                         // 松鼠
                         // 放主要技能时进入第三人称模式，隐藏双手
                         if (TPSCamBoom != null && isInThirdPerson)
                         {
                             weaponIsShow = false;
-                            hideWeaponLeftHand = true;
+                            hideIdleLeftHand = true;
                             currWeapon.MainWeapon.localScale = Vector3.zero;
                         }
                         break;
@@ -501,15 +540,59 @@ namespace VRMod.Player
                 // 强制游戏自带的手和武器模型与玩家手同步
                 if (currWeapon != null)
                 {
-
                     var weaponSID = HeroCameraManager.HeroObj.PlayerCom.CurWeaponSID;
                     var weaponData = WeaponDatas.GetWeaponData(weaponSID);
-                    // 如果使用如律令要把左手隐藏
-                    hideWeaponLeftHand |= weaponData.weaponType == WeaponDatas.WeaponType.Talisman;
+                    if (ModConfig.EnableDebugMode.Value)
+                    {
+                        if (Input.GetKeyUp(KeyCode.Keypad5))
+                        {
+                            if (isParentOverride)
+                            {
+                                weaponData.parentOffset = offsetOverride;
+                                weaponData.parentRotationEuler = rotationEulerOverride;
+                                offsetOverride = weaponData.modelOffset;
+                                rotationEulerOverride = weaponData.modelRotationEuler;
+                            }
+                            else
+                            {
+                                weaponData.modelOffset = offsetOverride;
+                                weaponData.modelRotationEuler = rotationEulerOverride;
+                                offsetOverride = weaponData.parentOffset;
+                                rotationEulerOverride = weaponData.parentRotationEuler;
+                            }
+                            WeaponDatas.SetWeaponData(weaponData.id, weaponData);
+                            isParentOverride = !isParentOverride;
+                        }
+                        if (Input.GetKeyUp(KeyCode.Keypad0))
+                        {
+                            if (isParentOverride)
+                            {
+                                weaponData.parentOffset = offsetOverride;
+                                weaponData.parentRotationEuler = rotationEulerOverride;
+                            }
+                            else
+                            {
+                                weaponData.modelOffset = offsetOverride;
+                                weaponData.modelRotationEuler = rotationEulerOverride;
+                            }
+                            WeaponDatas.SetWeaponData(weaponData.id, weaponData);
+                            Log.Message("  Weapon id: " + weaponData.id);
+                            Log.Message("  Weapon: " + weaponData.name);
+                            Log.Message("  parentOffset: (" + weaponData.parentOffset.x.ToString("0.00") + "f, " + weaponData.parentOffset.y.ToString("0.00") + "f, " + weaponData.parentOffset.z.ToString("0.00") + "f)");
+                            Log.Message("  modelOffset: (" + weaponData.modelOffset.x.ToString("0.00") + "f, " + weaponData.modelOffset.y.ToString("0.00") + "f, " + weaponData.modelOffset.z.ToString("0.00") + "f)");
+                            Log.Message("  parentRotationEuler: (" + weaponData.parentRotationEuler.x.ToString("0.00") + "f, " + weaponData.parentRotationEuler.y.ToString("0.00") + "f, " + weaponData.parentRotationEuler.z.ToString("0.00") + "f)");
+                            Log.Message("  modelRotationEuler: (" + weaponData.modelRotationEuler.x.ToString("0.00") + "f, " + weaponData.modelRotationEuler.y.ToString("0.00") + "f, " + weaponData.modelRotationEuler.z.ToString("0.00") + "f)");
+                            Log.Message("  useParentTrans: " + isParentOverride);
+                        }
+                    }
+
+
+                    // 如果使用如律令要把左手柄的空手隐藏
+                    hideIdleLeftHand |= weaponData.weaponType == WeaponDatas.WeaponType.Talisman;
 
                     if (LeftHandMesh)
                     {
-                        LeftHandMesh.localScale = hideWeaponLeftHand || isDualWield ? Vector3.zero : new Vector3(0.67f, 0.67f, 0.67f);
+                        LeftHandMesh.localScale = hideIdleLeftHand || isDualWield ? Vector3.zero : new Vector3(0.67f, 0.67f, 0.67f);
                         LeftHand.model.localScale = Vector3.one / ModConfig.PlayerWorldScale.Value;
                     }
 
@@ -519,16 +602,18 @@ namespace VRMod.Player
                     {
                         lastWeaponID = HeroCameraManager.HeroObj.PlayerCom.CurWeaponID;
                         WeaponLeftHand = currWeapon.MainWeapon.Find("Home/hero_fpp_101_A_L");
+                        WeaponRightHand = currWeapon.MainWeapon.Find("Home/hero_fpp_101_A_R");
                         WeaponAnimator = currWeapon.MainWeapon.GetComponentInChildren<Animator>();
-                        if (weaponData.weaponType == WeaponDatas.WeaponType.Gauntlet)
-                            Muzzle = currWeapon.MainWeapon.DeepFindChild(((WeaponDatas.GauntletWeaponData)weaponData).muzzle);
-                        else
-                            Muzzle = currWeapon.MainWeapon.Find("muzzle");
+                        Muzzle = currWeapon.MainWeapon.Find("muzzle");
                         if (weaponData.hideMuzzle)
                         {
                             if (Muzzle)
                                 Muzzle.gameObject.active = false;
                         }
+
+                        // 临时处理
+                        offsetOverride = isParentOverride ? weaponData.parentOffset : weaponData.modelOffset;
+                        rotationEulerOverride = isParentOverride ? weaponData.parentRotationEuler : weaponData.modelRotationEuler;
 
                         // 如果是狙击枪，则要加上VR里可用的狙击瞄具
                         if (weaponData.weaponType == WeaponDatas.WeaponType.SniperRifle)
@@ -541,27 +626,57 @@ namespace VRMod.Player
                                 vrScope.Setup(rifleWeaponData);
                             }
                         }
-                        //if (weaponData.id == 1703)
-                        //{
-                        //    HeroCameraManager.HeroTran.parent.Find("9703_range").gameObject.active = false;
-                        //}
+
+                        if (weaponData.weaponType == WeaponDatas.WeaponType.Talisman)
+                        {
+                            var talismanWeaponData = (WeaponDatas.TalismanWeaponData)weaponData;
+                            TalismanLeft = currWeapon.MainWeapon.Find(talismanWeaponData.leftWeaponName);
+                            TalismanAmuletLeft = currWeapon.MainWeapon.Find(talismanWeaponData.leftAmuletName);
+                        }
+
                         vrBattleUI.UpdateCrossHair();
                     }
+
+                    if (weaponData.id == 1417 && currWeapon.OtherShowWeapon != null)
+                    {
+                        currWeapon.OtherShowWeapon.gameObject.active = false;
+                    }
+
+                    if (weaponData.weaponType == WeaponDatas.WeaponType.Helmet)
+                    {
+                        var helmetWeaponData = (WeaponDatas.HelmetWeaponData)weaponData;
+                        if (WeaponAnimator.IsInState(helmetWeaponData.aimingHash))
+                        {
+                            CameraManager.MainCamera.position = Head.position;
+                            CameraManager.MainCamera.rotation = Quaternion.LookRotation(GetFlatForwardDirection());
+                        }
+                    }
+
                     if (weaponIsShow)
                     {
                         // UI模式隐藏武器
                         currWeapon.MainWeapon.localScale = isUIMode ? Vector3.zero : Vector3.one;
-                        AttachWeaponToHand(currWeapon.MainWeapon, weaponData, HandType.Right, hideWeaponLeftHand);
+                        // 扔炸弹时隐藏如律令的左手
+                        //if (weaponData.weaponType == WeaponDatas.WeaponType.Talisman)
+                        //{
+                        //    WeaponLeftHand.localScale = isSecondarySkill ? Vector3.zero : Vector3.one;
+                        //    TalismanLeft.localScale = isSecondarySkill ? Vector3.zero : Vector3.one;
+                        //    TalismanAmuletLeft.localScale = isSecondarySkill ? Vector3.zero : Vector3.one;
+                        //}
+                        bool forceOneHanded = hideIdleLeftHand;
+                        bool forceModelTrans = !weaponData.useParentTrans || isSecondarySkill || isPrimarySkill;
+                        forceModelTrans = false;
+                        AttachWeaponToHand(currWeapon, weaponData, HandType.Right, forceOneHanded, forceModelTrans);
                         if (isDualWield)
                         {
                             //只有狗会双持
-                            var deputyWeapon = HeroCameraManager.HeroObj.PlayerCom.GetCurWeaponTran(HeroCameraManager.HeroObj.PlayerCom.DeputyWeaponID);
-                            if (deputyWeapon)
+                            var deputyWeapon = HeroCameraManager.HeroObj.PlayerCom.GetCurWeapon(HeroCameraManager.HeroObj.PlayerCom.DeputyWeaponID);
+                            if (deputyWeapon != null)
                             {
                                 var weaponData2 = WeaponDatas.GetWeaponData(HeroCameraManager.HeroObj.PlayerCom.DeputyWeaponSID);
-                                AttachWeaponToHand(deputyWeapon, weaponData2, HandType.Left, true);
+                                AttachWeaponToHand(deputyWeapon, weaponData2, HandType.Left, true, forceModelTrans);
                                 //扔炸弹时隐藏左手武器
-                                deputyWeapon.localScale = isSecondarySkill ? Vector3.zero : Vector3.one;
+                                deputyWeapon.MainWeapon.parent.localScale = isSecondarySkill ? Vector3.zero : Vector3.one;
                             }
                         }
                     }
@@ -572,34 +687,23 @@ namespace VRMod.Player
                 CameraManager.MainCamera.localScale = Vector3.zero;
                 RightHand.muzzle.localEulerAngles = new Vector3(36, 0, 0);
             }
-
-            // 需要在LateUpdate里更新彩虹的射线，起点才正常
-            foreach(var lineRenderer in bezierLineRenderers)
-            {
-                if (lineRenderer && !lineRenderer.playSight)
-                    lineRenderer.Draw();
-            }
-            // 需要在LateUpdate里更新手套的激光射线，起点才正常
-            foreach (var rayLineLaser in rayLineLasers)
-            {
-                allowUpdateRayLineLaser = true;
-                rayLineLaser.Update();
-                allowUpdateRayLineLaser = false;
-            }
         }
 
         public Dictionary<int, WeaponDatas.WeaponData> weaponDatas = WeaponDatas.weaponDatas;
 
-        void AttachWeaponToHand(Transform weapon, WeaponDatas.WeaponData weaponData, HandType handType, bool forceOneHanded = false)
+        void AttachWeaponToHand(Weapon weapon, WeaponDatas.WeaponData weaponData, HandType handType, bool forceOneHanded = false, bool forceModelTrans = false)
         {
             bool twohanded = false;
 
-            var offset = weaponData.offset;
-            if (offsetOverride != Vector3.zero)
-                offset = offsetOverride;
-            var rotationEuler = weaponData.rotationEuler;
-            if (rotationEulerOverride != Vector3.zero)
-                rotationEuler = rotationEulerOverride;
+            var parentOffset = isParentOverride ? offsetOverride : weaponData.parentOffset;
+            var modelOffset = !isParentOverride ? offsetOverride : weaponData.modelOffset;
+            var parentRotationEuler = isParentOverride ? rotationEulerOverride : weaponData.parentRotationEuler;
+            var modelRotationEuler = !isParentOverride ? rotationEulerOverride : weaponData.modelRotationEuler;
+
+            var parentTrans = weapon.MainWeapon.parent;
+            var modelTrans = !isParentOverride || forceModelTrans ? weapon.MainWeapon : null;
+            if (weaponData.useParentTrans)
+                modelTrans = null;
 
             //如果是非单手武器,则进行双持判定
             if (!isDualWield && ModConfig.EnableTwoTwoHanded.Value && handType == HandType.Right && !forceOneHanded && weaponData.HoldingStyle == WeaponDatas.HoldingStyle.TwoHanded)
@@ -625,29 +729,31 @@ namespace VRMod.Player
                     if (weaponData.weaponType == WeaponDatas.WeaponType.Bow)
                     {
                         var bowData = (WeaponDatas.BowWeaponData)weaponData;
-                        weapon.rotation = Quaternion.LookRotation(guidingVector, LeftHand.model.up);
-                        weapon.Rotate(0, 0, bowData.zAngle, Space.Self);
-                        RightHand.muzzle.rotation = weapon.rotation;
-                        weapon.position = LeftHand.model.position + weapon.right * offset.x + weapon.up * offset.y + weapon.forward * (offset.z - bowData.leftHandForwardDistance);
-                    }
-                    else if (weaponData.weaponType == WeaponDatas.WeaponType.SniperRifle && vrScope & vrScope.IsShowing && ModConfig.EnableSniperADSSnap.Value)
-                    {
-                        // Sniper ADS cursor 
-                        var targetPosition = RightHand.model.position + weapon.right * offset.x + weapon.up * offset.y + weapon.forward * offset.z;
-                        weapon.position = Vector3.SmoothDamp(weapon.position, targetPosition, ref velocity, 0.3f) + weapon.forward * 0.05f;
-                        weapon.Rotate(-rotationEuler, Space.Self);
-                        weapon.rotation = weapon.rotation.SmoothDamp(Quaternion.LookRotation(guidingVector, RightHand.model.up), ref deriv, 0.3f);
-                        weapon.Rotate(rotationEuler, Space.Self);
+                        var lookRotation = Quaternion.LookRotation(guidingVector, LeftHand.model.up);
+                        parentTrans.rotation = lookRotation;
+                        RightHand.muzzle.rotation = parentTrans.rotation;
+                        parentTrans.Rotate(0, 0, bowData.zAngle, Space.Self);
+                        parentTrans.position = LeftHand.model.position + parentTrans.right * parentOffset.x + parentTrans.up * parentOffset.y + parentTrans.forward * (parentOffset.z - bowData.leftHandForwardDistance);
+                        if(modelTrans != null)
+                        {
+                            modelTrans.rotation = lookRotation;
+                            modelTrans.position = LeftHand.model.position + modelTrans.right * modelOffset.x + modelTrans.up * modelOffset.y + modelTrans.forward * (modelOffset.z - bowData.leftHandForwardDistance);
+                        }
                     }
                     else
                     {
-                        if ((weaponData.weaponType == WeaponDatas.WeaponType.Minigun))
-                            weapon.rotation = Quaternion.LookRotation(guidingVector, Vector3.up);
-                        else
-                            weapon.rotation = Quaternion.LookRotation(guidingVector, RightHand.model.up);
-                        weapon.Rotate(rotationEuler, Space.Self);
-                        RightHand.muzzle.rotation = weapon.rotation;
-                        weapon.position = RightHand.model.position + weapon.right * offset.x + weapon.up * offset.y + weapon.forward * offset.z;
+                        var upVector = (weaponData.weaponType == WeaponDatas.WeaponType.Minigun)? Vector3.up : RightHand.model.up;
+                        var lookRotation = Quaternion.LookRotation(guidingVector, upVector);
+                        parentTrans.rotation = lookRotation;
+                        RightHand.muzzle.rotation = parentTrans.rotation;
+                        parentTrans.Rotate(parentRotationEuler, Space.Self);
+                        parentTrans.position = RightHand.model.position + parentTrans.right * parentOffset.x + parentTrans.up * parentOffset.y + parentTrans.forward * parentOffset.z;
+                        if (modelTrans != null)
+                        {
+                            modelTrans.rotation = lookRotation;
+                            modelTrans.Rotate(modelRotationEuler, Space.Self);
+                            modelTrans.position = RightHand.model.position + modelTrans.right * modelOffset.x + modelTrans.up * modelOffset.y + modelTrans.forward * modelOffset.z;
+                        }
                     }
                     if (WeaponLeftHand != null)
                         WeaponLeftHand.gameObject.active = true;
@@ -672,97 +778,120 @@ namespace VRMod.Player
                     if (weaponData.weaponType == WeaponDatas.WeaponType.Bow)
                     {
                         var bowData = (WeaponDatas.BowWeaponData)weaponData;
-                        weapon.rotation = RightHand.model.rotation;
-                        weapon.Rotate(0, 0, bowData.zAngle, Space.Self);
-                        weapon.position = RightHand.model.position + weapon.right * offset.x + weapon.up * offset.y + weapon.forward * offset.z;
+                        parentTrans.rotation = RightHand.model.rotation;
+                        parentTrans.Rotate(0, 0, bowData.zAngle, Space.Self);
+                        parentTrans.position = RightHand.model.position + parentTrans.right * parentOffset.x + parentTrans.up * parentOffset.y + parentTrans.forward * parentOffset.z;
+                        if (modelTrans != null)
+                        {
+                            modelTrans.rotation = parentTrans.rotation;
+                            modelTrans.position = LeftHand.model.position + modelTrans.right * modelOffset.x + modelTrans.up * modelOffset.y + modelTrans.forward * (modelOffset.z - bowData.leftHandForwardDistance);
+                        }
                     }
                     else if (weaponData.weaponType == WeaponDatas.WeaponType.Melee)
                     {
                         var meleeData = (WeaponDatas.MeleeWeaponData)weaponData;
                         if(WeaponAnimator && WeaponAnimator.IsInState(meleeData.idleHash))
                         {
-                            weapon.rotation = RightHand.model.rotation;
-                            weapon.Rotate(meleeData.idleEuler, Space.Self);
-                            weapon.position = RightHand.model.position + weapon.right * offset.x + weapon.up * offset.y + weapon.forward * offset.z;
+                            parentTrans.rotation = RightHand.model.rotation;
+                            parentTrans.Rotate(meleeData.idleEuler, Space.Self);
+                            parentTrans.position = RightHand.model.position + parentTrans.right * parentOffset.x + parentTrans.up * parentOffset.y + parentTrans.forward * parentOffset.z;
+                            if (modelTrans != null)
+                            {
+                                modelTrans.rotation = parentTrans.rotation;
+                                modelTrans.position = RightHand.model.position + modelTrans.right * modelOffset.x + modelTrans.up * modelOffset.y + modelTrans.forward * modelOffset.z;
+                            }
+                            if (WeaponRightHand != null)
+                                WeaponRightHand.gameObject.active = false;
                         }
                         else
                         {
-                            weapon.rotation = RightHand.model.rotation;
-                            weapon.position = RightHand.model.position + weapon.right * meleeData.attackOffset.x + weapon.up * meleeData.attackOffset.y + weapon.forward * meleeData.attackOffset.z;
+                            parentTrans.rotation = RightHand.model.rotation;
+                            //parentTrans.position = RightHand.model.position + parentTrans.right * meleeData.attackOffset.x + parentTrans.up * meleeData.attackOffset.y + parentTrans.forward * meleeData.attackOffset.z;
+                            if (modelTrans != null)
+                            {
+                                modelTrans.rotation = parentTrans.rotation;
+                                modelTrans.position = RightHand.model.position + modelTrans.right * meleeData.attackOffset.x + modelTrans.up * meleeData.attackOffset.y + modelTrans.forward * meleeData.attackOffset.z;
+                            }
+                            if (WeaponRightHand != null)
+                                WeaponRightHand.gameObject.active = true;
                         }
                     }
-                    else if (weaponData.weaponType == WeaponDatas.WeaponType.Gauntlet)
+                    else if (weaponData.weaponType == WeaponDatas.WeaponType.Split)
                     {
-                        // 手套需要修正激光的位置和朝向
-                        var gauntletData = (WeaponDatas.GauntletWeaponData)weaponData;
-                        weapon.rotation = RightHand.model.rotation;
-                        weapon.Rotate(rotationEuler, Space.Self);
-                        weapon.position = RightHand.model.position + weapon.right * offset.x + weapon.up * offset.y + weapon.forward * offset.z;
-                        if (!Muzzle)
-                            Muzzle = weapon.DeepFindChild(gauntletData.muzzle);
-                        if (Muzzle)
+                        var splitData = (WeaponDatas.SplitWeaponData)weaponData;
+                        var splitPartTrans = parentTrans.Find(splitData.splitPartName + "right");
+                        if (splitPartTrans == null)
+                            splitPartTrans = parentTrans.parent.Find(splitData.splitPartName + "right");
+                        if (splitPartTrans != null)
                         {
-                            Muzzle.localPosition = gauntletData.muzzlePosition;
-                            var distance = Mathf.Max(Vector3.Distance(RightHand.model.position, RightHand.GetRayHitPosition()), 0);
-                            if (distance > 2)
-                                Muzzle.localEulerAngles = gauntletData.muzzleRotation;
+                            splitPartTrans.parent = parentTrans;
+                            splitPartTrans.gameObject.active = true;
+                            splitPartTrans.GetComponent<WeaponFollowHero>().enabled = false;
+                            splitPartTrans.localRotation = Quaternion.identity;
+                            splitPartTrans.localPosition = new Vector3 (1, -1, 1);
                         }
-                    }
-                    else if (weaponData.weaponType == WeaponDatas.WeaponType.SniperRifle && vrScope & vrScope.IsShowing && ModConfig.EnableSniperADSSnap.Value)
-                    {
-                        // Sniper ADS position
-                        var targetPosition = RightHand.model.position + weapon.right * offset.x + weapon.up * offset.y + weapon.forward * offset.z;
-                        weapon.position = Vector3.SmoothDamp(weapon.position, targetPosition, ref velocity, 0.3f) + weapon.forward* 0.05f;
-                        weapon.Rotate(-rotationEuler, Space.Self);
-                        weapon.rotation = weapon.rotation.SmoothDamp(RightHand.model.rotation, ref deriv, 0.3f);
-                        weapon.Rotate(rotationEuler, Space.Self);
-                    }
-                    else if (weaponData.weaponType == WeaponDatas.WeaponType.Split && vrScope & vrScope.IsShowing && ModConfig.EnableSniperADSSnap.Value)
-                    {
-                        // Sniper ADS position
-                        var targetPosition = RightHand.model.position + weapon.right * offset.x + weapon.up * offset.y + weapon.forward * offset.z;
-                        weapon.position = Vector3.SmoothDamp(weapon.position, targetPosition, ref velocity, 0.3f) + weapon.forward * 0.05f;
-                        weapon.Rotate(-rotationEuler, Space.Self);
-                        weapon.rotation = weapon.rotation.SmoothDamp(RightHand.model.rotation, ref deriv, 0.3f);
-                        weapon.Rotate(rotationEuler, Space.Self);
+                        parentTrans.rotation = RightHand.model.rotation;
+                        parentTrans.Rotate(parentRotationEuler, Space.Self);
+                        parentTrans.position = RightHand.model.position + parentTrans.right * parentOffset.x + parentTrans.up * parentOffset.y + parentTrans.forward * parentOffset.z;
+                        if (modelTrans != null)
+                        {
+                            modelTrans.rotation = RightHand.model.rotation;
+                            parentTrans.Rotate(modelRotationEuler, Space.Self);
+                            modelTrans.position = RightHand.model.position + modelTrans.right * modelOffset.x + modelTrans.up * modelOffset.y + modelTrans.forward * modelOffset.z;
+                        }
                     }
                     else
                     {
-                        weapon.rotation = RightHand.model.rotation;
-                        weapon.Rotate(rotationEuler, Space.Self);
-                        weapon.position = RightHand.model.position + weapon.right * offset.x + weapon.up * offset.y + weapon.forward * offset.z;
+
+                        parentTrans.rotation = RightHand.model.rotation;
+                        parentTrans.Rotate(parentRotationEuler, Space.Self);
+                        parentTrans.position = RightHand.model.position + parentTrans.right * parentOffset.x + parentTrans.up * parentOffset.y + parentTrans.forward * parentOffset.z;
+                        if (modelTrans != null)
+                        {
+                            modelTrans.rotation = RightHand.model.rotation;
+                            parentTrans.Rotate(modelRotationEuler, Space.Self);
+                            modelTrans.position = RightHand.model.position + modelTrans.right * modelOffset.x + modelTrans.up * modelOffset.y + modelTrans.forward * modelOffset.z;
+                        }
                     }
                     if (WeaponLeftHand != null && weaponData.weaponType != WeaponDatas.WeaponType.Talisman)
                         WeaponLeftHand.gameObject.active = false;
                 }
                 else
                 {
+                    parentTrans = weapon.DeputyWeapon.parent;
+                    modelTrans = !isParentOverride || forceModelTrans ? weapon.DeputyWeapon : null;
+                    if (weaponData.useParentTrans)
+                        modelTrans = null;
                     LeftHand.muzzle.localEulerAngles = new Vector3(36, 0, 0);
                     // 只有狗的双持会需要在左手附上武器
-                    if (weaponData.weaponType == WeaponDatas.WeaponType.Gauntlet)
+                    if (weaponData.weaponType == WeaponDatas.WeaponType.Split)
                     {
-                        // 手套需要修正激光的位置和朝向
-                        var gauntletData = (WeaponDatas.GauntletWeaponData)weaponData;
-                        weapon.rotation = LeftHand.model.rotation;
-                        weapon.Rotate(rotationEuler.x, -rotationEuler.y, rotationEuler.z, Space.Self);
-                        weapon.position = LeftHand.model.position + weapon.right * -offset.x + weapon.up * offset.y + weapon.forward * offset.z;
-                        if (!Muzzle)
-                            Muzzle = weapon.DeepFindChild(gauntletData.muzzle);
-                        if (Muzzle)
+                        var splitData = (WeaponDatas.SplitWeaponData)weaponData;
+                        var splitPartTrans = parentTrans.Find(splitData.splitPartName + "left");
+                        if (splitPartTrans == null)
+                            splitPartTrans = parentTrans.parent.Find(splitData.splitPartName + "right");
+                        if (splitPartTrans != null)
                         {
-                            Muzzle.localPosition = gauntletData.muzzlePosition;
-                            var distance = Mathf.Max(Vector3.Distance(RightHand.model.position, RightHand.GetRayHitPosition()), 0);
-                            if (distance > 2)
-                                Muzzle.localEulerAngles = gauntletData.muzzleRotation;
+                            splitPartTrans.parent = parentTrans;
+                            splitPartTrans.gameObject.active = true;
+                            splitPartTrans.GetComponent<WeaponFollowHero>().enabled = false;
+                            splitPartTrans.localRotation = Quaternion.identity;
+                            splitPartTrans.localPosition = new Vector3(-1, -1, 1);
+                        }
+                    } 
+
+                    {
+                        parentTrans.rotation = LeftHand.model.rotation;
+                        parentTrans.Rotate(parentRotationEuler.x, -parentRotationEuler.y, parentRotationEuler.z, Space.Self);
+                        parentTrans.position = LeftHand.model.position + parentTrans.right * -parentOffset.x + parentTrans.up * parentOffset.y + parentTrans.forward * parentOffset.z;
+                        if (modelTrans != null)
+                        {
+                            modelTrans.rotation = LeftHand.model.rotation;
+                            modelTrans.Rotate(modelRotationEuler.x, -modelRotationEuler.y, modelRotationEuler.z, Space.Self);
+                            modelTrans.position = LeftHand.model.position + modelTrans.right * -modelOffset.x + modelTrans.up * modelOffset.y + modelTrans.forward * modelOffset.z;
                         }
                     }
-                    else
-                    {
-                        weapon.rotation = LeftHand.model.rotation;
-                        weapon.Rotate(rotationEuler.x, -rotationEuler.y, rotationEuler.z, Space.Self);
-                        weapon.position = LeftHand.model.position + weapon.right * -offset.x + weapon.up * offset.y + weapon.forward * offset.z;
-                    }
-                    var weaponRightHand = weapon.Find("Home/hero_fpp_101_A_R");
+                    var weaponRightHand = parentTrans.Find("Home/hero_fpp_101_A_R");
                     if (weaponRightHand != null && weaponData.weaponType != WeaponDatas.WeaponType.Talisman)
                         weaponRightHand.gameObject.active = false;
                 }
@@ -796,7 +925,8 @@ namespace VRMod.Player
         public void FixDieScreen()
         {
             var hub_die = GameObject.Find("hub_die(Clone)");
-            hub_die.active = false;
+            hub_die.transform.localEulerAngles = Vector3.zero;
+            //hub_die.active = false;
         }
 
         public void SetCGCamera(bool isInCG, Camera cgCamera = null)
@@ -900,6 +1030,12 @@ namespace VRMod.Player
             ToggleEventCamera(true);
             SetUIMode(false);
 
+            StereoRender.LeftCam.gameObject.active = false;
+            StereoRender.RightCam.gameObject.active = false;
+            yield return new WaitForSeconds(0.1f);
+            StereoRender.LeftCam.gameObject.active = true;
+            StereoRender.RightCam.gameObject.active = true;
+
             // Spirital Assault Fix
             if (gamemode == 1) {
                 var effectRoot = GameObject.Find("CUIManager/Canvas_PC(Clone)/MainRoot/PanelPopup/lay_survival_new/lay_schedule/FightingEffect/UI_progress_bar/Position/Fire");
@@ -918,6 +1054,13 @@ namespace VRMod.Player
             vrBattleUI.Setup();
 
             etcTouchPad = FindObjectOfType<ETCTouchPad>();
+
+            etcTransformCtrl_Hero = HeroCameraManager.HeroTran.GetComponent<ETCTransformCtrl>();
+            etcTransformCtrl_FPSCam = CameraManager.MainCamera.GetComponent<ETCTransformCtrl>();
+            //if(etcTransformCtrl_Hero)
+            //    Destroy(etcTransformCtrl_Hero);
+            if (etcTransformCtrl_FPSCam)
+                Destroy(etcTransformCtrl_FPSCam);
 
             Origin.position = HeroCameraManager.HeroTran.position;
             fpsCamMotionCtrl = CameraManager.MainCamera.GetComponent<FPSCamMotionCtrl>();
@@ -955,12 +1098,18 @@ namespace VRMod.Player
             LeftHandMesh.localEulerAngles = new Vector3(0f, 202.2307f, 180f);
 
             // Zi Xiao left hand fix
-            if (HeroCameraManager.HeroObj.PlayerCom.SID == 216) {
+            if (HeroCameraManager.HeroObj.PlayerCom.SID == 216) 
+            {
+                HeroSkillHandHide = HeroSkillHand.Find("113_A_L");
                 LeftHandMesh.gameObject.GetOrAddComponent<MeshFilter>().mesh = LeftHandRenderers[1].sharedMesh;
                 LeftHandMesh.gameObject.GetOrAddComponent<MeshRenderer>().material = LeftHandRenderers[1].sharedMaterial;
             } else {
                 LeftHandMesh.gameObject.GetOrAddComponent<MeshFilter>().mesh = LeftHandRenderers[0].sharedMesh;
                 LeftHandMesh.gameObject.GetOrAddComponent<MeshRenderer>().material = LeftHandRenderers[0].sharedMaterial;
+            }
+            if (HeroCameraManager.HeroObj.PlayerCom.SID == 217)
+            {
+                HeroSkillHandHide = HeroSkillHand.Find("hero_fpp_114_A_R");
             }
             if (HeroCameraManager.HeroObj.PlayerCom.SID == 219)
             {
