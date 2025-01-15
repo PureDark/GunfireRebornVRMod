@@ -701,9 +701,11 @@ namespace VRMod.Player
             var modelRotationEuler = !isParentOverride ? rotationEulerOverride : weaponData.modelRotationEuler;
 
             var parentTrans = weapon.MainWeapon.parent;
-            var modelTrans = !isParentOverride || forceModelTrans ? weapon.MainWeapon : null;
-            if (weaponData.useParentTrans)
-                modelTrans = null;
+            var modelTrans = (!isParentOverride) || forceModelTrans ? weapon.MainWeapon : null;
+            if (!ModConfig.EnableDebugMode.Value)
+            {
+                modelTrans = weaponData.useParentTrans ? null : weapon.MainWeapon;
+            }
 
             //如果是非单手武器,则进行双持判定
             if (!isDualWield && ModConfig.EnableTwoTwoHanded.Value && handType == HandType.Right && !forceOneHanded && weaponData.HoldingStyle == WeaponDatas.HoldingStyle.TwoHanded)
@@ -864,8 +866,10 @@ namespace VRMod.Player
                     modelRotationEuler = weaponData.modelRotationEuler;
                     parentTrans = weapon.DeputyWeapon.parent;
                     modelTrans = !isParentOverride || forceModelTrans ? weapon.DeputyWeapon : null;
-                    if (weaponData.useParentTrans)
-                        modelTrans = null;
+                    if (!ModConfig.EnableDebugMode.Value)
+                    {
+                        modelTrans = weaponData.useParentTrans ? null : weapon.DeputyWeapon;
+                    }
                     LeftHand.muzzle.localEulerAngles = new Vector3(36, 0, 0);
                     // 只有狗的双持会需要在左手附上武器
                     if (weaponData.weaponType == WeaponDatas.WeaponType.Split)
