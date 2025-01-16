@@ -26,7 +26,7 @@ namespace VRMod.Player.GameData
             Melee = 5,
             Talisman = 6,
             Split = 7,
-            Helmet = 7
+            Helmet = 8
         }
 
         public enum HoldingStyle
@@ -102,7 +102,7 @@ namespace VRMod.Player.GameData
             }
         }
 
-        public class BowWeaponData : WeaponData
+        public class BowWeaponData : ParentTransWeaponData
         {
             public float leftHandForwardDistance;
             public int zAngle;
