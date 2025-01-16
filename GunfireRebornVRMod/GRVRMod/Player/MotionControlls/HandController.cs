@@ -87,11 +87,16 @@ namespace VRMod.Player.MotionControlls
             }
             else if (ray.gameObject.activeSelf)
             {
-            if (uiMode)
-                ray.material.shader = VRAssets.LaserUnlit;
-            else
-                ray.material.shader = savedLaserShader;
-                ray.enabled = true;
+                if (uiMode)
+                {
+                    ray.material.shader = VRAssets.LaserUnlit;
+                    ray.enabled = true;
+                }
+                else
+                {
+                    ray.material.shader = savedLaserShader;
+                    ray.enabled = ModConfig.EnableAimRay.Value;
+                }
                 ray.SetPosition(0, muzzle.position);
                 ray.SetPosition(1, GetRayHitPosition());
             }
@@ -102,7 +107,7 @@ namespace VRMod.Player.MotionControlls
             if (uiMode)
                 return GetCanvasHitEnd();
 
-            return GetRayHitPosition(ModConfig.EnableAimRay.Value?300:0);
+            return GetRayHitPosition(300);
         }
 
         public Vector3 GetRayHitPosition(float maxDistance)
