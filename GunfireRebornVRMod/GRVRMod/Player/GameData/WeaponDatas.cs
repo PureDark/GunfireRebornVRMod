@@ -291,6 +291,7 @@ namespace VRMod.Player.GameData
             { 1415, new WeaponData(1415, "星环", new Vector3(-0.24f, 0.09f, -0.81f), new Vector3(0.00f, -0.05f, -0.47f), default, default, HoldingStyle.OneHanded) },  
             { 1416, new WeaponData(1416, "龙息", new Vector3(-0.35f, 0.17f, -0.54f), new Vector3(-0.20f, -0.01f, -0.42f), new Vector3(0.00f, 8.50f, 0.00f), new Vector3(0.00f, 8.50f, 0.00f), HoldingStyle.OneHanded) },  
             { 1417, new HelmetWeaponData(1417, "骤雨", new Vector3(-0.22f, 0.14f, -0.79f), new Vector3(-0.22f, 0.14f, -0.79f), default, default, -1879668672) },
+            { 1418, new WeaponData(1418, "素湍", new Vector3(-0.26f, 0.15f, -0.85f), new Vector3(0.09f, -0.19f, -0.61f), new Vector3(0.00f, 11.50f, 0.00f), new Vector3(0.00f, 11.50f, 0.00f), HoldingStyle.OneHanded)},
             { 1501, new RifleWeaponData(1501, "贯日者", new Vector3(-0.17f, 0.14f, -0.29f), new Vector3(-0.01f, -0.06f, -0.17f), new Vector3(0.00f, 1.50f, 0.00f), new Vector3(0.00f, 1.50f, 0.00f), "1501_Bone012", new Vector3(-0.1f, 0.18f, 0f), new Vector3(90f, 0f, 0f))}, 
             { 1502, new RifleWeaponData(1502, "爆裂双星", new Vector3(-0.17f, 0.09f, -0.29f), new Vector3(0, -0.08f, -0.15f), new Vector3(0, 1, 0), new Vector3(0, 1, 0), "1502_bone01", new Vector3(-0.36f, 0.15f, 0f), new Vector3(0f, 270f, 0f))}, 
             { 1503, new RifleWeaponData(1503, "苍鹰", new Vector3(-0.22f, 0.17f, -0.48f), new Vector3(0.01f, -0.05f, -0.32f), default, default, "1503_Bone001", new Vector3(0.05f, 0.25f, 0f), new Vector3(0f, 270f, 0f))}, 
@@ -309,6 +310,7 @@ namespace VRMod.Player.GameData
             { 1606, new WeaponData(1606, "逐风", new Vector3(-0.11f, 0.25f, -0.34f), new Vector3(0.26f, 0.11f, -0.14f)) }, 
             { 1701, new WeaponData(1701, "凤鸣", new Vector3(-0.42f, 0.26f, -0.85f), new Vector3(-0.61f, 0.16f, -0.84f)) },
             { 1703, new SplitWeaponData(1703, "璇玑", new Vector3(-0.27f, 0.15f, -0.77f), new Vector3(0.11f, -0.19f, -0.54f), default, default, "weapon_1703_") },
+            { 1704, new WeaponData(1704, "鹤吟", new Vector3(-0.29f, 0.12f, -0.59f), new Vector3(0.00f, -0.08f, -0.20f))}
         };
 
         public static WeaponData GetWeaponData(int weaponID)

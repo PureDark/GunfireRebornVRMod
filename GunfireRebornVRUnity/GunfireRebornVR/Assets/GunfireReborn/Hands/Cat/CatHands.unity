@@ -3838,6 +3838,16 @@ PrefabInstance:
       propertyPath: m_Positions.Array.data[0].z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 974318605531344655, guid: 9c3a5a26e1424674ba70ca7fddf5dd09,
+        type: 3}
+      propertyPath: m_Parameters.textureMode
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 974318605531344655, guid: 9c3a5a26e1424674ba70ca7fddf5dd09,
+        type: 3}
+      propertyPath: m_Parameters.alignment
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 974318605830006184, guid: 9c3a5a26e1424674ba70ca7fddf5dd09,
         type: 3}
       propertyPath: far clip plane
@@ -3916,7 +3926,7 @@ PrefabInstance:
     - target: {fileID: 2738016402455030647, guid: 9c3a5a26e1424674ba70ca7fddf5dd09,
         type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3746135540476722140, guid: 9c3a5a26e1424674ba70ca7fddf5dd09,
         type: 3}

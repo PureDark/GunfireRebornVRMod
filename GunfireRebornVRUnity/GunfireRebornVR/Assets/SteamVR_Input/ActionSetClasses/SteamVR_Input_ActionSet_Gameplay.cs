@@ -233,6 +233,14 @@ namespace Valve.VR
             }
         }
         
+        public virtual SteamVR_Action_Boolean ForceUIMode
+        {
+            get
+            {
+                return SteamVR_Actions.gameplay_ForceUIMode;
+            }
+        }
+        
         public virtual SteamVR_Action_Vibration HapticLeft
         {
             get

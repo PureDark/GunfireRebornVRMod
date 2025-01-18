@@ -202,7 +202,19 @@
                   }
                },
                "mode" : "button",
+               "parameters" : {
+                  "click_activate_threshold" : "0.75"
+               },
                "path" : "/user/hand/right/input/trigger"
+            },
+            {
+               "inputs" : {
+                  "long" : {
+                     "output" : "/actions/gameplay/in/forceuimode"
+                  }
+               },
+               "mode" : "button",
+               "path" : "/user/hand/right/input/joystick"
             }
          ]
       },
@@ -217,6 +229,7 @@
    "category" : "steamvr_input",
    "controller_type" : "oculus_touch",
    "description" : "",
+   "interaction_profile" : "",
    "name" : "Gunfire Reborn Oculus Touch",
    "options" : {},
    "simulated_actions" : []

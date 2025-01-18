@@ -1,6 +1,7 @@
 ﻿using BoltBehavior;
 using GameCoder.Engine;
 using HarmonyLib;
+using HeadBar;
 using SkillBolt;
 using System.Collections;
 using System.Collections.Generic;
@@ -96,7 +97,8 @@ namespace VRMod.Patches
             UIFormName.Panel_petability,
             UIFormName.Panel_petshop,
             UIFormName.SeasonPet_WarEndChoose,
-            UIFormName.GROWTHTREE_PANLEL
+            UIFormName.GROWTHTREE_PANLEL,
+            UIFormName.SURVIVAL_MODE_EXPVIEW_NEW
         };
 
         public static List<string> BattleModePathes = new List<string>
@@ -105,6 +107,8 @@ namespace VRMod.Patches
             UIFormName.PANEL_CRAZE,
             UIFormName.WAR_PANEL
         };
+
+        static bool IsSurvival = false;
 
         [HarmonyPatch(typeof(CUIManager), nameof(CUIManager.showUI))]
         internal class InjectShowUI
@@ -116,8 +120,10 @@ namespace VRMod.Patches
                 {
                     if (UIModePathes.Contains(uiFormPath))
                         VRPlayer.Instance.SetUIMode(true);
-                    else if (BattleModePathes.Contains(uiFormPath))
+                    else if (!IsSurvival && BattleModePathes.Contains(uiFormPath))
                         VRPlayer.Instance.SetUIMode(false);
+                    if (uiFormPath == UIFormName.SURVIVAL_MODE_EXPVIEW_NEW)
+                        IsSurvival = true;
                     if (uiFormPath == UIFormName.WAREND_PANEL)
                     {
                         var winTextGO = CUIManager.instance.MainPopUpCanvas.transform.DeepFindChild("arttext_Win_1");
@@ -136,6 +142,8 @@ namespace VRMod.Patches
                 Log.Info("InjectHideUI: uiFormPath=" + uiFormPath);
                 if (UIModePathes.Contains(uiFormPath) && uiFormPath != UIFormName.ASK_RESURGENCE_PANEL && VRPlayer.Instance && !VRPlayer.Instance.isHome)
                     VRPlayer.Instance.SetUIMode(false);
+                if (uiFormPath == UIFormName.SURVIVAL_MODE_EXPVIEW_NEW)
+                    IsSurvival = false;
             }
         }
 
@@ -355,29 +363,72 @@ namespace VRMod.Patches
         {
             private static bool Prefix(OCBloodBar __instance)
             {
+                //Log.Info("OCBloodBar.UpdateUIPos hp=" + __instance.BloodBar.hp + " name=" + __instance.m_CalposTran.name + " HPRootTran.name=" + __instance.BloodBar.m_HPRootTran.name + " pos="+ __instance.m_CalposTran.position);
                 __instance.m_UpdatePos = __instance.m_CalposTran.position;
+                __instance.BloodBar.m_HPRootTran.position = __instance.m_CalposTran.position;
+                if (__instance.isShowBloodBar)
+                {
+                    if (__instance.bossHpbartrans != null)
+                        __instance.bossHpbartrans.position = __instance.m_UpdatePos;
+                    if (__instance.BloodBar != null)
+                    {
+                        if (__instance.BloodBar.ARTrans)
+                            __instance.BloodBar.ARTrans.localRotation = Quaternion.identity;
+                        if (__instance.BloodBar.SHTrans)
+                            __instance.BloodBar.SHTrans.localRotation = Quaternion.identity;
+                        if (__instance.BloodBar.m_ScaleCtr)
+                            __instance.BloodBar.m_ScaleCtr.m_RealMaxScale = 3;
+                        if (__instance.BloodBar.m_UIPanelScaleCtr)
+                            __instance.BloodBar.m_UIPanelScaleCtr.m_RealMaxScale = 3;
+                    }
+                }
                 return false;
             }
         }
 
-        [HarmonyPatch(typeof(OCBloodBar), nameof(OCBloodBar.LateUpdate))]
+        [HarmonyPatch(typeof(OCBloodBar), nameof(OCBloodBar.Update))]
         internal class InjectOCBloodBarLateUpdate
         {
             private static void Postfix(OCBloodBar __instance)
             {
-                if (__instance != null &&__instance.isShowBloodBar)
+                if (__instance != null && __instance.isShowBloodBar)
                 {
-                    if(__instance.bossHpbartrans != null)
+                    if (__instance.bossHpbartrans != null)
                         __instance.bossHpbartrans.position = __instance.m_UpdatePos;
-                    if (__instance.BloodBar.ARTrans)
-                        __instance.BloodBar.ARTrans.localRotation = Quaternion.identity;
-                    if (__instance.BloodBar.SHTrans)
-                        __instance.BloodBar.SHTrans.localRotation = Quaternion.identity;
-                    if (__instance.BloodBar.m_ScaleCtr)
-                        __instance.BloodBar.m_ScaleCtr.m_RealMaxScale = 3;
+                    if (__instance.BloodBar != null)
+                    {
+                        if (__instance.BloodBar.ARTrans)
+                            __instance.BloodBar.ARTrans.localRotation = Quaternion.identity;
+                        if (__instance.BloodBar.SHTrans)
+                            __instance.BloodBar.SHTrans.localRotation = Quaternion.identity;
+                        if (__instance.BloodBar.m_ScaleCtr)
+                            __instance.BloodBar.m_ScaleCtr.m_RealMaxScale = 3;
+                    }
                 }
             }
         }
+
+        //[HarmonyPatch(typeof(PCMonsterBloodBar), nameof(PCMonsterBloodBar.Update))]
+        //internal class InjectOCBloodBarLateUpdate
+        //{
+        //    private static void Postfix(OCBloodBar __instance)
+        //    {
+        //        if (__instance != null && __instance.isShowBloodBar)
+        //        {
+        //            if (__instance.bossHpbartrans != null)
+        //                __instance.bossHpbartrans.position = __instance.m_UpdatePos;
+        //            if (__instance.BloodBar != null)
+        //            {
+        //                if (__instance.BloodBar.ARTrans)
+        //                    __instance.BloodBar.ARTrans.localRotation = Quaternion.identity;
+        //                if (__instance.BloodBar.SHTrans)
+        //                    __instance.BloodBar.SHTrans.localRotation = Quaternion.identity;
+        //                if (__instance.BloodBar.m_ScaleCtr)
+        //                    __instance.BloodBar.m_ScaleCtr.m_RealMaxScale = 3;
+        //            }
+        //        }
+        //    }
+        //}
 
         // 取消新更新的血条受伤特效
         [HarmonyPatch(typeof(BarHurtEffectController), nameof(BarHurtEffectController.AddHurtEffect))]

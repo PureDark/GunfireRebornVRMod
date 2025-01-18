@@ -468,6 +468,8 @@ namespace VRMod.Player
             if (doomFistInterface)
             {
                 doomFistInterface.localRotation = Quaternion.identity;
+                doomFistInterface.position = Head.position + Head.forward * distance;
+                doomFistInterface.rotation = Head.rotation;
             }
             else 
 

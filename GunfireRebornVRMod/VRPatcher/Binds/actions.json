@@ -114,6 +114,10 @@
       "type": "boolean"
     },
     {
+      "name": "/actions/Gameplay/in/ForceUIMode",
+      "type": "boolean"
+    },
+    {
       "name": "/actions/Gameplay/out/HapticLeft",
       "type": "vibration"
     },
@@ -207,7 +211,8 @@
       "/actions/Gameplay/in/RB_DualWield2ndSkill": "RB_DualWield2ndSkill",
       "/actions/Gameplay/in/InteractUI": "InteractUI",
       "/actions/Gameplay/out/HapticLeft": "HapticLeft",
-      "/actions/Gameplay/out/HapticRight": "HapticRight"
+      "/actions/Gameplay/out/HapticRight": "HapticRight",
+      "/actions/Gameplay/in/ForceUIMode": "Force UI Mode"
     },
     {
       "language_tag": "zh-CN",
@@ -232,7 +237,8 @@
       "/actions/Gameplay/in/Y_SwitchWeapons": "Y_交换主副武器",
       "/actions/Gameplay/in/InteractUI": "UI交互",
       "/actions/Gameplay/out/HapticLeft": "左手震动",
-      "/actions/Gameplay/out/HapticRight": "右手震动"
+      "/actions/Gameplay/out/HapticRight": "右手震动",
+      "/actions/Gameplay/in/ForceUIMode": "强制UI模式"
     }
   ]
 }

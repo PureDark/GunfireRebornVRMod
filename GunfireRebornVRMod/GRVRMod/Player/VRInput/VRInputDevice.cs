@@ -37,6 +37,8 @@ namespace VRMod.Player.VRInput
         public SteamVR_Action_Vibration HapticLeft = SteamVR_Actions.gameplay_HapticLeft;
         public SteamVR_Action_Vibration HapticRight = SteamVR_Actions.gameplay_HapticRight;
 
+        public SteamVR_Action_Boolean ForceUIMode = SteamVR_Actions.gameplay_ForceUIMode;
+
         const float LowerDeadZone = 0.2f;
         const float UpperDeadZone = 0.9f;
 
@@ -134,6 +136,11 @@ namespace VRMod.Player.VRInput
                 UpdateWithState(InputControlType.DPadUp, true, updateTick, deltaTime);
             else if (Scroll.axis.y < 0f)
                 UpdateWithState(InputControlType.DPadDown, true, updateTick, deltaTime);
+
+            if (ForceUIMode.stateUp)
+            {
+                VRPlayer.Instance.SetUIMode(!VRPlayer.Instance.isUIMode);
+            }
         }
 
         public void CommitInternal(ulong updateTick, float deltaTime)

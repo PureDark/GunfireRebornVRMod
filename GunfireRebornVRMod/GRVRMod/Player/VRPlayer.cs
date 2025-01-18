@@ -163,6 +163,7 @@ namespace VRMod.Player
 
         private int lastWeaponID;
         private float aimSwitchDelay = 1f;
+        private float aimShowSkillHandDelay = 1f;
 
         private ETCTouchPad etcTouchPad;
         private ETCTransformCtrl etcTransformCtrl_Hero;
@@ -280,16 +281,6 @@ namespace VRMod.Player
 
                 }
             }
-
-            if (Input.GetKeyUp(KeyCode.LeftAlt))
-            {
-                if(Time.timeScale > 0.5f)
-                    Time.timeScale = 0.1f;
-                else if(Time.timeScale > 0.05f)
-                    Time.timeScale = 0.01f;
-                else
-                    Time.timeScale = 1.0f;
-            }
             if (Input.GetKeyUp(KeyCode.P))
             {
                 ScreenCam.enabled = !ScreenCam.enabled;
@@ -298,6 +289,15 @@ namespace VRMod.Player
             }
             if (ModConfig.EnableDebugMode.Value)
             {
+                if (Input.GetKeyUp(KeyCode.LeftAlt))
+                {
+                    if (Time.timeScale > 0.5f)
+                        Time.timeScale = 0.1f;
+                    else if (Time.timeScale > 0.05f)
+                        Time.timeScale = 0.01f;
+                    else
+                        Time.timeScale = 1.0f;
+                }
                 if (Input.GetKeyUp(KeyCode.J))
                 {
                     ToggleEventCamera();
@@ -455,9 +455,12 @@ namespace VRMod.Player
 
                 if (isSkillButtonPressed)
                     aimSwitchDelay = 0.5f;
+                if (isSecondarySkill || isPrimarySkill)
+                    aimShowSkillHandDelay = 0.5f;
                 if (aimSwitchDelay > 0 || isSecondarySkill || isPrimarySkill)
                 {
-                    aimSwitchDelay -= 0.013f;
+                    aimSwitchDelay -= Time.deltaTime;
+                    aimShowSkillHandDelay -= Time.deltaTime;
                     hand = LeftHand;
                 }
 
@@ -470,7 +473,7 @@ namespace VRMod.Player
                 // 不放技能时默认隐藏技能手
                 if (HeroSkillHand)
                 {
-                    bool isPlaying = aimSwitchDelay > 0 || isSecondarySkill || isPrimarySkill;
+                    bool isPlaying = aimShowSkillHandDelay > 0 || isSecondarySkill || isPrimarySkill;
                     HeroSkillHand.localScale = isPlaying ? Vector3.one : Vector3.zero;
                     hideIdleLeftHand = isPlaying;
                 }
@@ -518,14 +521,14 @@ namespace VRMod.Player
                     case 216:
                         if (!HeroSkillHandHide)
                             HeroSkillHandHide = HeroSkillHand.Find("113_A_L");
-                        if (HeroSkillHandHide)
-                            HeroSkillHandHide.gameObject.active = false;
                         break;
                     case 217:
                         if (!HeroSkillHandHide)
                             HeroSkillHandHide = HeroSkillHand.Find("hero_fpp_114_A_R");
-                        if (HeroSkillHandHide)
-                            HeroSkillHandHide.gameObject.active = false;
+                        break;
+                    case 218:
+                        if (!HeroSkillHandHide)
+                            HeroSkillHandHide = HeroSkillHand.Find("hero_fpp_116_A_R");
                         break;
                     case 219:
                         // 松鼠
@@ -538,6 +541,8 @@ namespace VRMod.Player
                         }
                         break;
                 }
+                if (HeroSkillHandHide)
+                    HeroSkillHandHide.gameObject.active = false;
 
                 // 强制游戏自带的手和武器模型与玩家手同步
                 if (currWeapon != null)
@@ -612,6 +617,8 @@ namespace VRMod.Player
                                 Muzzle.gameObject.active = false;
                         }
 
+                        isParentOverride = weaponData.useParentTrans;
+
                         // 临时处理
                         offsetOverride = isParentOverride ? weaponData.parentOffset : weaponData.modelOffset;
                         rotationEulerOverride = isParentOverride ? weaponData.parentRotationEuler : weaponData.modelRotationEuler;
@@ -648,8 +655,7 @@ namespace VRMod.Player
                         var helmetWeaponData = (WeaponDatas.HelmetWeaponData)weaponData;
                         if (WeaponAnimator.IsInState(helmetWeaponData.aimingHash))
                         {
-                            CameraManager.MainCamera.position = Head.position;
-                            CameraManager.MainCamera.rotation = Quaternion.LookRotation(GetFlatForwardDirection());
+                            CameraManager.MainCamera.rotation = Head.rotation;
                         }
                     }
 
